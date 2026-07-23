@@ -2,7 +2,6 @@ package com.mg4.control.service
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.PixelFormat
 import android.os.Handler
@@ -14,15 +13,15 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import com.mg4.hardware.VehicleWriteGate
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.slider.Slider
-import com.mg4.control.MainActivity
 import com.mg4.control.R
-import com.mg4.control.debug.AppLogger
-import com.mg4.control.hardware.MG4Hardware
-import com.mg4.control.model.DrivingProfile
+import com.mg4.hardware.AppLogger
+import com.mg4.hardware.MG4Hardware
+import com.mg4.hardware.model.DrivingProfile
 import com.mg4.control.profile.ProfileApplier
 import com.mg4.control.profile.ProfileManager
 import com.mg4.control.util.LocaleHelper
@@ -86,11 +85,15 @@ object ProfilePickerOverlay {
         profiles: List<DrivingProfile>?,
         onAutoDismiss: (() -> Unit)?
     ) {
-        // L'overlay s'affiche TOUJOURS, quelle que soit la vitesse : il sert aussi à la
-        // luminosité et à l'extinction, et masquer le sélecteur sans rien dire donnait
-        // l'impression que le raccourci volant était cassé. C'est l'ÉCRITURE qui est
-        // filtrée : si la sécurité conduite refuse, ProfileApplier échoue et VehicleWriteGate
-        // affiche le toast « vitesse (limite) » au moment du choix du profil.
+        // [T-904] L'overlay ne sert qu'à appliquer un profil, donc à écrire dans le
+        // véhicule : inutile et dangereux de le poser devant le conducteur en roulant.
+        // Même politique que les écritures — refus aussi si la vitesse est illisible.
+        if (VehicleWriteGate.decide(MG4Hardware.getVehicleSpeedKmh())
+                != VehicleWriteGate.Decision.ALLOWED) {
+            AppLogger.w(TAG, "Overlay non affiché : véhicule non à l'arrêt")
+            onAutoDismiss?.invoke()
+            return
+        }
 
         // Si déjà affiché → on remplace (sans déclencher l'ancien onAutoDismiss)
         dismissOnMainThread(context, fireAutoDismiss = false)
@@ -124,7 +127,7 @@ object ProfilePickerOverlay {
 
         fun dp(value: Float) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, dm).toInt()
 
-        fun makeProfileButton(profile: com.mg4.control.model.DrivingProfile) =
+        fun makeProfileButton(profile: com.mg4.hardware.model.DrivingProfile) =
             MaterialButton(themedContext).apply {
                 text      = profile.name
                 textSize  = 19f
@@ -187,18 +190,6 @@ object ProfilePickerOverlay {
                 dismissOnMainThread(context)              // ferme le popup profils
                 showVehiclePowerOffConfirm(context)       // P-check + confirmation
             }
-        }
-
-        // ── Bouton « Ouvrir MG4Control » (bas droite, toujours visible) ────
-        view.findViewById<MaterialButton>(R.id.overlay_btn_open_app)?.setOnClickListener {
-            AppLogger.i(TAG, "Ouverture de MG4Control depuis l'overlay")
-            runCatching {
-                context.startActivity(
-                    Intent(context, MainActivity::class.java)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                )
-            }.onFailure { AppLogger.w(TAG, "Lancement MainActivity échoué : ${it.message}") }
-            dismissOnMainThread(context)
         }
 
         // ── Tap sur le fond → fermeture ───────────────────────────────────

@@ -19,9 +19,7 @@ import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
@@ -34,10 +32,9 @@ import com.google.android.material.button.MaterialButton
 import com.mg4.control.BuildConfig
 import com.mg4.control.R
 import com.mg4.control.util.QrCode
-import com.mg4.control.debug.AppLogger
+import com.mg4.hardware.AppLogger
 import com.mg4.control.debug.CrashLogger
-import com.mg4.control.hardware.MG4Hardware
-import com.mg4.control.hardware.VehicleWriteGate
+import com.mg4.hardware.MG4Hardware
 import com.mg4.control.update.ApkCleanup
 import com.mg4.control.update.UpdateChecker
 import com.mg4.control.update.UpdateDialogManager
@@ -163,36 +160,6 @@ class SettingsFragment : Fragment() {
         switchAutoApply.isChecked = prefs.getBoolean("auto_apply_profile", true)
         switchAutoApply.setOnCheckedChangeListener { _, checked ->
             prefs.edit().putBoolean("auto_apply_profile", checked).apply()
-        }
-
-        // ── Sécurité conduite (verrou d'écriture par vitesse) ────────────────
-        val switchSpeedGate = view.findViewById<Switch>(R.id.switch_speed_gate)
-        val rowSpeedGateMax = view.findViewById<View>(R.id.row_speed_gate_max)
-        val inputSpeedGateMax = view.findViewById<EditText>(R.id.input_speed_gate_max)
-
-        val gateEnabled = prefs.getBoolean(VehicleWriteGate.KEY_ENABLED, false)
-        switchSpeedGate.isChecked = gateEnabled
-        rowSpeedGateMax.visibility = if (gateEnabled) View.VISIBLE else View.GONE
-        inputSpeedGateMax.setText(prefs.getInt(VehicleWriteGate.KEY_MAX_KMH, 0).toString())
-
-        switchSpeedGate.setOnCheckedChangeListener { _, checked ->
-            prefs.edit().putBoolean(VehicleWriteGate.KEY_ENABLED, checked).apply()
-            rowSpeedGateMax.visibility = if (checked) View.VISIBLE else View.GONE
-        }
-
-        // Valide + persiste la vitesse : clamp 0–250, réaffiche la valeur retenue.
-        fun commitSpeedGateMax() {
-            val clamped = VehicleWriteGate.clampSpeed(inputSpeedGateMax.text.toString().toIntOrNull())
-            prefs.edit().putInt(VehicleWriteGate.KEY_MAX_KMH, clamped).apply()
-            val clampedText = clamped.toString()
-            if (inputSpeedGateMax.text.toString() != clampedText) {
-                inputSpeedGateMax.setText(clampedText)
-            }
-        }
-        inputSpeedGateMax.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) commitSpeedGateMax() }
-        inputSpeedGateMax.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) { commitSpeedGateMax() }
-            false
         }
 
         // ── Vérification auto des mises à jour ───────────────────────────────
@@ -328,7 +295,6 @@ class SettingsFragment : Fragment() {
         }
     }
 
-
     // ── Feedback "application à jour" sur le bouton ──────────────────────────
 
     private fun showUpToDate(btn: MaterialButton, originalText: String) {
@@ -391,10 +357,6 @@ class SettingsFragment : Fragment() {
         // Sonde diagnostic : logge volume + état des portes AVANT de rendre les logs,
         // pour que le rapport les contienne (indépendant du toggle / de l'onglet Audio).
         MG4Hardware.runDoorVolumeDiag()
-        // Sonde température : tente de lire temp extérieure + habitacle et logge le brut.
-        MG4Hardware.runTemperatureDiag()
-        // Sonde vitesse : logge la vitesse brute (validation de l'unité par firmware).
-        MG4Hardware.runSpeedDiag()
 
         val appVersion = try {
             ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName ?: "?"
