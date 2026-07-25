@@ -54,7 +54,7 @@ class DriveRegenFragment : Fragment() {
             btn.setOnClickListener {
                 applyDriveModeUI(mode)
                 CoroutineScope(Dispatchers.IO).launch { MG4Hardware.setDriveMode(mode) }
-                Toast.makeText(context, "Mode : ${mode.label}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Mode : ${getString(mode.labelRes)}", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -62,7 +62,7 @@ class DriveRegenFragment : Fragment() {
             btn.setOnClickListener {
                 applyRegenUI(level)
                 CoroutineScope(Dispatchers.IO).launch { MG4Hardware.setRegenLevel(level) }
-                Toast.makeText(context, "Regen : ${level.label}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Regen : ${getString(level.labelRes)}", Toast.LENGTH_SHORT).show()
             }
         }
     }

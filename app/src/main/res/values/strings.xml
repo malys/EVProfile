@@ -67,11 +67,6 @@
     <string name="shortcuts_cfg_aeb_brake">Al.+Fr.</string>
 
     <!-- Drive modes -->
-    <string name="drive_eco">ECO</string>
-    <string name="drive_normal">NORMAL</string>
-    <string name="drive_sport">SPORT</string>
-    <string name="drive_snow">SNOW</string>
-    <string name="drive_custom">CUSTOM</string>
     <string name="drive_energy_saving">Éco. énergie</string>
 
     <!-- Drive tab section headers -->
@@ -79,12 +74,6 @@
     <string name="drive_section_regen">Régénération</string>
 
     <!-- Regen levels -->
-    <string name="regen_off">Off</string>
-    <string name="regen_low">Faible</string>
-    <string name="regen_medium">Moyen</string>
-    <string name="regen_high">Fort</string>
-    <string name="regen_adaptive">Adaptatif</string>
-    <string name="regen_one_pedal">1 Pédale</string>
     <!-- Versions courtes pour le dialog profil (6 boutons en ligne) -->
     <string name="regen_adaptive_short">Adapt.</string>
     <string name="regen_one_pedal_short">1 Péd.</string>

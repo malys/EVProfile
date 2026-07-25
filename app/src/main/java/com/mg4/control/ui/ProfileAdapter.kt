@@ -59,9 +59,9 @@ class ProfileAdapter(
         holder.tvName.text    = profile.name
         holder.tvSummary.text = buildString {
             append(": ")
-            append(profile.driveMode.label)
+            append(context.getString(profile.driveMode.labelRes))
             append(" · ")
-            append(profile.regenLevel.label)
+            append(context.getString(profile.regenLevel.labelRes))
             if (adasLabel.isNotEmpty()) { append(" · "); append(adasLabel) }
         }
 

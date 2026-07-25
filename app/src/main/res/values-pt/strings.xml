@@ -67,11 +67,6 @@
     <string name="shortcuts_cfg_aeb_brake">Al.+Fr.</string>
 
     <!-- Modos de condução -->
-    <string name="drive_eco">ECO</string>
-    <string name="drive_normal">NORMAL</string>
-    <string name="drive_sport">SPORT</string>
-    <string name="drive_snow">SNOW</string>
-    <string name="drive_custom">CUSTOM</string>
     <string name="drive_energy_saving">Poupança energia</string>
 
     <!-- Cabeçalhos de secção Drive -->
@@ -79,12 +74,6 @@
     <string name="drive_section_regen">Regeneração</string>
 
     <!-- Níveis de regeneração -->
-    <string name="regen_off">Off</string>
-    <string name="regen_low">Baixo</string>
-    <string name="regen_medium">Médio</string>
-    <string name="regen_high">Alto</string>
-    <string name="regen_adaptive">Adaptativo</string>
-    <string name="regen_one_pedal">1 Pedal</string>
     <string name="regen_adaptive_short">Adapt.</string>
     <string name="regen_one_pedal_short">1 Ped.</string>
 
