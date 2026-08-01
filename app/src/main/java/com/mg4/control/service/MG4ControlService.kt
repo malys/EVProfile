@@ -99,10 +99,14 @@ class MG4ControlService : Service() {
         startForeground(NOTIF_ID, buildNotification())
         // Feed the shared gate MG4Control's localized refusal strings (mg4-hardware itself
         // has no app resources; the module falls back to English when no provider is set).
+        // Le contexte applicatif, volontairement : `getString` se résoudrait sur le Service,
+        // et messageProvider est un champ de singleton dans la bibliothèque partagée — il
+        // retiendrait ce Service, et tout ce qu'il référence, pour la durée du processus.
+        val strings = applicationContext
         VehicleWriteGate.messageProvider = { decision ->
             when (decision) {
-                VehicleWriteGate.Decision.REFUSED_MOVING        -> getString(R.string.write_refused_moving)
-                VehicleWriteGate.Decision.REFUSED_UNKNOWN_SPEED -> getString(R.string.write_refused_unknown_speed)
+                VehicleWriteGate.Decision.REFUSED_MOVING        -> strings.getString(R.string.write_refused_moving)
+                VehicleWriteGate.Decision.REFUSED_UNKNOWN_SPEED -> strings.getString(R.string.write_refused_unknown_speed)
                 VehicleWriteGate.Decision.ALLOWED               -> null
             }
         }

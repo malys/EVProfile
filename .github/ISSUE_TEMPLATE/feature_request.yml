@@ -1,0 +1,130 @@
+name: ✨ Feature Request
+description: Suggest a new feature or enhancement
+title: "[FEATURE] "
+labels: [enhancement, needs-review]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Feature Request
+
+        Have an idea to make this project better? We'd love to hear it!
+
+        **Before requesting:** Please check if a similar feature has been requested in [Discussions](https://github.com/malys/MG4Control/discussions).
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: "Pre-submission checks"
+      description: "Ensure you've done these before submitting"
+      options:
+        - label: I've checked existing issues/discussions and found no duplicate
+          required: true
+        - label: This feature aligns with project scope (MG4 infotainment / vehicle integration)
+          required: true
+        - label: I understand this project is not affiliated with SAIC/MG Motor
+          required: false
+
+  - type: input
+    id: title
+    attributes:
+      label: "Feature Title"
+      description: "Clear, concise name for the feature"
+      placeholder: "Add trip consumption tracking"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: "Problem or Use Case"
+      description: |
+        What problem does this solve? Why is it needed?
+        - Current limitation
+        - User need
+        - How this improves the project
+      placeholder: |
+        Users cannot track energy consumption over multiple trips.
+        This makes it hard to understand driving efficiency trends.
+        A trip history would help users optimize their driving style.
+      rows: 5
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: "Proposed Solution"
+      description: |
+        How should this feature work?
+        - UI flow
+        - Data storage
+        - Integration points
+      placeholder: |
+        1. Add "Trip History" tab in home screen
+        2. Show: date, distance, energy used, efficiency (kWh/km)
+        3. Store in local SQLite database (with backup to shared storage)
+        4. Read PERF_VEHICLE_SPEED and ENERGY_CONSUMED via CarPropertyManager
+      rows: 6
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternative Approaches"
+      description: "Have you considered other ways to solve this?"
+      placeholder: |
+        - Alternative 1: Cloud sync to ABRP API
+        - Pro: shared with driving community
+        - Con: requires network, privacy concerns on offline-only build
+      rows: 4
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: "Estimated Complexity"
+      description: "How much work is this?"
+      options:
+        - "Small (< 1 day)"
+        - "Medium (1–3 days)"
+        - "Large (1–2 weeks)"
+        - "Unknown"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: vehicle_impact
+    attributes:
+      label: "Vehicle Impact"
+      description: "Does this feature write to vehicle systems?"
+      options:
+        - label: "No — read-only data display"
+        - label: "Yes — affects drive mode / ADAS / vehicle state"
+        - label: "Unknown — unclear"
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "Acceptance Criteria"
+      description: "How will we know this feature is done?"
+      placeholder: |
+        - [ ] Trip history persists across app restarts
+        - [ ] Data exports to CSV
+        - [ ] UI shows on 12.8\" display without overflow
+        - [ ] Tests cover trip recording, storage, and display
+      rows: 5
+
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: "Consent"
+      options:
+        - label: I understand this project is not affiliated with SAIC/MG Motor and carries no warranty (see DISCLAIMER.md)
+          required: true
+        - label: I consent to my feature request being refined by Claude AI for clarity
+          required: false

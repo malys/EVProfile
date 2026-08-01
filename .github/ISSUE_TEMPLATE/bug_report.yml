@@ -1,0 +1,132 @@
+name: 🐛 Bug Report
+description: Report a bug or issue you've encountered
+title: "[BUG] "
+labels: [bug, needs-review]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Bug Report
+
+        Thank you for helping improve this project! Please provide as much detail as possible.
+
+        **⚠️ SAFETY CRITICAL:** If this bug affects vehicle behavior or safety systems (AEB, ADAS, drive mode, etc.), mark it as `security` immediately.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: "Pre-submission checks"
+      description: "Ensure you've done these before submitting"
+      options:
+        - label: I've searched existing issues and found no duplicate
+          required: true
+        - label: I'm using the latest version
+          required: true
+        - label: I've tested this on the actual vehicle (or emulator)
+          required: false
+        - label: This bug affects vehicle safety or ADAS (if yes, see 🔐 below)
+          required: false
+
+  - type: input
+    id: title
+    attributes:
+      label: "Bug Summary"
+      description: "One-line summary of the bug"
+      placeholder: "App crashes when setting drive mode at speed > 0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: |
+        Detailed description of the bug. Include:
+        - What you expected to happen
+        - What actually happened
+        - Why this is a problem
+      placeholder: |
+        Expected: Refuse to change drive mode when speed > 0 km/h
+        Actual: App crashes with NullPointerException
+        Impact: User cannot change drive settings safely; potential vehicle instability
+      rows: 6
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Steps to Reproduce"
+      description: "Exact steps to reproduce the bug"
+      placeholder: |
+        1. Open MG4Control
+        2. Set vehicle speed to 50 km/h
+        3. Tap "Drive Profile" → "Sport Mode"
+        4. Observe crash
+      rows: 5
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: "Environment"
+      description: "Device and software details"
+      placeholder: |
+        - Vehicle: MG4 EV
+        - Firmware: SWI133
+        - Android Automotive: v9
+        - App Version: 1.2.3
+        - Build: offline / online
+      rows: 4
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Logs or Screenshots"
+      description: |
+        Attach:
+        - Logcat output (from ADB: `adb logcat | grep -i mg4`)
+        - Crash dumps (from in-app diagnostic screen)
+        - Screenshots showing the issue
+      placeholder: "Paste logcat or crash output here"
+      rows: 8
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: "Severity"
+      description: "How critical is this bug?"
+      options:
+        - "Critical (crashes app / affects vehicle safety)"
+        - "High (feature broken / data loss)"
+        - "Medium (workaround available)"
+        - "Low (cosmetic / minor)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: safety
+    attributes:
+      label: "🔐 Safety Classification"
+      description: "Does this affect vehicle safety systems?"
+      options:
+        - "No — UI/UX or non-critical system"
+        - "Yes — Speed gate / AEB / ADAS / drive mode / seat heat"
+        - "Unknown — Unclear, needs investigation"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: "Consent"
+      options:
+        - label: I understand this project is not affiliated with SAIC/MG Motor and carry no warranty (see DISCLAIMER.md)
+          required: true
+        - label: I consent to my issue being processed and refined by Claude AI to improve clarity for maintainers
+          required: false
