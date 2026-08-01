@@ -33,6 +33,7 @@ import com.mg4.control.profile.ProfileManager
 import com.mg4.control.shortcut.ShortcutAction
 import com.mg4.hardware.FirmwareInfo
 import com.mg4.hardware.VehicleWriteGate
+import com.mg4.hardware.saic.SaicHub
 import com.mg4.control.util.ThemeHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -111,6 +112,12 @@ class MG4ControlService : Service() {
             }
         }
         MG4Hardware.init(applicationContext)
+        // One bind, for one reason: when the speed property answers nothing the gate refuses
+        // every road-behaviour write, and the gear — which the vendor service on this hub
+        // reports — says whether the car is in park. Without the bind that fallback is silent
+        // and a profile is refused with nothing wrong with it. Asynchronous, idempotent, and
+        // it holds no reference to this Service.
+        SaicHub.connect(applicationContext)
         registerHardkeyReceiver()
         registerBtAclReceiver()        // [BT-PROFILES]
         registerSkinChangeReceiver()   // [THEME-AUTO]
