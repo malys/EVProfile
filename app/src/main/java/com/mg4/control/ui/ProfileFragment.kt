@@ -25,6 +25,8 @@ import com.mg4.hardware.MG4Hardware.Swi68Mode
 import com.mg4.hardware.model.DriveMode
 import com.mg4.hardware.model.DrivingProfile
 import com.mg4.hardware.model.RegenLevel
+import android.widget.Toast
+import com.mg4.hardware.AppLogger
 import com.mg4.control.profile.ProfileApplier
 import com.mg4.control.profile.ProfileManager
 import com.mg4.hardware.FirmwareInfo
@@ -112,10 +114,27 @@ class ProfileFragment : Fragment() {
     // Nouveau profil : lit l'état hardware courant puis ouvre le dialog pré-rempli
     // -------------------------------------------------------------------------
 
+    /**
+     * Pré-remplit un nouveau profil avec l'état courant de la voiture.
+     *
+     * Chaque réglage passe par son lecteur `…OrNull` : un signal que le firmware ne rend pas
+     * vaut `null`, pas « désactivé ». La différence compte ici plus qu'ailleurs — un profil
+     * enregistré avec `aebEnabled=false` parce que la lecture a échoué **coupera l'AEB** à
+     * chaque application. Faute de valeur « ne pas toucher » dans le modèle, on garde la
+     * valeur par défaut et on nomme les signaux illisibles dans le dialogue : c'est à
+     * l'utilisateur de les régler sciemment, pas à une lecture ratée de décider.
+     */
     private fun openNewProfileDialog() {
         CoroutineScope(Dispatchers.IO).launch {
             val hasHeat  = FirmwareInfo.hasHeatFeatures()
             val isSWI132 = FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI132
+            val unread = mutableListOf<String>()
+
+            /** Retient le nom du réglage quand la voiture n'a pas répondu. */
+            fun <T> T?.orNoted(label: String, fallback: T): T {
+                if (this == null) unread += label
+                return this ?: fallback
+            }
             val prefill = if (FirmwareInfo.isVsmBased()) {
                 // SWI68/SWI69/SWI131/SWI132/SWI165 : ADAS ACC/TJA — sièges/volant uniquement sur SWI68/SWI165
                 val elkMode = MG4Hardware.getElkMode().let {
@@ -126,13 +145,13 @@ class ProfileFragment : Fragment() {
                     name          = "",
                     driveMode     = MG4Hardware.getDriveMode()  ?: DriveMode.NORMAL,
                     regenLevel    = MG4Hardware.getRegenLevel() ?: RegenLevel.MEDIUM,
-                    steeringHeat  = if (hasHeat) MG4Hardware.isSteeringHeatOn() else false,
-                    seatHeatLeft  = if (hasHeat) MG4Hardware.getSeatHeatLeft().coerceAtLeast(0) else 0,
-                    seatHeatRight = if (hasHeat) MG4Hardware.getSeatHeatRight().coerceAtLeast(0) else 0,
+                    steeringHeat  = if (hasHeat) MG4Hardware.steeringHeatOnOrNull().orNoted("volant chauffant", false) else false,
+                    seatHeatLeft  = if (hasHeat) MG4Hardware.seatHeatLeftOrNull().orNoted("siège gauche", 0) else 0,
+                    seatHeatRight = if (hasHeat) MG4Hardware.seatHeatRightOrNull().orNoted("siège droit", 0) else 0,
                     // SWI132 : deux alertes indépendantes comme SWI133 (pas de soundWarning VSM)
-                    overspeedAlarm = if (isSWI132) MG4Hardware.isOverspeedAlarmOn() else false,
-                    speedLimitTone = if (isSWI132) MG4Hardware.isSpeedLimitToneOn() else false,
-                    soundWarning   = if (!isSWI132) MG4Hardware.isSoundWarningOn() else false,
+                    overspeedAlarm = if (isSWI132) MG4Hardware.overspeedAlarmOnOrNull().orNoted("alerte survitesse", false) else false,
+                    speedLimitTone = if (isSWI132) MG4Hardware.speedLimitToneOnOrNull().orNoted("ton limite de vitesse", false) else false,
+                    soundWarning   = if (!isSWI132) MG4Hardware.soundWarningOnOrNull().orNoted("alerte sonore ADAS", false) else false,
                     // Mode ACC/TJA — SHWA (ancien codage limiteur) ramené à Off (limiteur géré à part)
                     swi68AdasMode  = MG4Hardware.getAccTjaMode().let {
                         if (it < 0 || it == Swi68Mode.SHWA) Swi68Mode.OFF else it
@@ -140,15 +159,15 @@ class ProfileFragment : Fragment() {
                     // Limiteur de vitesse — capturé pour tous les firmwares VSM (SWI68/69/131/132/165)
                     swi132LimiterConfigured = true,
                     swi132SasMode  = MG4Hardware.getSpeedLimiterMode().let { if (it < 0) 0 else it },
-                    aebEnabled     = MG4Hardware.isAebEnabled(),
-                    aebMode        = MG4Hardware.getAebMode().let { if (it < 1) AebMode.ALARM else it },
+                    aebEnabled     = MG4Hardware.aebEnabledOrNull().orNoted("AEB", false),
+                    aebMode        = MG4Hardware.aebModeOrNull().orNoted("mode AEB", AebMode.ALARM),
                     aebSensitivity = MG4Hardware.getAebSensitivity().let { if (it < 1) AebSensitivity.STANDARD else it },
                     elkMode        = elkMode,
                     elkSensitivity = elkSen,
                     lasAudibleWarning    = if (isSWI132) (MG4Hardware.getLasWarningSound() == 1) else true,
                     lasVibrationReminder = if (isSWI132) (MG4Hardware.getLasWarningVibration() == 1) else true,
-                    energySaving   = MG4Hardware.isEnergySavingOn(),
-                    tsrEnabled     = MG4Hardware.isTsrOn()
+                    energySaving   = MG4Hardware.energySavingOnOrNull().orNoted("mode éco", false),
+                    tsrEnabled     = MG4Hardware.tsrOnOrNull().orNoted("TSR", false)
                 )
             } else {
                 // SWI133/UNKNOWN : ADAS mixte, sièges et volant chauffants
@@ -159,23 +178,32 @@ class ProfileFragment : Fragment() {
                     name           = "",
                     driveMode      = MG4Hardware.getDriveMode()  ?: DriveMode.NORMAL,
                     regenLevel     = MG4Hardware.getRegenLevel() ?: RegenLevel.MEDIUM,
-                    steeringHeat   = MG4Hardware.isSteeringHeatOn(),
-                    seatHeatLeft   = MG4Hardware.getSeatHeatLeft().coerceAtLeast(0),
-                    seatHeatRight  = MG4Hardware.getSeatHeatRight().coerceAtLeast(0),
-                    overspeedAlarm = MG4Hardware.isOverspeedAlarmOn(),
-                    speedLimitTone = MG4Hardware.isSpeedLimitToneOn(),
+                    steeringHeat   = MG4Hardware.steeringHeatOnOrNull().orNoted("volant chauffant", false),
+                    seatHeatLeft   = MG4Hardware.seatHeatLeftOrNull().orNoted("siège gauche", 0),
+                    seatHeatRight  = MG4Hardware.seatHeatRightOrNull().orNoted("siège droit", 0),
+                    overspeedAlarm = MG4Hardware.overspeedAlarmOnOrNull().orNoted("alerte survitesse", false),
+                    speedLimitTone = MG4Hardware.speedLimitToneOnOrNull().orNoted("ton limite de vitesse", false),
                     adasMode       = MG4Hardware.getMixedIntelligentDrive().coerceAtLeast(0),
-                    aebEnabled     = MG4Hardware.isAebEnabled(),
-                    aebMode        = MG4Hardware.getAebMode().let { if (it < 1) AebMode.ALARM else it },
+                    aebEnabled     = MG4Hardware.aebEnabledOrNull().orNoted("AEB", false),
+                    aebMode        = MG4Hardware.aebModeOrNull().orNoted("mode AEB", AebMode.ALARM),
                     aebSensitivity = aebSen,
                     elkMode        = elkMode,
                     elkSensitivity = elkSen,
-                    energySaving   = if (FirmwareInfo.getGeneration() != FirmwareInfo.Gen.UNKNOWN) MG4Hardware.isEnergySavingOn() else false,
-                    tsrEnabled     = if (FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI133) MG4Hardware.isTsrOn() else false
+                    energySaving   = if (FirmwareInfo.getGeneration() != FirmwareInfo.Gen.UNKNOWN) MG4Hardware.energySavingOnOrNull().orNoted("mode éco", false) else false,
+                    tsrEnabled     = if (FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI133) MG4Hardware.tsrOnOrNull().orNoted("TSR", false) else false
                 )
             }
             withContext(Dispatchers.Main) {
-                if (isAdded) showProfileDialog(existing = null, data = prefill)
+                if (!isAdded) return@withContext
+                if (unread.isNotEmpty()) {
+                    AppLogger.w("MG4Control.Profile", "pré-remplissage : illisibles — ${unread.joinToString(", ")}")
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.profile_prefill_unread, unread.joinToString(", ")),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                showProfileDialog(existing = null, data = prefill)
             }
         }
     }

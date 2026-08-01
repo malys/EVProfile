@@ -294,4 +294,5 @@
     <string name="automation_dir_below">Unter</string>
     <string name="automation_dir_above">Über</string>
     <string name="automation_confirm_msg_above">Die Außentemperatur liegt über %1$d°C\n(%2$s°C aktuelle Temperatur)\nProfil „%3$s“ anwenden?</string>
+    <string name="profile_prefill_unread">Auf diesem Fahrzeug nicht lesbar: %1$s. Vor dem Speichern prüfen — das Profil würde sie so anwenden.</string>
 </resources>

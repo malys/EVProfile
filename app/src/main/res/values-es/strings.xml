@@ -294,4 +294,5 @@
     <string name="automation_dir_below">Inferior a</string>
     <string name="automation_dir_above">Superior a</string>
     <string name="automation_confirm_msg_above">La temperatura exterior está por encima de %1$d°C\n(%2$s°C temperatura actual)\n¿Aplicar el perfil «%3$s»?</string>
+    <string name="profile_prefill_unread">No legibles en este coche: %1$s. Revísalos antes de guardar: el perfil los aplicaría tal cual.</string>
 </resources>

@@ -240,9 +240,9 @@ object ProfileApplier {
         AppLogger.i(TAG, "  [VERIFY] Vérification ADAS (auto-démarrage) — stabilisation 500ms")
         try { Thread.sleep(500) } catch (_: InterruptedException) {}
         verifyOneAlert("OverspeedAlarm", profile.overspeedAlarm,
-            { MG4Hardware.isOverspeedAlarmOn() }, { MG4Hardware.setOverspeedAlarm(it) })
+            { MG4Hardware.overspeedAlarmOnOrNull() }, { MG4Hardware.setOverspeedAlarm(it) })
         verifyOneAlert("SpeedLimitTone", profile.speedLimitTone,
-            { MG4Hardware.isSpeedLimitToneOn() }, { MG4Hardware.setSpeedLimitTone(it) })
+            { MG4Hardware.speedLimitToneOnOrNull() }, { MG4Hardware.setSpeedLimitTone(it) })
         verifyElk(profile)
     }
 
@@ -255,6 +255,12 @@ object ProfileApplier {
         if (profile.elkMode == 0) return   // ELK non configuré dans ce profil → ne pas toucher
         repeat(3) { i ->
             val actual = MG4Hardware.getElkMode()
+            // -1 = illisible. Sans ce garde-fou la boucle réécrit trois fois l'ELK sur un
+            // firmware qui ne rend jamais son mode, en le comptant chaque fois comme un écart.
+            if (actual < 0) {
+                AppLogger.w(TAG, "  [VERIFY] ElkMode illisible — vérification abandonnée")
+                return
+            }
             if (actual == profile.elkMode) {
                 AppLogger.i(TAG, "  [VERIFY] ElkMode conforme (lu=$actual" +
                     if (i > 0) ", après $i correction(s))" else ")")
@@ -275,9 +281,15 @@ object ProfileApplier {
      * Relit une alerte ; si elle diffère de la valeur voulue, la réécrit et réessaie.
      * Jusqu'à 3 tentatives espacées de 300ms pour couvrir un écrasement firmware tardif.
      */
-    private fun verifyOneAlert(name: String, desired: Boolean, read: () -> Boolean, write: (Boolean) -> Boolean) {
+    private fun verifyOneAlert(name: String, desired: Boolean, read: () -> Boolean?, write: (Boolean) -> Boolean) {
         repeat(3) { i ->
             val actual = read()
+            // null = le firmware n'a pas répondu. On ne peut pas vérifier ce qu'on ne peut pas
+            // lire : insister trois fois réécrirait un réglage sur la foi d'une lecture ratée.
+            if (actual == null) {
+                AppLogger.w(TAG, "  [VERIFY] $name illisible — vérification abandonnée")
+                return
+            }
             if (actual == desired) {
                 AppLogger.i(TAG, "  [VERIFY] $name conforme (lu=$actual" +
                     if (i > 0) ", après $i correction(s))" else ")")

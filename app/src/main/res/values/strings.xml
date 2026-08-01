@@ -296,4 +296,5 @@
     <string name="automation_dir_below">Inférieure à</string>
     <string name="automation_dir_above">Supérieure à</string>
     <string name="automation_confirm_msg_above">La température extérieure est au-dessus de %1$d°C\n(%2$s°C température actuelle)\nVoulez-vous appliquer le profil « %3$s » ?</string>
+    <string name="profile_prefill_unread">Non lus sur cette voiture : %1$s. Vérifiez-les avant d’enregistrer — le profil les appliquerait tels quels.</string>
 </resources>

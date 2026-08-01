@@ -294,4 +294,5 @@
     <string name="automation_dir_below">Below</string>
     <string name="automation_dir_above">Above</string>
     <string name="automation_confirm_msg_above">The outside temperature is above %1$d°C\n(%2$s°C current temperature)\nApply profile “%3$s”?</string>
+    <string name="profile_prefill_unread">Not readable on this car: %1$s. Check them before saving — the profile would apply them as they stand.</string>
 </resources>
