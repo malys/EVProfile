@@ -200,7 +200,7 @@
             <!-- Ne plus me rappeler — poussé à gauche via spacer -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_update_skip"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.MG4.Button.Outlined"
                 android:layout_width="wrap_content"
                 android:layout_height="44dp"
                 android:text="@string/update_skip_btn"
@@ -219,7 +219,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_update_later"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.MG4.Button.Outlined"
                 android:layout_width="wrap_content"
                 android:layout_height="44dp"
                 android:layout_marginEnd="8dp"
@@ -234,7 +234,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_update_manual"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.MG4.Button.Outlined"
                 android:layout_width="wrap_content"
                 android:layout_height="44dp"
                 android:layout_marginEnd="8dp"
@@ -249,7 +249,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_update_auto"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.MG4.Button.Outlined"
                 android:layout_width="wrap_content"
                 android:layout_height="44dp"
                 android:text="@string/update_auto_btn"
@@ -298,7 +298,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_cancel_download"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.MG4.Button.Outlined"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:text="@string/update_cancel"
@@ -366,7 +366,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_close_manual"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.MG4.Button.Outlined"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:text="@string/update_close"

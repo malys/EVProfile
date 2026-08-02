@@ -69,7 +69,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/overlay_bri_night"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    style="@style/Widget.MG4.Button.Outlined"
                     android:layout_width="0dp" android:layout_height="74dp" android:layout_weight="1"
                     android:layout_marginEnd="5dp"
                     android:text="@string/overlay_brightness_night"
@@ -78,7 +78,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/overlay_bri_mid"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    style="@style/Widget.MG4.Button.Outlined"
                     android:layout_width="0dp" android:layout_height="74dp" android:layout_weight="1"
                     android:layout_marginStart="5dp" android:layout_marginEnd="5dp"
                     android:text="@string/overlay_brightness_mid"
@@ -87,7 +87,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/overlay_bri_day"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    style="@style/Widget.MG4.Button.Outlined"
                     android:layout_width="0dp" android:layout_height="74dp" android:layout_weight="1"
                     android:layout_marginStart="5dp"
                     android:text="@string/overlay_brightness_day"

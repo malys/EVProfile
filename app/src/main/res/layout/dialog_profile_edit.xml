@@ -150,7 +150,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_drive_eco_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -166,7 +166,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_drive_normal_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -183,7 +183,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_drive_sport_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -208,7 +208,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_drive_snow_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -224,7 +224,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_drive_custom_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -243,7 +243,7 @@
                     <!-- Économie d'énergie — bouton toggle sous Custom -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_energy_saving_d"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        style="@style/Widget.MG4.Button.Outlined"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:layout_marginTop="6dp"
@@ -294,7 +294,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_regen_off_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -310,7 +310,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_regen_low_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -327,7 +327,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_regen_medium_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -351,7 +351,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_regen_high_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -367,7 +367,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_regen_adaptive_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -384,7 +384,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_regen_one_pedal_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -456,7 +456,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_steer_off_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -472,7 +472,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_steer_on_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -533,7 +533,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_sl_0_d"
-                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                style="@style/Widget.MG4.Button.Outlined"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -549,7 +549,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_sl_1_d"
-                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                style="@style/Widget.MG4.Button.Outlined"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -572,7 +572,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_sl_2_d"
-                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                style="@style/Widget.MG4.Button.Outlined"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -588,7 +588,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_sl_3_d"
-                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                style="@style/Widget.MG4.Button.Outlined"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -641,7 +641,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_sr_0_d"
-                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                style="@style/Widget.MG4.Button.Outlined"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -657,7 +657,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_sr_1_d"
-                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                style="@style/Widget.MG4.Button.Outlined"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -680,7 +680,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_sr_2_d"
-                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                style="@style/Widget.MG4.Button.Outlined"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -696,7 +696,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_sr_3_d"
-                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                style="@style/Widget.MG4.Button.Outlined"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -826,7 +826,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_off_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginEnd="2dp"
                             android:text="@string/adas_off"
@@ -836,7 +836,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_lim_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="2dp" android:layout_marginEnd="2dp"
                             android:text="@string/adas_limiteur_short"
@@ -846,7 +846,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_auto_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="2dp"
                             android:text="@string/adas_auto"
@@ -864,7 +864,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_acc_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginEnd="2dp"
                             android:text="@string/adas_acc"
@@ -874,7 +874,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_ica_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="2dp"
                             android:text="@string/adas_ica"
@@ -977,7 +977,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_swi68_off_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginEnd="2dp"
                             android:text="@string/adas_off"
@@ -987,7 +987,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_swi68_lim_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="2dp" android:layout_marginEnd="2dp"
                             android:text="@string/adas_limiteur_short"
@@ -997,7 +997,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_swi68_auto_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="2dp"
                             android:text="@string/adas_auto"
@@ -1015,7 +1015,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_swi68_acc_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginEnd="2dp"
                             android:text="@string/adas_acc"
@@ -1025,7 +1025,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_swi68_tja_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="2dp" android:layout_marginEnd="2dp"
                             android:text="@string/adas_tja"
@@ -1111,7 +1111,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_aeb_alarm_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginEnd="2dp"
                             android:text="@string/adas_aeb_alarm"
@@ -1121,7 +1121,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_aeb_alarm_brake_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="2dp"
                             android:text="@string/adas_aeb_alarm_brake"
@@ -1141,7 +1141,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_aeb_sen_low_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginEnd="2dp"
                             android:text="@string/aeb_sensitivity_low"
@@ -1151,7 +1151,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_aeb_sen_standard_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="2dp" android:layout_marginEnd="2dp"
                             android:text="@string/aeb_sensitivity_standard"
@@ -1161,7 +1161,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_aeb_sen_high_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="2dp"
                             android:text="@string/aeb_sensitivity_high"
@@ -1272,7 +1272,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_elk_alert_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginEnd="2dp"
                             android:text="@string/elk_mode_alert"
@@ -1282,7 +1282,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_elk_assist_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="2dp" android:layout_marginEnd="2dp"
                             android:text="@string/elk_mode_assist"
@@ -1292,7 +1292,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_elk_emergency_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="2dp"
                             android:text="@string/elk_mode_emergency"
@@ -1310,7 +1310,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_elk_sen_low_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginEnd="2dp"
                             android:text="@string/elk_sensitivity_low"
@@ -1320,7 +1320,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_elk_sen_standard_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="2dp" android:layout_marginEnd="2dp"
                             android:text="@string/elk_sensitivity_standard"
@@ -1330,7 +1330,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_elk_sen_high_d"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            style="@style/Widget.MG4.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="2dp"
                             android:text="@string/elk_sensitivity_high"
@@ -1387,7 +1387,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_dialog_cancel"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.MG4.Button.Outlined"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginEnd="8dp"
@@ -1402,7 +1402,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_dialog_save"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.MG4.Button.Outlined"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:text="@string/profile_save"

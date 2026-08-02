@@ -2,7 +2,7 @@ name: 🐛 Bug Report
 description: Report a bug or issue you've encountered
 title: "[BUG] "
 labels: [bug, needs-review]
-assignees: []
+assignees: [SliDeeN]
 
 body:
   - type: markdown
@@ -128,5 +128,3 @@ body:
       options:
         - label: I understand this project is not affiliated with SAIC/MG Motor and carry no warranty (see DISCLAIMER.md)
           required: true
-        - label: I consent to my issue being processed and refined by Claude AI to improve clarity for maintainers
-          required: false

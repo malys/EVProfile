@@ -2,7 +2,7 @@ name: ✨ Feature Request
 description: Suggest a new feature or enhancement
 title: "[FEATURE] "
 labels: [enhancement, needs-review]
-assignees: []
+assignees: [SliDeeN]
 
 body:
   - type: markdown
@@ -126,5 +126,3 @@ body:
       options:
         - label: I understand this project is not affiliated with SAIC/MG Motor and carries no warranty (see DISCLAIMER.md)
           required: true
-        - label: I consent to my feature request being refined by Claude AI for clarity
-          required: false
