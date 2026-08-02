@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="Theme.MG4Control" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/accent_normal</item>
-        <item name="colorPrimaryVariant">@color/bg_card</item>
-        <item name="colorOnPrimary">@color/text_primary</item>
-        <item name="colorSurface">@color/bg_card</item>
-        <item name="colorOnSurface">@color/text_primary</item>
-        <item name="android:windowBackground">@color/bg_dark</item>
-        <item name="android:textColorPrimary">@color/text_primary</item>
-        <item name="android:textColorSecondary">@color/text_secondary</item>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- DayNight, not a forced dark theme: the suite follows the vehicle's day/night
+         setting. Dark is still the mode that matters - a light background filling the
+         windscreen at night is glare - which is why the light palette was raised to
+         the same 7:1 floor as the dark one rather than the other way round.
+         Shared component styles live in styles_mg4.xml. -->
+    <style name="Theme.MG4Control" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/mg4_accent</item>
+        <item name="colorOnPrimary">@color/mg4_on_accent</item>
+        <item name="colorSurface">@color/mg4_surface</item>
+        <item name="colorSurfaceContainer">@color/mg4_surface_raised</item>
+        <item name="android:colorBackground">@color/mg4_background</item>
+        <item name="android:windowBackground">@color/mg4_background</item>
+        <item name="colorError">@color/mg4_error</item>
+        <item name="android:statusBarColor">@color/mg4_background</item>
+        <!-- Material3's "on surface" is a grey-mauve that is comfortable indoors and
+             too weak in full sun: a hard contrast is imposed instead. -->
+        <item name="colorOnSurface">@color/mg4_text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/mg4_text_secondary</item>
+        <item name="colorOnBackground">@color/mg4_text_primary</item>
+        <item name="colorOutline">@color/mg4_outline</item>
+        <item name="android:textColorPrimary">@color/mg4_text_primary</item>
+        <item name="android:textColorSecondary">@color/mg4_text_secondary</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.MG4.Dialog</item>
     </style>
 </resources>

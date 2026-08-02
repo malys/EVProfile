@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- MG4 Control, DARK theme: only the values that genuinely differ between the two
+     themes are redeclared here. The aliases and product hues in values/colors_app.xml
+     hold in both themes and are not repeated - Android falls back to values/ for
+     anything missing here. -->
+<resources>
+    <!-- Tinted chip backgrounds. In dark these are very low tints, not darkened versions
+         of the light ones: a pastel on black turns grey. Each background/text pair
+         clears at least 8.5:1. -->
+    <color name="dash_accent_dim">#FF0A2733</color>
+    <color name="dash_eco_dim">#FF0D2415</color>
+    <color name="dash_warn_dim">#FF2A1C08</color>
+    <color name="dash_danger_dim">#FF2E1113</color>
+</resources>

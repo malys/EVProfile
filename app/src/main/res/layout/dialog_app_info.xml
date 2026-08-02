@@ -256,7 +256,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_info_close"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.MG4.Button.Outlined"
             android:layout_width="wrap_content"
             android:layout_height="44dp"
             android:text="@string/info_close"

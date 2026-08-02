@@ -109,7 +109,7 @@
         <!-- Fermer l'application -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_fw_close_app"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.MG4.Button.Outlined"
             android:layout_width="0dp"
             android:layout_height="44dp"
             android:layout_weight="1"
@@ -126,7 +126,7 @@
         <!-- Continuer -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_fw_continue"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.MG4.Button.Outlined"
             android:layout_width="0dp"
             android:layout_height="44dp"
             android:layout_weight="1"
