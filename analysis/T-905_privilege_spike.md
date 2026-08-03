@@ -12,28 +12,24 @@ This is a decision document. No production code was changed for it.
 which runs the app with the full system UID — maximum privilege — while
 AGENTS.md requires minimal rights. Nothing recorded *why*.
 
-## What the OEM apps actually do
+## Vehicle-service integration contract
 
-Every OEM app reaches vehicle settings through the SAIC SDK, and that path
-needs no privilege at all:
+The project has a vehicle-settings integration path that needs no client-side privileged
+permission:
 
-- `apks/vehiclesettingservice_eh32_eu_p/sources/com/saicmotor/sdk/vehiclesettings/manager/BaseManager.java:63-74`
-  binds by explicit package + action:
+- The client binds by explicit package + action:
   `intent.setPackage("com.saicmotor.service.vehicle")`,
   `intent.setAction("com.saicmotor.service.vehicle.VehicleService")`,
   `bindService(intent, conn, BIND_AUTO_CREATE)`, with a 1 s retry loop and
   rebind on disconnect.
-- No permission is declared or checked on that bind.
-- Grepping `enforceCallingPermission`, `enforceCallingOrSelfPermission`,
-  `checkCallingPermission` and `Binder.getCallingUid` across
-  `vehiclesettingservice_eh32_eu_p/` and `vehicleservice_overseas_eh32/`
-  returns **zero hits**. The service does not identify its callers at all.
+- No permission is declared by the client for that bind. Service-side export and caller
+  authentication remain runtime assumptions and require on-vehicle verification.
 
 This is the "Katman3" path that `MG4Hardware.kt:27` names and deliberately
 skips ("not needed for our use case").
 
-Caveat: the decompiled tree carries no `AndroidManifest.xml`, so whether
-`VehicleService` is `exported` cannot be settled from `apks/` alone. That is
+Caveat: whether `VehicleService` is `exported` must be settled by an on-vehicle
+measurement. That is
 the blocking measurement below.
 
 ## What MG4Control uses instead, and what each path costs
