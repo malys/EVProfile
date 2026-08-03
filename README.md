@@ -1,15 +1,19 @@
 # MG4 Control
 
-![image info](mg4control_github_banner.svg)
+<p align="center"><img src="docs/logo.svg" width="440" alt="MG4 Control"></p>
 
+[![Tests](https://github.com/SliDeeN/MG4Control/actions/workflows/tests.yml/badge.svg)](https://github.com/SliDeeN/MG4Control/actions/workflows/tests.yml)
 [![Security](https://github.com/SliDeeN/MG4Control/actions/workflows/security.yml/badge.svg)](https://github.com/SliDeeN/MG4Control/actions/workflows/security.yml)
 [![Release](https://github.com/SliDeeN/MG4Control/actions/workflows/release.yml/badge.svg)](https://github.com/SliDeeN/MG4Control/actions/workflows/release.yml)
+[![License](https://img.shields.io/badge/license-see%20LICENSE-blue.svg)](LICENSE.md)
 
-> Application Android Automotive pour le contrôle avancé des paramètres de conduite du MG4 électrique.
-> Android Automotive app for advanced driving settings control on the MG4 electric vehicle.
+Android Automotive app for advanced driving-settings control on the MG4 electric vehicle.
 
-> Vous appréciez MG4Control et souhaitez soutenir son développement ?  
-You enjoy MG4Control and want to support its development ?  
+> ⚠️ **This app writes vehicle settings.** Use it only while parked and at your own risk.
+> Read [DISCLAIMER.md](DISCLAIMER.md) before installing. This independent community
+> project is not affiliated with SAIC Motor or MG Motor.
+
+Want to support MG4Control's development?
 [![PayPal](https://img.shields.io/badge/Donate-PayPal-blue?logo=paypal)](https://www.paypal.com/paypalme/pfauquembergue)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/slideen)
 ---
@@ -398,10 +402,10 @@ installing: this application writes to vehicle settings, and wrong settings can 
 how the car behaves. Not affiliated with SAIC Motor or MG.
 
 ## Credits
-Made with ❤ by **SliDeeN** and **Claude IA**
+Made with ❤ by **SliDeeN** and **Claude AI**.
 
-Basé sur l'application **DriveHub Dort** développée par **Merth4n** & **hotboy_ist**
+Based on **DriveHub Dort**, developed by **Merth4n** and **hotboy_ist**.
 
-Remerciements spéciaux à **confor1max** pour les tests approfondis du firmware SWI68 🙏
+Special thanks to **confor1max** for extensive SWI68 firmware testing.
 
 [![GitHub](https://img.shields.io/badge/GitHub-SliDeeN%2FMG4Control-181717?logo=github)](https://github.com/SliDeeN/MG4Control)
