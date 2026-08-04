@@ -47,7 +47,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/door_volume_desc"
                     android:textColor="@color/dash_text_lo"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/text_label"
                     android:layout_marginTop="6dp" />
 
             </LinearLayout>
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:text="@string/door_volume_level_label"
             android:textColor="@color/dash_text_lo"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_label"
             android:layout_marginTop="14dp" />
 
         <com.google.android.material.slider.Slider
@@ -91,7 +91,7 @@
                 android:layout_weight="1"
                 android:text="@string/door_volume_restore_title"
                 android:textColor="@color/text_primary"
-                android:textSize="15sp" />
+                android:textSize="@dimen/text_label" />
 
             <Switch
                 android:id="@+id/switch_door_restore"
@@ -106,7 +106,7 @@
             android:layout_height="wrap_content"
             android:text="@string/door_volume_doors_label"
             android:textColor="@color/dash_text_lo"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_label"
             android:layout_marginTop="12dp" />
 
         <LinearLayout

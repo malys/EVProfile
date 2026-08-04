@@ -101,6 +101,12 @@
     <string name="profile_name_required">Name is required</string>
     <string name="profile_save">Save</string>
     <string name="profile_cancel">Cancel</string>
+    <!-- Catégories du rail de l'éditeur de profil -->
+    <string name="profile_cat_general">General</string>
+    <string name="profile_cat_drive">Driving</string>
+    <string name="profile_cat_comfort">Comfort</string>
+    <string name="profile_cat_adas">ADAS</string>
+    <string name="profile_cat_safety">Safety</string>
     <string name="profile_applied">Profile applied: %s</string>
     <string name="profile_max_reached">Maximum %d profiles reached</string>
     <string name="profile_auto_applied">Default profile applied at startup</string>

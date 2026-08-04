@@ -27,7 +27,7 @@
                 android:layout_weight="1"
                 android:text="@string/climate_steering_heat"
                 android:textColor="@color/text_primary"
-                android:textSize="15sp" />
+                android:textSize="@dimen/text_label" />
 
             <Switch
                 android:id="@+id/switch_steering_heat"
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:text="@string/climate_seat_left"
             android:textColor="@color/text_secondary"
-            android:textSize="12sp"
+            android:textSize="@dimen/text_label"
             android:textAllCaps="true"
             android:letterSpacing="0.1"
             android:layout_marginBottom="8dp" />
@@ -56,46 +56,46 @@
             <Button
                 android:id="@+id/btn_seat_left_0"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
+                android:layout_height="@dimen/touch_target"
                 android:layout_weight="1"
                 android:layout_margin="4dp"
                 android:text="@string/climate_off"
                 android:textColor="@color/text_primary"
                 android:backgroundTint="@color/bg_button"
-                android:textSize="13sp" />
+                android:textSize="@dimen/text_label" />
 
             <Button
                 android:id="@+id/btn_seat_left_1"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
+                android:layout_height="@dimen/touch_target"
                 android:layout_weight="1"
                 android:layout_margin="4dp"
                 android:text="@string/climate_level_1"
                 android:textColor="@color/text_primary"
                 android:backgroundTint="@color/bg_button"
-                android:textSize="13sp" />
+                android:textSize="@dimen/text_label" />
 
             <Button
                 android:id="@+id/btn_seat_left_2"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
+                android:layout_height="@dimen/touch_target"
                 android:layout_weight="1"
                 android:layout_margin="4dp"
                 android:text="@string/climate_level_2"
                 android:textColor="@color/text_primary"
                 android:backgroundTint="@color/bg_button"
-                android:textSize="13sp" />
+                android:textSize="@dimen/text_label" />
 
             <Button
                 android:id="@+id/btn_seat_left_3"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
+                android:layout_height="@dimen/touch_target"
                 android:layout_weight="1"
                 android:layout_margin="4dp"
                 android:text="@string/climate_level_3"
                 android:textColor="@color/text_primary"
                 android:backgroundTint="@color/bg_button"
-                android:textSize="13sp" />
+                android:textSize="@dimen/text_label" />
 
         </LinearLayout>
 
@@ -105,7 +105,7 @@
             android:layout_height="wrap_content"
             android:text="@string/climate_seat_right"
             android:textColor="@color/text_secondary"
-            android:textSize="12sp"
+            android:textSize="@dimen/text_label"
             android:textAllCaps="true"
             android:letterSpacing="0.1"
             android:layout_marginBottom="8dp" />
@@ -118,46 +118,46 @@
             <Button
                 android:id="@+id/btn_seat_right_0"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
+                android:layout_height="@dimen/touch_target"
                 android:layout_weight="1"
                 android:layout_margin="4dp"
                 android:text="@string/climate_off"
                 android:textColor="@color/text_primary"
                 android:backgroundTint="@color/bg_button"
-                android:textSize="13sp" />
+                android:textSize="@dimen/text_label" />
 
             <Button
                 android:id="@+id/btn_seat_right_1"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
+                android:layout_height="@dimen/touch_target"
                 android:layout_weight="1"
                 android:layout_margin="4dp"
                 android:text="@string/climate_level_1"
                 android:textColor="@color/text_primary"
                 android:backgroundTint="@color/bg_button"
-                android:textSize="13sp" />
+                android:textSize="@dimen/text_label" />
 
             <Button
                 android:id="@+id/btn_seat_right_2"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
+                android:layout_height="@dimen/touch_target"
                 android:layout_weight="1"
                 android:layout_margin="4dp"
                 android:text="@string/climate_level_2"
                 android:textColor="@color/text_primary"
                 android:backgroundTint="@color/bg_button"
-                android:textSize="13sp" />
+                android:textSize="@dimen/text_label" />
 
             <Button
                 android:id="@+id/btn_seat_right_3"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
+                android:layout_height="@dimen/touch_target"
                 android:layout_weight="1"
                 android:layout_margin="4dp"
                 android:text="@string/climate_level_3"
                 android:textColor="@color/text_primary"
                 android:backgroundTint="@color/bg_button"
-                android:textSize="13sp" />
+                android:textSize="@dimen/text_label" />
 
         </LinearLayout>
 

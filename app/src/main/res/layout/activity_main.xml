@@ -19,22 +19,21 @@
     <!-- ── TOP BAR ─────────────────────────────────────────────────── -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="88dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingStart="20dp"
-        android:paddingEnd="12dp"
-        android:background="@color/dash_card"
-        android:elevation="4dp">
+        android:paddingStart="@dimen/spacing_lg"
+        android:paddingEnd="@dimen/spacing_lg"
+        android:background="@color/mg4_surface">
 
         <!-- Logo image -->
         <ImageView
             android:id="@+id/topbar_logo"
             android:layout_width="0dp"
-            android:layout_height="36dp"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:src="@drawable/logo_topbar"
-            android:background="@drawable/gradient_logo_bg"
+            android:background="@color/mg4_surface"
             android:scaleType="fitStart"
             android:adjustViewBounds="true"
             android:contentDescription="@string/app_name" />
@@ -57,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/settings_firmware_version"
                 android:textColor="@color/dash_text_lo"
-                android:textSize="10sp"
+                android:textSize="@dimen/text_label"
                 android:layout_marginEnd="6dp" />
 
             <!-- Chip SWI133 — stylisé depuis MainActivity -->
@@ -66,7 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SWI133"
-                android:textSize="11sp"
+                android:textSize="@dimen/text_label"
                 android:textStyle="bold"
                 android:letterSpacing="0.06"
                 android:paddingStart="9dp"
@@ -81,7 +80,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SWI132"
-                android:textSize="11sp"
+                android:textSize="@dimen/text_label"
                 android:textStyle="bold"
                 android:letterSpacing="0.06"
                 android:paddingStart="9dp"
@@ -96,7 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SWI68"
-                android:textSize="11sp"
+                android:textSize="@dimen/text_label"
                 android:textStyle="bold"
                 android:letterSpacing="0.06"
                 android:paddingStart="9dp"
@@ -111,7 +110,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SWI69"
-                android:textSize="11sp"
+                android:textSize="@dimen/text_label"
                 android:textStyle="bold"
                 android:letterSpacing="0.06"
                 android:paddingStart="9dp"
@@ -126,7 +125,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SWI131"
-                android:textSize="11sp"
+                android:textSize="@dimen/text_label"
                 android:textStyle="bold"
                 android:letterSpacing="0.06"
                 android:paddingStart="9dp"
@@ -141,7 +140,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SWI165"
-                android:textSize="11sp"
+                android:textSize="@dimen/text_label"
                 android:textStyle="bold"
                 android:letterSpacing="0.06"
                 android:paddingStart="9dp"
@@ -155,9 +154,9 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_nav_audio"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
+            android:layout_height="@dimen/touch_target"
             android:text="@string/nav_audio"
-            android:textSize="11sp"
+            android:textSize="@dimen/text_label"
             android:letterSpacing="0.06"
             android:textAllCaps="true"
             android:textColor="@color/text_secondary"
@@ -165,15 +164,15 @@
             android:layout_marginEnd="8dp"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_border"
-            app:cornerRadius="8dp" />
+            app:cornerRadius="@dimen/mg4_corner" />
 
         <!-- Bouton RACCOURCIS -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_nav_shortcuts"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
+            android:layout_height="@dimen/touch_target"
             android:text="@string/nav_shortcuts"
-            android:textSize="11sp"
+            android:textSize="@dimen/text_label"
             android:letterSpacing="0.06"
             android:textAllCaps="true"
             android:textColor="@color/text_secondary"
@@ -181,15 +180,15 @@
             android:layout_marginEnd="8dp"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_border"
-            app:cornerRadius="8dp" />
+            app:cornerRadius="@dimen/mg4_corner" />
 
         <!-- Bouton PROFILS -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_nav_profiles"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
+            android:layout_height="@dimen/touch_target"
             android:text="@string/nav_profiles"
-            android:textSize="11sp"
+            android:textSize="@dimen/text_label"
             android:letterSpacing="0.06"
             android:textAllCaps="true"
             android:textColor="@color/text_secondary"
@@ -197,22 +196,22 @@
             android:layout_marginEnd="8dp"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_border"
-            app:cornerRadius="8dp" />
+            app:cornerRadius="@dimen/mg4_corner" />
 
         <!-- Bouton RÉGLAGES -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_nav_settings"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
+            android:layout_height="@dimen/touch_target"
             android:text="@string/nav_settings"
-            android:textSize="11sp"
+            android:textSize="@dimen/text_label"
             android:letterSpacing="0.06"
             android:textAllCaps="true"
             android:textColor="@color/text_secondary"
             app:backgroundTint="@color/dash_btn"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_border"
-            app:cornerRadius="8dp" />
+            app:cornerRadius="@dimen/mg4_corner" />
 
     </LinearLayout>
 

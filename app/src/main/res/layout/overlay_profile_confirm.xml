@@ -4,7 +4,7 @@
     android:id="@+id/confirm_backdrop"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#99000000"
+    android:background="@color/mg4_scrim"
     android:clickable="true"
     android:focusable="true">
 
@@ -55,7 +55,7 @@
                 app:backgroundTint="@color/dash_accent_dim"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/dash_accent"
-                app:cornerRadius="12dp" />
+                app:cornerRadius="@dimen/mg4_corner" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/confirm_btn_no"
@@ -71,7 +71,7 @@
                 app:backgroundTint="@color/dash_btn"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/dash_border"
-                app:cornerRadius="12dp" />
+                app:cornerRadius="@dimen/mg4_corner" />
 
         </LinearLayout>
 
@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:textColor="@color/dash_text_lo"
-            android:textSize="15sp" />
+            android:textSize="@dimen/text_label" />
 
     </LinearLayout>
 

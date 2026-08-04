@@ -57,6 +57,24 @@
          mg4_on_accent, which is almost black in the dark theme. -->
     <color name="text_active">#FFFFFFFF</color>
 
+    <!-- Overlay scrim. The same veil in both themes: it darkens whatever the launcher
+         happens to be showing behind the overlay, which is not our surface. -->
+    <color name="mg4_scrim">#99000000</color>
+
+    <!-- QR quiet zone. Deliberately white in both themes: a scanner needs the light
+         module colour, so this one does not follow DayNight. -->
+    <color name="qr_quiet_zone">#FFFFFFFF</color>
+
+    <!-- Console log levels. The console had its own fixed dark palette; these aliases put
+         it back on the suite tokens, so it follows DayNight like every other screen. The
+         level name is written out beside the colour - the colour never carries it alone. -->
+    <color name="console_error">@color/mg4_error</color>
+    <color name="console_warn">@color/mg4_warn</color>
+    <color name="console_info">@color/mg4_text_primary</color>
+    <color name="console_debug">@color/mg4_text_secondary</color>
+    <color name="console_timestamp">@color/mg4_text_secondary</color>
+    <color name="console_tag">@color/mg4_accent</color>
+
     <!-- Tinted chip backgrounds on the dashboard -->
     <!-- Used as the background behind dash_accent / dash_eco / dash_warn / dash_danger
          as text. Each pair clears at least 7:1. See values-night/colors_app.xml. -->

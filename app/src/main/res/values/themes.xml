@@ -25,4 +25,14 @@
         <item name="android:textColorSecondary">@color/mg4_text_secondary</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.MG4.Dialog</item>
     </style>
+
+    <!-- Editors are full-screen on the 720dp landscape panel: a floating dialog would
+         compress three columns until their 72dp controls become unusable. -->
+    <style name="Theme.MG4.Picker" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowBackground">@color/mg4_background</item>
+        <item name="colorSurface">@color/mg4_surface</item>
+        <item name="colorOnSurface">@color/mg4_text_primary</item>
+    </style>
 </resources>

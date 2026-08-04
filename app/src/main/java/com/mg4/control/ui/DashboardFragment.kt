@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Switch
+import com.google.android.material.button.MaterialButton
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -35,7 +36,8 @@ class DashboardFragment : Fragment() {
 
     // ── ViewPager ────────────────────────────────────────────────────────────
     private var pager: ViewPager2? = null
-    private var dots: Array<View>? = null
+    private var dashboardTabControls: MaterialButton? = null
+    private var dashboardTabElk: MaterialButton? = null
 
     // ── Page 0 — Drive mode ─────────────────────────────────────────────────
     private val driveModeButtons = mutableMapOf<DriveMode, Button>()
@@ -153,33 +155,34 @@ class DashboardFragment : Fragment() {
 
     private fun setupPager(root: View) {
         pager = root.findViewById(R.id.dashboard_pager)
-        val dotsContainer = root.findViewById<LinearLayout>(R.id.pager_dots)
+        dashboardTabControls = root.findViewById(R.id.dashboard_tab_controls)
+        dashboardTabElk = root.findViewById(R.id.dashboard_tab_elk)
 
         pager?.adapter = DashboardPagerAdapter()
         pager?.offscreenPageLimit = 1  // garde les 2 pages en mémoire
 
-        // Dots
-        val dotCount = 2
-        val dotViews = Array(dotCount) { i ->
-            View(requireContext()).apply {
-                val size = 10
-                val lp = LinearLayout.LayoutParams(size, size)
-                lp.setMargins(6, 0, 6, 0)
-                layoutParams = lp
-                setBackgroundResource(R.drawable.dot_indicator)
-                isSelected = i == 0
-            }
-        }
-        dotViews.forEach { dotsContainer.addView(it) }
-        dots = dotViews
+        dashboardTabControls?.setOnClickListener { pager?.setCurrentItem(0, false) }
+        dashboardTabElk?.setOnClickListener { pager?.setCurrentItem(1, false) }
 
         pager?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                dots?.forEachIndexed { i, dot -> dot.isSelected = i == position }
+                updateDashboardTabs(position)
                 // Refresh ELK quand on arrive sur la page 1
                 if (position == 1) refreshElk()
             }
         })
+        updateDashboardTabs(0)
+    }
+
+    private fun updateDashboardTabs(position: Int) {
+        dashboardTabControls?.isEnabled = position != 0
+        dashboardTabElk?.isEnabled = position != 1
+        dashboardTabControls?.isSelected = position == 0
+        dashboardTabElk?.isSelected = position == 1
+        dashboardTabControls?.contentDescription = getString(R.string.card_drive) +
+            if (position == 0) ", selected" else ""
+        dashboardTabElk?.contentDescription = getString(R.string.elk_card_title) +
+            if (position == 1) ", selected" else ""
     }
 
     private inner class DashboardPagerAdapter :

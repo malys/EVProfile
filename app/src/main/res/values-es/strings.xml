@@ -101,6 +101,12 @@
     <string name="profile_name_required">El nombre es obligatorio</string>
     <string name="profile_save">Guardar</string>
     <string name="profile_cancel">Cancelar</string>
+    <!-- Catégories du rail de l'éditeur de profil -->
+    <string name="profile_cat_general">General</string>
+    <string name="profile_cat_drive">Conducción</string>
+    <string name="profile_cat_comfort">Confort</string>
+    <string name="profile_cat_adas">ADAS</string>
+    <string name="profile_cat_safety">Seguridad</string>
     <string name="profile_applied">Perfil aplicado: %s</string>
     <string name="profile_max_reached">Máximo %d perfiles alcanzado</string>
     <string name="profile_auto_applied">Perfil predeterminado aplicado al inicio</string>

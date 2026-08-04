@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:text="@string/profile_default_badge"
             android:textColor="@color/dash_accent"
-            android:textSize="10sp"
+            android:textSize="@dimen/text_label"
             android:textStyle="bold"
             android:letterSpacing="0.08"
             android:background="@drawable/bg_chip_active"
@@ -72,7 +72,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_apply"
             android:layout_width="0dp"
-            android:layout_height="52dp"
+            android:layout_height="@dimen/touch_target"
             android:layout_weight="2"
             android:layout_marginEnd="5dp"
             android:text="@string/profile_apply_now"
@@ -82,12 +82,12 @@
             app:backgroundTint="@color/dash_eco_dim"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_eco"
-            app:cornerRadius="8dp" />
+            app:cornerRadius="@dimen/mg4_corner" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_edit"
             android:layout_width="0dp"
-            android:layout_height="52dp"
+            android:layout_height="@dimen/touch_target"
             android:layout_weight="1"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
@@ -98,12 +98,12 @@
             app:backgroundTint="@color/dash_btn"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_border"
-            app:cornerRadius="8dp" />
+            app:cornerRadius="@dimen/mg4_corner" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_set_default"
             android:layout_width="0dp"
-            android:layout_height="52dp"
+            android:layout_height="@dimen/touch_target"
             android:layout_weight="1"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
@@ -114,12 +114,12 @@
             app:backgroundTint="@color/dash_btn"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_border"
-            app:cornerRadius="8dp" />
+            app:cornerRadius="@dimen/mg4_corner" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_delete"
             android:layout_width="0dp"
-            android:layout_height="52dp"
+            android:layout_height="@dimen/touch_target"
             android:layout_weight="1"
             android:layout_marginStart="5dp"
             android:text="@string/profile_delete"
@@ -129,7 +129,7 @@
             app:backgroundTint="@color/dash_danger_dim"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_danger"
-            app:cornerRadius="8dp" />
+            app:cornerRadius="@dimen/mg4_corner" />
 
     </LinearLayout>
 

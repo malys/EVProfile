@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:text="@string/info_title"
         android:textColor="@color/dash_text_lo"
-        android:textSize="10sp"
+        android:textSize="@dimen/text_label"
         android:textStyle="bold"
         android:letterSpacing="0.12"
         android:textAllCaps="true"
@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/info_based_on"
                 android:textColor="@color/dash_text_lo"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_label"
                 android:layout_marginBottom="16dp" />
 
             <!-- Version -->
@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/info_version_label"
                     android:textColor="@color/dash_text_lo"
-                    android:textSize="13sp"
+                    android:textSize="@dimen/text_label"
                     android:textAllCaps="true"
                     android:letterSpacing="0.08"
                     android:layout_marginEnd="10dp" />
@@ -107,7 +107,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/info_firmware_label"
                 android:textColor="@color/dash_text_lo"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_label"
                 android:textAllCaps="true"
                 android:letterSpacing="0.08"
                 android:layout_marginBottom="6dp" />
@@ -161,7 +161,7 @@
                         android:layout_width="160dp"
                         android:layout_height="160dp"
                         android:scaleType="fitCenter"
-                        android:background="#FFFFFFFF"
+                        android:background="@color/qr_quiet_zone"
                         android:padding="4dp"
                         android:layout_marginBottom="8dp" />
 
@@ -171,7 +171,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/info_github_link"
                         android:textColor="@color/dash_accent"
-                        android:textSize="13sp"
+                        android:textSize="@dimen/text_label"
                         android:textStyle="italic"
                         android:clickable="true"
                         android:focusable="true" />
@@ -192,7 +192,7 @@
                         android:layout_width="160dp"
                         android:layout_height="160dp"
                         android:scaleType="fitCenter"
-                        android:background="#FFFFFFFF"
+                        android:background="@color/qr_quiet_zone"
                         android:padding="4dp"
                         android:layout_marginBottom="8dp" />
 
@@ -202,7 +202,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/info_gitlab_link"
                         android:textColor="@color/dash_accent"
-                        android:textSize="13sp"
+                        android:textSize="@dimen/text_label"
                         android:textStyle="italic"
                         android:clickable="true"
                         android:focusable="true" />
@@ -224,7 +224,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/info_made_with_love"
                 android:textColor="@color/dash_text_lo"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_label"
                 android:gravity="center" />
 
             <!-- Remerciements spéciaux -->
@@ -233,7 +233,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/info_special_thanks"
                 android:textColor="@color/dash_text_lo"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_label"
                 android:gravity="center"
                 android:layout_marginTop="4dp" />
 
@@ -258,15 +258,15 @@
             android:id="@+id/btn_info_close"
             style="@style/Widget.MG4.Button.Outlined"
             android:layout_width="wrap_content"
-            android:layout_height="44dp"
+            android:layout_height="@dimen/touch_target"
             android:text="@string/info_close"
             android:textColor="@color/text_secondary"
-            android:textSize="13sp"
+            android:textSize="@dimen/text_label"
             android:textAllCaps="true"
             android:backgroundTint="@color/dash_btn"
             app:strokeColor="@color/dash_border"
             app:strokeWidth="1dp"
-            app:cornerRadius="8dp" />
+            app:cornerRadius="@dimen/mg4_corner" />
 
     </LinearLayout>
 

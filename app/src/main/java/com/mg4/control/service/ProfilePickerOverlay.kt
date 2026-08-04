@@ -136,7 +136,7 @@ object ProfilePickerOverlay {
                 backgroundTintList = ColorStateList.valueOf(accentDimColor)
                 strokeColor        = ColorStateList.valueOf(accentColor)
                 strokeWidth        = dp(1f)
-                cornerRadius       = dp(10f)
+                cornerRadius       = dp(12f)
                 setOnClickListener {
                     AppLogger.i(TAG, "Profil sélectionné : '${profile.name}'")
                     CoroutineScope(Dispatchers.IO).launch {

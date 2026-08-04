@@ -607,7 +607,7 @@ class ProfileFragment : Fragment() {
         if (existing != null) etName.setText(existing.name)
 
         // ── Création du dialog sans chrome Android ───────────────────────────
-        val dialog = AlertDialog.Builder(ctx)
+        val dialog = AlertDialog.Builder(ctx, R.style.Theme_MG4_Picker)
             .setView(dialogView)
             .setCancelable(true)
             .create()
@@ -667,13 +667,45 @@ class ProfileFragment : Fragment() {
             dialog.dismiss()
         }
 
+        // ── Rail de catégories ───────────────────────────────────────────────
+        // Le volet de droite n'affiche qu'une catégorie à la fois : le rail porte toute la
+        // navigation de l'éditeur, aucun geste n'est requis. Une catégorie dont toutes les
+        // sections sont masquées par le firmware disparaît du rail plutôt que d'ouvrir un
+        // volet vide.
+        val detail = dialogView.findViewById<ViewFlipper>(R.id.profile_detail)
+        val railEntries = listOf(
+            R.id.rail_profile_general to emptyList<Int>(),
+            R.id.rail_profile_drive   to emptyList(),
+            R.id.rail_profile_comfort to listOf(R.id.section_steering_dialog, R.id.section_seats_dialog),
+            R.id.rail_profile_adas    to listOf(R.id.adas_section_swi133, R.id.adas_section_swi68,
+                                                R.id.section_tsr_dialog),
+            R.id.rail_profile_safety  to listOf(R.id.adas_section_aeb, R.id.elk_section_dialog)
+        )
+        val railButtons = railEntries.map { dialogView.findViewById<MaterialButton>(it.first) }
+        fun selectCategory(index: Int) {
+            detail.displayedChild = index
+            railButtons.forEachIndexed { i, button ->
+                val current = i == index
+                activateBtn(button, current)
+                // TalkBack annonce la catégorie courante : la couleur ne la porte pas seule.
+                button.isSelected = current
+            }
+        }
+        railEntries.forEachIndexed { index, (_, sections) ->
+            val button = railButtons[index]
+            val hasContent = sections.isEmpty() ||
+                sections.any { dialogView.findViewById<View>(it)?.visibility == View.VISIBLE }
+            button.visibility = if (hasContent) View.VISIBLE else View.GONE
+            button.setOnClickListener { selectCategory(index) }
+        }
+        selectCategory(0)
+
         dialog.show()
 
-        // Borner la taille du dialog : footer toujours visible + largeur adaptée à 3 colonnes
-        val dm = requireActivity().resources.displayMetrics
+        // Full-screen editor: rail on the left, one category at a time on the right.
         dialog.window?.setLayout(
-            (dm.widthPixels * 0.94).toInt(),
-            (dm.heightPixels * 0.88).toInt()
+            android.view.WindowManager.LayoutParams.MATCH_PARENT,
+            android.view.WindowManager.LayoutParams.MATCH_PARENT
         )
     }
 }

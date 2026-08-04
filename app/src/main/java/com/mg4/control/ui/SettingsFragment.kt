@@ -390,7 +390,7 @@ class SettingsFragment : Fragment() {
             val tvCrash = TextView(ctx).apply {
                 text = crashLog
                 typeface = Typeface.MONOSPACE
-                textSize = 9f
+                textSize = 16f
                 setTextColor(ctx.getColor(R.color.dash_danger))
                 val pad = (12 * resources.displayMetrics.density).toInt()
                 setPadding(pad, pad, pad, pad)
@@ -419,7 +419,7 @@ class SettingsFragment : Fragment() {
         val tvReport = TextView(ctx).apply {
             text = getString(R.string.diag_loading)
             typeface = Typeface.MONOSPACE
-            textSize = 10f
+            textSize = 16f
             setTextColor(ctx.getColor(R.color.text_secondary))
             val pad = (12 * resources.displayMetrics.density).toInt()
             setPadding(pad, pad, pad, pad)
@@ -429,7 +429,7 @@ class SettingsFragment : Fragment() {
         // Section AppLogger en temps réel (30 dernières lignes)
         val tvLogs = TextView(ctx).apply {
             typeface = Typeface.MONOSPACE
-            textSize = 9f
+            textSize = 16f
             setTextColor(ctx.getColor(R.color.dash_text_lo))
             val pad = (12 * resources.displayMetrics.density).toInt()
             setPadding(pad, 0, pad, pad)

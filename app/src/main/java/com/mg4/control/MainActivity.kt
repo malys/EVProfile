@@ -270,11 +270,10 @@ class MainActivity : AppCompatActivity() {
         dialogView.findViewById<TextView>(R.id.tv_fw_detected_badge).text =
             FirmwareInfo.getDetectedString()
 
-        val dialog = AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this, R.style.Theme_MG4_Picker)
             .setView(dialogView)
             .setCancelable(false)
             .create()
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialogView.findViewById<MaterialButton>(R.id.btn_fw_close_app).setOnClickListener {
             finishAffinity()
@@ -286,6 +285,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         dialog.show()
+        dialog.window?.setLayout(
+            android.view.WindowManager.LayoutParams.MATCH_PARENT,
+            android.view.WindowManager.LayoutParams.MATCH_PARENT
+        )
     }
 
     // ── Boutons de navigation dans la top-bar ─────────────────────────────────
