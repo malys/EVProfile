@@ -98,7 +98,7 @@ class ProfileManager(private val context: Context) {
 
     fun getById(id: String): DrivingProfile? = getAll().firstOrNull { it.id == id }
 
-    // [BT-PROFILES] Retourne le premier profil dont le btDeviceMac correspond au MAC donné.
+    /** Legacy lookup retained only so profiles saved by older releases remain readable. */
     fun getProfileForBtDevice(mac: String): DrivingProfile? =
         getAll().firstOrNull { it.btDeviceMac.equals(mac, ignoreCase = true) }
 

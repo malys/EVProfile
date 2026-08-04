@@ -77,44 +77,6 @@
                         android:inputType="textCapSentences" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- ── [BT-PROFILES] Section Bluetooth ───────────────── -->
-                <LinearLayout
-                    android:id="@+id/section_bt_profile"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_section_rounded"
-                    android:padding="8dp"
-                    android:layout_marginBottom="8dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/profile_bt_device_label"
-                        android:textColor="@color/dash_text_lo"
-                        android:textSize="9sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.12"
-                        android:textAllCaps="true"
-                        android:paddingBottom="5dp" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/dash_border"
-                        android:layout_marginBottom="5dp" />
-
-                    <Spinner
-                        android:id="@+id/spinner_bt_device"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:background="@drawable/bg_section_rounded"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:textColor="@color/text_primary" />
-
-                </LinearLayout>
-
                 <!-- ── Section Mode de conduite ───────────────────── -->
                 <LinearLayout
                     android:layout_width="match_parent"

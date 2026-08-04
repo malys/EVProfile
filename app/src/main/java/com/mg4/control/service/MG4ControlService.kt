@@ -32,6 +32,7 @@ import com.mg4.control.profile.ProfileApplier
 import com.mg4.control.profile.ProfileManager
 import com.mg4.control.shortcut.ShortcutAction
 import com.mg4.hardware.FirmwareInfo
+import com.mg4.hardware.PhysicalButtonEventDecoder
 import com.mg4.hardware.VehicleWriteGate
 import com.mg4.hardware.saic.SaicHub
 import com.mg4.control.util.ThemeHelper
@@ -60,11 +61,6 @@ class MG4ControlService : Service() {
          */
         const val HARDKEY_PERMISSION = "com.mg4.control.permission.RECEIVE_HARDKEY"
 
-        // Keycodes des boutons ★ du volant
-        private const val KEYCODE_BTN1     = 17    // STAR_LEFT
-        private const val KEYCODE_BTN2     = 286   // STAR_RIGHT
-        private const val KEYCODE_BTN2_ALT = 18    // alias STAR_RIGHT (certains firmwares)
-
         /**
          * Flag one-shot : le profil n'est appliqué qu'une seule fois par session de processus.
          * Évite le double-apply quand MainActivity et BootReceiver démarrent le service.
@@ -77,7 +73,8 @@ class MG4ControlService : Service() {
 
     private var hardkeyReceiver: BroadcastReceiver? = null
 
-    // ── [BT-PROFILES] Receiver ACL Bluetooth ─────────────────────────────────
+    // Kept only for source compatibility with the removed Bluetooth automation code.
+    // It is never registered, so MG4Control no longer observes Bluetooth connections.
     private var btAclReceiver: BroadcastReceiver? = null
 
     // ── Receiver sync thème launcher ─────────────────────────────────────────
@@ -86,8 +83,9 @@ class MG4ControlService : Service() {
     // ── Listener de cycle d'allumage (Katman5) ──────────────────────────────
     private var vehicleConditionListener: ((Int) -> Unit)? = null
 
-    // État par slot pour la détection d'appui long
-    private val slotLongTriggered = mutableMapOf<String, Boolean>()
+    // Identité du bouton et distinction court/long : décodées par la librairie, qui connaît
+    // les alias de keycode par firmware et n'émet le long qu'une fois par appui.
+    private val buttonDecoder = PhysicalButtonEventDecoder()
 
     // États des toggles en mémoire — réinitialisés à chaque démarrage du service (= redémarrage voiture)
     // Évite le bug du 1er appui : si on utilise SharedPrefs, l'état persisté peut ne pas correspondre
@@ -119,7 +117,6 @@ class MG4ControlService : Service() {
         // it holds no reference to this Service.
         SaicHub.connect(applicationContext)
         registerHardkeyReceiver()
-        registerBtAclReceiver()        // [BT-PROFILES]
         registerSkinChangeReceiver()   // [THEME-AUTO]
         registerIgnitionListener()
     }
@@ -130,8 +127,6 @@ class MG4ControlService : Service() {
         vehicleConditionListener = null
         hardkeyReceiver?.let { unregisterReceiver(it) }
         hardkeyReceiver = null
-        btAclReceiver?.let { unregisterReceiver(it) }     // [BT-PROFILES]
-        btAclReceiver = null
         skinChangeReceiver?.let { unregisterReceiver(it) } // [THEME-AUTO]
         skinChangeReceiver = null
     }
@@ -184,32 +179,22 @@ class MG4ControlService : Service() {
 
         AppLogger.i(TAG, "HARDKEY keycode=$keycode down=$isDown long=$isLong")
 
-        val slot = when (keycode) {
-            KEYCODE_BTN1                   -> "btn1"
-            KEYCODE_BTN2, KEYCODE_BTN2_ALT -> "btn2"
+        val event = buttonDecoder.accept(keycode, isDown, isLong) ?: return
+
+        // MG4Control ne câble que les deux touches étoile ; le reste du volant appartient
+        // au véhicule.
+        val slot = when (event.button) {
+            PhysicalButtonEventDecoder.Button.STAR_LEFT  -> "btn1"
+            PhysicalButtonEventDecoder.Button.STAR_RIGHT -> "btn2"
             else -> return
         }
 
-        when {
-            isDown && isLong -> {
-                slotLongTriggered[slot] = true
-                val pressKey = "${slot}_long"
-                val action = ShortcutAction.fromId(prefs.getInt("shortcut_$pressKey", 0))
-                if (action != ShortcutAction.NONE) executeToggle(action, pressKey)
-            }
-            isDown -> {
-                slotLongTriggered[slot] = false
-            }
-            else -> {
-                if (slotLongTriggered[slot] == true) {
-                    slotLongTriggered[slot] = false
-                    return
-                }
-                val pressKey = "${slot}_single"
-                val action = ShortcutAction.fromId(prefs.getInt("shortcut_$pressKey", 0))
-                if (action != ShortcutAction.NONE) executeToggle(action, pressKey)
-            }
+        val pressKey = when (event.press) {
+            PhysicalButtonEventDecoder.Press.LONG  -> "${slot}_long"
+            PhysicalButtonEventDecoder.Press.SHORT -> "${slot}_single"
         }
+        val action = ShortcutAction.fromId(prefs.getInt("shortcut_$pressKey", 0))
+        if (action != ShortcutAction.NONE) executeToggle(action, pressKey)
     }
 
     // ── Exécution du toggle ──────────────────────────────────────────────────
@@ -350,12 +335,7 @@ class MG4ControlService : Service() {
         }
     }
 
-    /**
-     * Planifie l'application du profil au démarrage du processus (one-shot).
-     * Priorité : profil BT associé → profil par défaut.
-     * Si connectedMacs est vide (téléphone connecté avant démarrage du service),
-     * une requête HFP async est effectuée en fallback.
-     */
+    /** Planifie l'application du profil par défaut au démarrage du processus (one-shot). */
     private fun scheduleDefaultProfileOnce() {
         if (profileScheduled) {
             AppLogger.i(TAG, "Profil déjà planifié — skip")
@@ -369,8 +349,7 @@ class MG4ControlService : Service() {
             return
         }
 
-        // Automatisation température (précédence : après choix manuel, avant BT/défaut).
-        tryTemperatureAutomation(onFallback = { resolveBtOrDefaultOnSchedule() })
+        applyConfiguredDefaultProfile("Démarrage service")
     }
 
     /** Résolution BT (+ fallback HFP) → défaut au démarrage service (corps historique, inchangé). */
@@ -577,7 +556,7 @@ class MG4ControlService : Service() {
 
     /**
      * Applique le profil approprié suite à un événement IGNITION_STATE=RUN.
-     * Priorité : choix manuel récent (popup/app) → profil BT associé → profil par défaut.
+     * Priorité : choix manuel récent (popup/app) → profil par défaut.
      */
     private fun applyDefaultProfileOnIgnition() {
         val prefs = getSharedPreferences("mg4_settings", MODE_PRIVATE)
@@ -608,8 +587,24 @@ class MG4ControlService : Service() {
             }
         }
 
-        // Automatisation température (précédence : après choix manuel, avant BT/défaut).
-        tryTemperatureAutomation(onFallback = { resolveBtOrDefaultOnIgnition() })
+        applyConfiguredDefaultProfile("IGNITION")
+    }
+
+    /**
+     * Seul automatisme conservé dans MG4Control : le profil explicitement défini par défaut.
+     * Les déclencheurs température et Bluetooth appartiennent désormais à MG4Tasker.
+     */
+    private fun applyConfiguredDefaultProfile(source: String) {
+        val profile = ProfileManager(applicationContext).getDefaultProfile() ?: run {
+            AppLogger.i(TAG, "$source → aucun profil par défaut, skip")
+            return
+        }
+        AppLogger.i(TAG, "$source → application du profil par défaut '${profile.name}'")
+        MG4Hardware.whenKatman1Ready {
+            ProfileApplier.apply(profile, autoStart = true) { ok ->
+                AppLogger.i(TAG, "$source → profil par défaut '${profile.name}' appliqué — ok=$ok")
+            }
+        }
     }
 
     /** Résolution BT → défaut au passage RUN (corps historique, inchangé). */

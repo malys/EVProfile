@@ -35,10 +35,4 @@
         android:name="com.mg4.control.ui.AudioFragment"
         android:label="@string/nav_audio" />
 
-    <!-- Automatisation (bouton AUTOMATISATION dans la top-bar) -->
-    <fragment
-        android:id="@+id/automationFragment"
-        android:name="com.mg4.control.ui.AutomationFragment"
-        android:label="@string/nav_automation" />
-
 </navigation>

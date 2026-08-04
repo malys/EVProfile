@@ -13,9 +13,9 @@ import android.widget.TextView
 import com.google.android.material.button.MaterialButton
 import com.mg4.control.R
 import com.mg4.control.automation.AutomationSettings
-import com.mg4.control.debug.AppLogger
-import com.mg4.control.hardware.VehicleWriteGate
-import com.mg4.control.model.DrivingProfile
+import com.mg4.hardware.AppLogger
+import com.mg4.hardware.VehicleWriteGate
+import com.mg4.hardware.model.DrivingProfile
 import com.mg4.control.util.LocaleHelper
 
 /**
@@ -55,7 +55,7 @@ object ProfileConfirmOverlay {
         onDeclined: () -> Unit
     ) {
         // En roulant (verrou actif) : pas d'écriture → on décline directement (fallback BT/défaut).
-        if (!VehicleWriteGate.isAllowedNow()) {
+        if (VehicleWriteGate.decideNow() != VehicleWriteGate.Decision.ALLOWED) {
             AppLogger.w(TAG, "Confirm non affiché : sécurité conduite active → onDeclined")
             onDeclined(); return
         }
