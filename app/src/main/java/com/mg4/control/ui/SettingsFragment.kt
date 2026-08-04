@@ -33,7 +33,7 @@ import com.mg4.control.BuildConfig
 import com.mg4.control.R
 import com.mg4.control.util.QrCode
 import com.mg4.hardware.AppLogger
-import com.mg4.control.debug.CrashLogger
+import com.mg4.hardware.diag.CrashLogger
 import com.mg4.hardware.MG4Hardware
 import com.mg4.control.update.ApkCleanup
 import com.mg4.control.update.UpdateChecker
