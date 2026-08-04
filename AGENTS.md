@@ -4,15 +4,19 @@ Context for AI agents working in this repository. The workspace-level file one d
 up covers the vehicle platform and the OEM interfaces; this file covers what is specific
 to MG4 Control.
 
+MG4 Control is part of **MG4Suite**. The workspace `AGENTS.md` and normative workspace
+`DESIGN.md` apply; this file contains only app-specific additions.
+
 ## What this app is
 
 A drive-profile manager for the MG4 Electric. It reads and writes vehicle settings —
-drive mode, regeneration, steering, ADAS — and applies saved profiles. It is the only
-app in the suite that writes to the car; MG4 Tasker and the launchers go through it or
-do not write at all.
+drive mode, regeneration, steering, ADAS — and applies saved profiles. It is the suite's
+interactive app for those writes. MG4Tasker also writes through the shared MG4Hardware
+safety layer; the launchers and MG4ABRPUploader never write to the vehicle.
 
-It is the reference implementation. When another MG4 project and this one disagree on
-how something is done, this one wins.
+It is the reference for interactive write sequencing and user-visible refusal handling.
+MG4Hardware remains authoritative for shared primitives, firmware routing and low-level
+safety gates.
 
 ## The one rule that shapes everything
 
@@ -51,9 +55,9 @@ reflection. Cache reflected `Method` objects; never call `getMethod()` per read.
 
 ## Unreadable is not false
 
-If a precondition cannot be read, refuse. The single exception is the park-state rescue:
-when speed is unreadable but the gear reads park, the write proceeds. That exception is
-narrow, deliberate, and covered by tests. Do not widen it.
+If a precondition cannot be read, refuse. In particular, unreadable speed always refuses a
+vehicle-setting write; park state is not a substitute for a valid 0 km/h reading. Any
+existing park-rescue path is safety debt to remove, not a pattern to extend.
 
 ## Writes are serialised
 
