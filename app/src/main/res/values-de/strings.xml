@@ -161,6 +161,12 @@
     <string name="diag_download">Herunterladen</string>
     <string name="diag_downloaded">Gespeichert: %1$s</string>
     <string name="diag_download_failed">Download fehlgeschlagen: %1$s</string>
+    <string name="diag_share">Teilen</string>
+    <string name="diag_share_confirm">Der Bericht verlässt das Fahrzeug Richtung %1$s. Er ist verschlüsselt und passwortgeschützt und verfällt nach einer Stunde. Fortfahren?</string>
+    <string name="diag_share_send">Senden</string>
+    <string name="diag_share_running">Wird gesendet…</string>
+    <string name="diag_share_ok">Bericht gesendet — Link und Passwort stehen im Protokoll</string>
+    <string name="diag_share_failed">Senden fehlgeschlagen: %1$s</string>
 
     <!-- Info / Über -->
     <string name="btn_check_update">Nach Updates suchen</string>
@@ -171,11 +177,11 @@
     <string name="info_app_label">Anwendung</string>
     <string name="info_version_label">Version</string>
     <string name="info_firmware_label">Firmware</string>
-    <string name="info_github_link">github.com/SliDeeN/MG4Control</string>
+    <string name="info_github_link">github.com/malys/MG4Control</string>
     <string name="info_gitlab_link">gitlab.com/SliDeeN/mg4control</string>
-    <string name="info_made_with_love">Made with ❤ by SliDeeN and Claude IA</string>
+    <string name="info_made_with_love">Betreut von malys</string>
     <string name="info_special_thanks">Danke an confor1max für SWI68-Tests 🙏</string>
-    <string name="info_based_on">Basierend auf DriveHub Dort von Merth4n &amp; hotboy_ist</string>
+    <string name="info_based_on">Fork von SliDeeN/MG4Control · basierend auf DriveHub Dort von Merth4n &amp; hotboy_ist</string>
     <string name="info_close">Schließen</string>
 
     <!-- Dashboard — Kartenüberschriften -->

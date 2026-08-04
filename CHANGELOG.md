@@ -6,8 +6,29 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+### Added
+
+- **Partager un diagnostic.** Le dialog Diagnostic peut envoyer le rapport complet vers une
+  instance PrivateBin (paste.chapril.org) : chiffré, protégé par mot de passe, expirant au
+  bout d'une heure, et le serveur ne détient jamais la clé. L'envoi est confirmé à chaque
+  fois — le rapport quitte la voiture, ce n'est pas une décision à prendre à la place de
+  l'utilisateur. Le lien et le mot de passe sont écrits dans le journal, seul endroit où on
+  peut les relire une fois le toast disparu ; les lignes de partage sont retirées des
+  rapports envoyés ensuite, pour qu'un second envoi ne livre pas le premier. Absent du build
+  offline, qui ne déclare pas la permission INTERNET.
+- **Trois appuis sur la version, dans la fenêtre À propos, ouvrent le Diagnostic.** Geste
+  caché : le rapport contient le firmware et les journaux, il n'a rien à faire sous le doigt
+  d'un passager qui explore l'écran.
+
 ### Changed
 
+- **La lecture des touches ★ du volant vient de MG4Hardware** (`PhysicalButtonEventDecoder`),
+  qui connaît les alias de keycode par firmware. Deux conséquences visibles : un appui long
+  maintenu ne déclenche plus l'action en boucle mais une seule fois, et un relâchement sans
+  appui préalable ne déclenche plus rien.
+- **La version firmware affichée dans À propos est lue par la librairie.** `FirmwareHelper`
+  lisait une seconde fois les mêmes propriétés système que la détection de génération ; il
+  est supprimé.
 - **Crash reporting now comes from MG4Hardware** (`com.mg4.hardware.diag.CrashLogger`)
   instead of being carried here. The report gains the full stack trace as the platform
   prints it, an atomic write so a second failure mid-write cannot destroy the previous

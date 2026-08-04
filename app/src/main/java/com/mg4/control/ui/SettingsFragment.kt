@@ -16,6 +16,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,13 +34,14 @@ import com.mg4.control.BuildConfig
 import com.mg4.control.R
 import com.mg4.control.util.QrCode
 import com.mg4.hardware.AppLogger
+import com.mg4.hardware.FirmwareInfo
 import com.mg4.hardware.diag.CrashLogger
+import com.mg4.hardware.diag.PrivateBin
 import com.mg4.hardware.MG4Hardware
 import com.mg4.control.update.ApkCleanup
 import com.mg4.control.update.UpdateChecker
 import com.mg4.control.update.UpdateDialogManager
 import java.io.File
-import com.mg4.control.util.FirmwareHelper
 import com.mg4.control.util.LocaleHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +50,7 @@ import kotlinx.coroutines.withContext
 
 class SettingsFragment : Fragment() {
 
-    private val githubUrl = "https://github.com/SliDeeN/MG4Control"
+    private val githubUrl = "https://github.com/malys/MG4Control"
     private val gitlabUrl = "https://gitlab.com/SliDeeN/mg4control"
 
     override fun onCreateView(
@@ -372,6 +374,16 @@ class SettingsFragment : Fragment() {
             )
         }
 
+        // "Partager" — envoi du rapport complet vers PrivateBin (moteur MG4Hardware).
+        // En tête du contenu : la voiture n'a pas de cible de partage, et c'est le geste
+        // qu'on cherche quand on vient d'ouvrir ce dialog pour envoyer un rapport.
+        // Absent du build offline, qui ne déclare pas la permission INTERNET : proposer
+        // l'envoi là-bas ne produirait qu'un échec.
+        val btnShare = if (BuildConfig.OFFLINE) null else Button(ctx).apply {
+            text = getString(R.string.diag_share)
+        }
+        btnShare?.let { container.addView(it) }
+
         // Section crash log (si un crash a été enregistré)
         val crashLog = CrashLogger.read(ctx)
         if (crashLog != null) {
@@ -448,13 +460,18 @@ class SettingsFragment : Fragment() {
             .create()
         dialog.window?.setBackgroundDrawable(ColorDrawable(ctx.getColor(R.color.dash_card)))
 
-        // Rapport court (30 dernières lignes) pour le presse-papier ; rapport complet pour le fichier.
-        fun buildReport(fullLog: Boolean) = buildString {
+        // Rapport court (30 dernières lignes) pour le presse-papier ; rapport complet pour
+        // le fichier et pour l'envoi.
+        //
+        // [leaving] écarte les lignes de partage : un envoi y laisse le lien et le mot de
+        // passe du paste précédent, et le journal est recopié dans le rapport. Sans ce
+        // filtre, le deuxième envoi livre le premier à son destinataire.
+        fun buildReport(fullLog: Boolean, leaving: Boolean = false) = buildString {
             if (crashLog != null) { appendLine(crashLog); appendLine() }
             appendLine(tvReport.text)
             appendLine()
             if (fullLog) {
-                val entries = AppLogger.entries
+                val entries = AppLogger.entries.filterNot { leaving && it.tag == SHARE_TAG }
                 appendLine("─── AppLogger (${entries.size} entrées) ───")
                 entries.forEach { e -> appendLine("${e.time} [${e.level.name[0]}] ${e.tag}: ${e.msg}") }
             } else appendLine(tvLogs.text)
@@ -470,6 +487,10 @@ class SettingsFragment : Fragment() {
             // "Télécharger" — écrit le rapport complet dans le dossier Download de la voiture
             dialog.getButton(AlertDialog.BUTTON_NEUTRAL)?.setOnClickListener {
                 downloadDiagnostic(ctx, buildReport(true))
+            }
+            // "Partager" (dans le contenu) — envoi confirmé, le dialog reste ouvert
+            btnShare?.setOnClickListener {
+                confirmDiagnosticShare(ctx) { buildReport(fullLog = true, leaving = true) }
             }
             // "Effacer crash" (dans le contenu) — supprime le fichier et ferme le dialog
             btnClearCrash?.setOnClickListener {
@@ -487,6 +508,69 @@ class SettingsFragment : Fragment() {
                 if (isAdded) tvReport.text = report
             }
         }
+    }
+
+    /**
+     * Confirmation avant envoi : le rapport quitte la voiture pour un serveur public.
+     * Chiffré et protégé par mot de passe, mais il part — ce n'est pas une décision à
+     * prendre à la place de l'utilisateur parce qu'il a touché un bouton "Partager".
+     */
+    private fun confirmDiagnosticShare(ctx: Context, report: () -> String) {
+        AlertDialog.Builder(ctx)
+            .setTitle(getString(R.string.diag_share))
+            .setMessage(getString(R.string.diag_share_confirm, PasteConfig.HOST))
+            .setNegativeButton(getString(R.string.nav_close), null)
+            .setPositiveButton(getString(R.string.diag_share_send)) { _, _ ->
+                uploadDiagnostic(ctx, report())
+            }
+            .show()
+    }
+
+    /**
+     * Envoi vers PrivateBin, hors du thread principal.
+     *
+     * Le lien est écrit dans AppLogger, pas seulement affiché : un toast disparaît et la
+     * voiture n'offre aucun moyen de rattraper une URL. Le journal, lui, se relit et se
+     * retrouve dans le prochain rapport.
+     */
+    private fun uploadDiagnostic(ctx: Context, report: String) {
+        Toast.makeText(ctx, getString(R.string.diag_share_running), Toast.LENGTH_SHORT).show()
+        val appCtx = ctx.applicationContext
+        CoroutineScope(Dispatchers.IO).launch {
+            val message = when (val outcome = PrivateBin.paste(report, PasteConfig.CONFIG)) {
+                is PrivateBin.Outcome.Ok -> {
+                    AppLogger.i(SHARE_TAG, "diagnostic envoyé — ${outcome.url}")
+                    AppLogger.i(SHARE_TAG, "mot de passe ${PasteConfig.CONFIG.password}, expire dans 1 heure")
+                    appCtx.getString(R.string.diag_share_ok)
+                }
+                is PrivateBin.Outcome.Failed -> {
+                    AppLogger.w(SHARE_TAG, "envoi du diagnostic échoué — ${outcome.reason}")
+                    appCtx.getString(R.string.diag_share_failed, outcome.reason)
+                }
+            }
+            withContext(Dispatchers.Main) {
+                Toast.makeText(appCtx, message, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    /**
+     * Où part un rapport partagé.
+     *
+     * L'instance PrivateBin de Chapril, tenue par April, association française — pas de
+     * compte, pas de pistage, et le serveur ne détient jamais la clé. Une heure est
+     * volontairement court : assez pour envoyer le lien à qui aide, trop peu pour laisser
+     * traîner le diagnostic d'une voiture.
+     */
+    private object PasteConfig {
+        const val HOST = "paste.chapril.org"
+
+        val CONFIG = PrivateBin.Config(
+            baseUrl = "https://$HOST/",
+            password = "mg4controlR0ck\$",
+            expire = "1hour",
+            formatter = "plaintext",
+        )
     }
 
     /** Écrit le rapport de diagnostic dans le dossier Download de la voiture (fichier .txt horodaté). */
@@ -515,15 +599,13 @@ class SettingsFragment : Fragment() {
             requireContext().packageManager
                 .getPackageInfo(requireContext().packageName, 0).versionName ?: "1.0"
         } catch (e: Exception) { "1.0" }
-        dialogView.findViewById<TextView>(R.id.tv_app_version).text = versionName
+        val tvVersion = dialogView.findViewById<TextView>(R.id.tv_app_version)
+        tvVersion.text = versionName
 
-        // Version firmware (lecture asynchrone)
-        val tvFirmware = dialogView.findViewById<TextView>(R.id.tv_firmware_info)
-        FirmwareHelper.getMpuVersion(requireContext()) { version ->
-            requireActivity().runOnUiThread {
-                if (isAdded) tvFirmware.text = version ?: "N/A"
-            }
-        }
+        // Version firmware : même propriété système et même repli que la détection de
+        // génération, donc lue par la librairie plutôt qu'une seconde fois ici.
+        dialogView.findViewById<TextView>(R.id.tv_firmware_info).text =
+            FirmwareInfo.getDetectedString().takeIf { it != "?" } ?: "N/A"
 
         // QR Code GitHub
         val ivQrGithub = dialogView.findViewById<ImageView>(R.id.iv_qr_code_github)
@@ -555,6 +637,31 @@ class SettingsFragment : Fragment() {
             dialog.dismiss()
         }
 
+        // Trois appuis sur la version ouvrent le diagnostic. Geste caché volontairement :
+        // le rapport contient le firmware et les logs, il n'a rien à faire sous le doigt
+        // d'un passager qui explore l'écran.
+        var taps = 0
+        var lastTap = 0L
+        tvVersion.setOnClickListener {
+            val now = SystemClock.elapsedRealtime()
+            // Une pause casse la série : trois appuis espacés dans le temps ne sont pas
+            // le geste, ce sont trois appuis distincts sur un champ qui n'en attend aucun.
+            taps = if (now - lastTap > VERSION_TAP_WINDOW_MS) 1 else taps + 1
+            lastTap = now
+            if (taps >= VERSION_TAPS_FOR_DIAGNOSTIC) {
+                taps = 0
+                dialog.dismiss()
+                showDiagnosticDialog()
+            }
+        }
+
         dialog.show()
+    }
+
+    private companion object {
+        const val SHARE_TAG = "MG4_SHARE"
+
+        const val VERSION_TAPS_FOR_DIAGNOSTIC = 3
+        const val VERSION_TAP_WINDOW_MS = 1_000L
     }
 }

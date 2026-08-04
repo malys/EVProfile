@@ -161,6 +161,12 @@
     <string name="diag_download">Download</string>
     <string name="diag_downloaded">Saved: %1$s</string>
     <string name="diag_download_failed">Download failed: %1$s</string>
+    <string name="diag_share">Share</string>
+    <string name="diag_share_confirm">The report leaves the car for %1$s. It is encrypted and password-protected, and expires after one hour. Continue?</string>
+    <string name="diag_share_send">Send</string>
+    <string name="diag_share_running">Uploading…</string>
+    <string name="diag_share_ok">Report sent — link and password are in the log</string>
+    <string name="diag_share_failed">Upload failed: %1$s</string>
 
     <!-- Infos / About -->
     <string name="btn_check_update">Check for updates</string>
@@ -171,11 +177,11 @@
     <string name="info_app_label">Application</string>
     <string name="info_version_label">Version</string>
     <string name="info_firmware_label">Firmware</string>
-    <string name="info_github_link">github.com/SliDeeN/MG4Control</string>
+    <string name="info_github_link">github.com/malys/MG4Control</string>
     <string name="info_gitlab_link">gitlab.com/SliDeeN/mg4control</string>
-    <string name="info_made_with_love">Made with ❤ by SliDeeN and Claude IA</string>
+    <string name="info_made_with_love">Maintained by malys</string>
     <string name="info_special_thanks">Thanks to confor1max for SWI68 testing 🙏</string>
-    <string name="info_based_on">Based on DriveHub Dort by Merth4n &amp; hotboy_ist</string>
+    <string name="info_based_on">Fork of SliDeeN/MG4Control · based on DriveHub Dort by Merth4n &amp; hotboy_ist</string>
     <string name="info_close">Close</string>
 
     <!-- Dashboard — card headers -->
