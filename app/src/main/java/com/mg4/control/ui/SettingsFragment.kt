@@ -27,6 +27,7 @@ import android.widget.ScrollView
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.ViewFlipper
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
@@ -57,8 +58,43 @@ class SettingsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View = inflater.inflate(R.layout.fragment_settings, container, false)
 
+    /**
+     * Rail de catégories : le volet de droite n'affiche qu'une catégorie à la fois, au lieu
+     * de la colonne unique de cartes qu'il fallait dérouler pour savoir ce qu'elle contenait.
+     */
+    private fun setupSettingsRail(view: View) {
+        val detail = view.findViewById<ViewFlipper>(R.id.settings_detail)
+        val railButtons = listOf(
+            R.id.rail_settings_language,
+            R.id.rail_settings_display,
+            R.id.rail_settings_vehicle,
+            R.id.rail_settings_app
+        ).map { view.findViewById<MaterialButton>(it) }
+
+        val accentDim     = requireContext().getColor(R.color.dash_accent_dim)
+        val inactiveColor = requireContext().getColor(R.color.dash_btn)
+        val textActive    = requireContext().getColor(R.color.dash_accent)
+        val textInactive  = requireContext().getColor(R.color.text_secondary)
+
+        fun select(index: Int) {
+            detail.displayedChild = index
+            railButtons.forEachIndexed { i, button ->
+                val current = i == index
+                button.backgroundTintList =
+                    ColorStateList.valueOf(if (current) accentDim else inactiveColor)
+                button.setTextColor(if (current) textActive else textInactive)
+                button.isSelected = current
+            }
+        }
+
+        railButtons.forEachIndexed { index, button -> button.setOnClickListener { select(index) } }
+        select(0)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setupSettingsRail(view)
 
         val prefs = requireContext().getSharedPreferences("mg4_settings", Context.MODE_PRIVATE)
         val accentColor  = requireContext().getColor(R.color.dash_accent)

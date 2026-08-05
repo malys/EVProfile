@@ -102,6 +102,10 @@
     <string name="profile_save">Salva</string>
     <string name="profile_cancel">Annulla</string>
     <string name="a11y_qr_code">Codice QR del link mostrato sotto</string>
+    <string name="settings_cat_language">Lingua</string>
+    <string name="settings_cat_display">Schermo</string>
+    <string name="settings_cat_vehicle">Veicolo</string>
+    <string name="settings_cat_app">Applicazione</string>
     <!-- Catégories du rail de l'éditeur de profil -->
     <string name="profile_cat_general">Generale</string>
     <string name="profile_cat_drive">Guida</string>
