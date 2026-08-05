@@ -114,6 +114,24 @@
             app:strokeColor="@color/dash_border"
             app:cornerRadius="@dimen/mg4_corner" />
 
+        <!-- Bouton AUTOMATISATION — ouvre MG4Tasker. Masqué par le code quand l'app
+             n'est pas installée : un bouton qui n'ouvre rien vaut moins que pas de bouton. -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_nav_tasker"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/touch_target"
+            android:visibility="gone"
+            android:text="@string/nav_tasker"
+            android:textSize="@dimen/text_label"
+            android:letterSpacing="0.06"
+            android:textAllCaps="true"
+            android:textColor="@color/text_secondary"
+            app:backgroundTint="@color/dash_btn"
+            android:layout_marginEnd="8dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/dash_border"
+            app:cornerRadius="@dimen/mg4_corner" />
+
         <!-- Bouton RÉGLAGES -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_nav_settings"

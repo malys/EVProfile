@@ -16,6 +16,8 @@
     <string name="nav_adas">ADAS</string>
     <string name="nav_settings">Impostazioni</string>
     <string name="nav_shortcuts">Scorciatoie</string>
+    <string name="nav_tasker">Automazione</string>
+    <string name="nav_tasker_unavailable">Impossibile aprire MG4Tasker</string>
 
     <!-- Scorciatoie al volante -->
     <string name="shortcuts_enabled_label">Attiva scorciatoie al volante</string>

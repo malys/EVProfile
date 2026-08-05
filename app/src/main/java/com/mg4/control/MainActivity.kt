@@ -198,6 +198,7 @@ class MainActivity : AppCompatActivity() {
         val btnShortcuts = findViewById<MaterialButton>(R.id.btn_nav_shortcuts)
         val btnProfiles  = findViewById<MaterialButton>(R.id.btn_nav_profiles)
         val btnSettings  = findViewById<MaterialButton>(R.id.btn_nav_settings)
+        setupTaskerButton()
 
         // Bouton Audio : contrôle vendor caradapter dispo uniquement sur A9 → masqué ailleurs.
         if (MG4Hardware.hasAudioControl()) {
@@ -256,6 +257,49 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // ── Bouton Automatisation (MG4Tasker) ────────────────────────────────────
+
+    /**
+     * MG4Tasker automatise ce que MG4Control règle à la main : le bouton l'ouvre, il ne le
+     * remplace pas et ne propose pas de l'installer.
+     *
+     * Le clic revérifie l'intent plutôt que de faire confiance à l'affichage : entre le
+     * moment où le bouton apparaît et celui où le doigt arrive, l'app peut avoir été
+     * désinstallée, et un startActivity() sur un paquet absent ferait tomber MG4Control.
+     */
+    private fun setupTaskerButton() {
+        findViewById<MaterialButton>(R.id.btn_nav_tasker)?.setOnClickListener { button ->
+            val intent = taskerLaunchIntent()
+            if (intent == null) {
+                button.visibility = View.GONE
+                return@setOnClickListener
+            }
+            try {
+                startActivity(intent)
+            } catch (_: Exception) {
+                Toast.makeText(this, R.string.nav_tasker_unavailable, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    /**
+     * Réévaluée à chaque reprise : installer MG4Tasker pendant que MG4Control tourne ne doit
+     * pas demander un redémarrage pour que le bouton apparaisse.
+     */
+    private fun refreshTaskerButton() {
+        findViewById<MaterialButton>(R.id.btn_nav_tasker)?.visibility =
+            if (taskerLaunchIntent() != null) View.VISIBLE else View.GONE
+    }
+
+    /** L'intent de lancement de MG4Tasker, stable d'abord, instable ensuite. */
+    private fun taskerLaunchIntent(): Intent? =
+        TASKER_PACKAGES.firstNotNullOfOrNull { packageManager.getLaunchIntentForPackage(it) }
+
+    override fun onResume() {
+        super.onResume()
+        refreshTaskerButton()
+    }
+
     // ── Dialogue de choix de langue au premier lancement ─────────────────────
 
     private fun showLanguagePicker() {
@@ -291,6 +335,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
+        /** MG4Tasker, build stable puis build instable (les deux peuvent coexister). */
+        private val TASKER_PACKAGES = listOf("com.mg4.tasker", "com.mg4.tasker.unstable")
+
         /**
          * Débloqué via 5 clics sur le logo en haut à gauche. En mémoire uniquement :
          * réinitialisé au redémarrage du process (le bouton Diagnostic reste masqué par défaut).

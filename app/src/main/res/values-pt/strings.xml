@@ -16,6 +16,8 @@
     <string name="nav_adas">ADAS</string>
     <string name="nav_settings">Definições</string>
     <string name="nav_shortcuts">Atalhos</string>
+    <string name="nav_tasker">Automação</string>
+    <string name="nav_tasker_unavailable">Não é possível abrir o MG4Tasker</string>
 
     <!-- Atalhos do volante -->
     <string name="shortcuts_enabled_label">Ativar atalhos do volante</string>

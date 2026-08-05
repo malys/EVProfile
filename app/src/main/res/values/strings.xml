@@ -16,6 +16,8 @@
     <string name="nav_adas">ADAS</string>
     <string name="nav_settings">Réglages</string>
     <string name="nav_shortcuts">Raccourcis</string>
+    <string name="nav_tasker">Automatisation</string>
+    <string name="nav_tasker_unavailable">Impossible d\'ouvrir MG4Tasker</string>
 
     <!-- Raccourcis au volant -->
     <string name="shortcuts_enabled_label">Activer les raccourcis au volant</string>

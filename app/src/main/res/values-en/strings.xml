@@ -16,6 +16,8 @@
     <string name="nav_adas">ADAS</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_shortcuts">Shortcuts</string>
+    <string name="nav_tasker">Automation</string>
+    <string name="nav_tasker_unavailable">Cannot open MG4Tasker</string>
 
     <!-- Steering wheel shortcuts -->
     <string name="shortcuts_enabled_label">Enable steering wheel shortcuts</string>

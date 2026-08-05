@@ -16,6 +16,8 @@
     <string name="nav_adas">ADAS</string>
     <string name="nav_settings">Einstellungen</string>
     <string name="nav_shortcuts">Kurzbefehle</string>
+    <string name="nav_tasker">Automatisierung</string>
+    <string name="nav_tasker_unavailable">MG4Tasker kann nicht geöffnet werden</string>
 
     <!-- Lenkrad-Kurzbefehle -->
     <string name="shortcuts_enabled_label">Lenkrad-Kurzbefehle aktivieren</string>

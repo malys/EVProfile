@@ -8,6 +8,18 @@ All notable changes to this project are documented here. Format follows
 
 ### Added
 
+- **Un bouton Automatisation dans la barre du haut, quand MG4Tasker est installé.** MG4Control
+  règle la voiture à la main, MG4Tasker automatise ce réglage : les deux se cherchaient par le
+  lanceur. Le bouton n'apparaît que si l'app est là — un bouton qui n'ouvre rien vaut moins
+  que pas de bouton — et la visibilité est réévaluée à chaque reprise, pour qu'une
+  installation faite pendant que MG4Control tourne n'exige pas un redémarrage. Le clic
+  revérifie l'intent : entre l'affichage et le doigt, l'app peut avoir été désinstallée.
+- **Le sélecteur de profils est exposé aux autres apps de la suite** (`showProfilePicker()`
+  sur `IProfileControl`, toujours fermé par la permission signature). MG4Tasker peut
+  demander à MG4Control de poser sa liste de profils devant le conducteur au lieu de choisir
+  à sa place. Refusé en roulant, comme l'application d'un profil, et signalé comme tel au
+  lieu d'un overlay qui n'apparaît simplement pas : une app qui n'apprend que « rien ne
+  s'est passé » ne peut pas distinguer une voiture en mouvement d'une liste de profils vide.
 - **Partager un diagnostic.** Le dialog Diagnostic peut envoyer le rapport complet vers une
   instance PrivateBin (paste.chapril.org) : chiffré, protégé par mot de passe, expirant au
   bout d'une heure, et le serveur ne détient jamais la clé. L'envoi est confirmé à chaque
