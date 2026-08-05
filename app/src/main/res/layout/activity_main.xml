@@ -3,6 +3,7 @@
     Layout principal de l'activité.
     Remplace la BottomNavigationView par une top-bar fixe avec :
       • Logo "MG4Control"
+      • Onglets du dashboard (Conduite / ELK), masqués hors dashboard
       • Bouton PROFILS
       • Bouton RÉGLAGES
     La zone de contenu en dessous est gérée par le NavController.
@@ -36,6 +37,34 @@
             android:scaleType="fitStart"
             android:adjustViewBounds="true"
             android:contentDescription="@string/app_name" />
+
+        <!-- Destinations du dashboard. Elles vivaient dans une rangée à elles sous la
+             barre : 72 dp de boutons plus 32 dp de marges, sur un panneau qui en fait
+             720. Ici elles ne coûtent plus de hauteur, et MainActivity ne les montre que
+             sur le dashboard — ailleurs elles ne désignent rien. -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/dashboard_tab_controls"
+            style="@style/Widget.MG4.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/touch_target"
+            android:layout_marginEnd="@dimen/spacing_sm"
+            android:text="@string/tab_dashboard_main"
+            android:textAllCaps="false"
+            android:paddingStart="@dimen/spacing_md"
+            android:paddingEnd="@dimen/spacing_md"
+            app:cornerRadius="@dimen/mg4_corner" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/dashboard_tab_elk"
+            style="@style/Widget.MG4.Button.Outlined"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/touch_target"
+            android:layout_marginEnd="@dimen/spacing_lg"
+            android:text="@string/tab_dashboard_elk"
+            android:textAllCaps="false"
+            android:paddingStart="@dimen/spacing_md"
+            android:paddingEnd="@dimen/spacing_md"
+            app:cornerRadius="@dimen/mg4_corner" />
 
         <!-- Bouton AUDIO (A9 uniquement — masqué par le code sur les autres firmwares) -->
         <com.google.android.material.button.MaterialButton

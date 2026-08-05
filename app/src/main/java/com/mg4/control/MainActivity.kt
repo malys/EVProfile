@@ -242,6 +242,13 @@ class MainActivity : AppCompatActivity() {
                     android.content.res.ColorStateList.valueOf(if (current) accent else inactive)
                 button.isSelected = current
             }
+            // Les onglets du dashboard ne désignent rien ailleurs : ils disparaissent
+            // plutôt que de rester affichés sans cible.
+            val onDashboard = destination.id == R.id.dashboardFragment
+            val tabVisibility = if (onDashboard) View.VISIBLE else View.GONE
+            findViewById<MaterialButton>(R.id.dashboard_tab_controls).visibility = tabVisibility
+            findViewById<MaterialButton>(R.id.dashboard_tab_elk).visibility = tabVisibility
+
             mark(btnAudio,     destination.id == R.id.audioFragment)
             mark(btnShortcuts, destination.id == R.id.shortcutsFragment)
             mark(btnProfiles,  destination.id == R.id.profileFragment)

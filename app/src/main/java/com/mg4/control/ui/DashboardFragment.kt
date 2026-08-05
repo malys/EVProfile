@@ -156,9 +156,11 @@ class DashboardFragment : Fragment() {
     // ═════════════════════════════════════════════════════════════════════════
 
     private fun setupPager(root: View) {
-        pager = root.findViewById(R.id.dashboard_pager)
-        dashboardTabControls = root.findViewById(R.id.dashboard_tab_controls)
-        dashboardTabElk = root.findViewById(R.id.dashboard_tab_elk)
+        pager = if (root is ViewPager2) root else root.findViewById(R.id.dashboard_pager)
+        // Les deux destinations sont dans la barre du haut, qui appartient à l'activité :
+        // le fragment les emprunte le temps de sa vue et les relâche dans onDestroyView.
+        dashboardTabControls = requireActivity().findViewById(R.id.dashboard_tab_controls)
+        dashboardTabElk = requireActivity().findViewById(R.id.dashboard_tab_elk)
 
         pager?.adapter = DashboardPagerAdapter()
         pager?.offscreenPageLimit = 1  // garde les 2 pages en mémoire
@@ -174,6 +176,17 @@ class DashboardFragment : Fragment() {
             }
         })
         updateDashboardTabs(0)
+    }
+
+    override fun onDestroyView() {
+        // Ces boutons survivent au fragment : sans ce nettoyage, leurs listeners
+        // retiendraient une vue détruite.
+        dashboardTabControls?.setOnClickListener(null)
+        dashboardTabElk?.setOnClickListener(null)
+        dashboardTabControls = null
+        dashboardTabElk = null
+        pager = null
+        super.onDestroyView()
     }
 
     private fun updateDashboardTabs(position: Int) {

@@ -103,6 +103,8 @@
     <string name="profile_save">Enregistrer</string>
     <string name="profile_cancel">Annuler</string>
     <string name="a11y_qr_code">Code QR du lien affiché en dessous</string>
+    <string name="tab_dashboard_main">Conduite</string>
+    <string name="tab_dashboard_elk">Sortie de voie</string>
     <string name="profile_delete_confirm">Supprimer « %1$s » ?</string>
     <string name="settings_cat_language">Langue</string>
     <string name="settings_cat_display">Affichage</string>

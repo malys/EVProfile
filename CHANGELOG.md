@@ -53,6 +53,13 @@ All notable changes to this project are documented here. Format follows
 
 ### Changed
 
+- **The dashboard tab row moved into the top bar.** Its two destinations cost a row of
+  their own — 72dp of buttons plus 32dp of margins — on a 720dp-tall panel. They are now
+  buttons in the top bar, shown only while the dashboard is the current destination, and
+  the pager fills the fragment. Both labels were shortened (`tab_dashboard_main`,
+  `tab_dashboard_elk`): the card titles they reused would have pushed the navigation
+  buttons off-screen. Navigation stays explicit and touchable — the swipe is still never
+  the only path.
 - **Firmware generation moved from the top bar to Settings › Vehicle.** It spanned the
   width of every screen for something you read once, in chips a few dp tall. It is now a
   row of 72dp buttons next to the detected firmware string, clickable only when the

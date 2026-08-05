@@ -102,6 +102,8 @@
     <string name="profile_save">Guardar</string>
     <string name="profile_cancel">Cancelar</string>
     <string name="a11y_qr_code">Código QR da ligação apresentada abaixo</string>
+    <string name="tab_dashboard_main">Condução</string>
+    <string name="tab_dashboard_elk">Saída de faixa</string>
     <string name="profile_delete_confirm">Eliminar «%1$s»?</string>
     <string name="settings_cat_language">Idioma</string>
     <string name="settings_cat_display">Ecrã</string>
