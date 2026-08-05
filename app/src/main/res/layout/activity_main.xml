@@ -3,7 +3,6 @@
     Layout principal de l'activité.
     Remplace la BottomNavigationView par une top-bar fixe avec :
       • Logo "MG4Control"
-      • Indicateur firmware read-only (chip SWI133 / chip SWI68)
       • Bouton PROFILS
       • Bouton RÉGLAGES
     La zone de contenu en dessous est gérée par le NavController.
@@ -19,7 +18,7 @@
     <!-- ── TOP BAR ─────────────────────────────────────────────────── -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="88dp"
+        android:layout_height="80dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingStart="@dimen/spacing_lg"
@@ -37,118 +36,6 @@
             android:scaleType="fitStart"
             android:adjustViewBounds="true"
             android:contentDescription="@string/app_name" />
-
-        <!-- Indicateur firmware (read-only) -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="@drawable/bg_fw_indicator"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:layout_marginEnd="12dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/settings_firmware_version"
-                android:textColor="@color/dash_text_lo"
-                android:textSize="@dimen/text_label"
-                android:layout_marginEnd="6dp" />
-
-            <!-- Chip SWI133 — stylisé depuis MainActivity -->
-            <TextView
-                android:id="@+id/chip_swi133"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SWI133"
-                android:textSize="@dimen/text_label"
-                android:textStyle="bold"
-                android:letterSpacing="0.06"
-                android:paddingStart="9dp"
-                android:paddingEnd="9dp"
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp"
-                android:layout_marginEnd="4dp" />
-
-            <!-- Chip SWI132 — stylisé depuis MainActivity -->
-            <TextView
-                android:id="@+id/chip_swi132"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SWI132"
-                android:textSize="@dimen/text_label"
-                android:textStyle="bold"
-                android:letterSpacing="0.06"
-                android:paddingStart="9dp"
-                android:paddingEnd="9dp"
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp"
-                android:layout_marginEnd="4dp" />
-
-            <!-- Chip SWI68 — stylisé depuis MainActivity -->
-            <TextView
-                android:id="@+id/chip_swi68"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SWI68"
-                android:textSize="@dimen/text_label"
-                android:textStyle="bold"
-                android:letterSpacing="0.06"
-                android:paddingStart="9dp"
-                android:paddingEnd="9dp"
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp"
-                android:layout_marginEnd="4dp" />
-
-            <!-- Chip SWI69 — stylisé depuis MainActivity -->
-            <TextView
-                android:id="@+id/chip_swi69"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SWI69"
-                android:textSize="@dimen/text_label"
-                android:textStyle="bold"
-                android:letterSpacing="0.06"
-                android:paddingStart="9dp"
-                android:paddingEnd="9dp"
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp"
-                android:layout_marginEnd="4dp" />
-
-            <!-- Chip SWI131 — stylisé depuis MainActivity -->
-            <TextView
-                android:id="@+id/chip_swi131"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SWI131"
-                android:textSize="@dimen/text_label"
-                android:textStyle="bold"
-                android:letterSpacing="0.06"
-                android:paddingStart="9dp"
-                android:paddingEnd="9dp"
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp"
-                android:layout_marginEnd="4dp" />
-
-            <!-- Chip SWI165 — stylisé depuis MainActivity -->
-            <TextView
-                android:id="@+id/chip_swi165"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SWI165"
-                android:textSize="@dimen/text_label"
-                android:textStyle="bold"
-                android:letterSpacing="0.06"
-                android:paddingStart="9dp"
-                android:paddingEnd="9dp"
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp" />
-
-        </LinearLayout>
 
         <!-- Bouton AUDIO (A9 uniquement — masqué par le code sur les autres firmwares) -->
         <com.google.android.material.button.MaterialButton

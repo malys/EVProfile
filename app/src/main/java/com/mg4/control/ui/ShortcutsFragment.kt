@@ -15,6 +15,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Switch
+import android.widget.ViewFlipper
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
@@ -110,6 +111,8 @@ class ShortcutsFragment : Fragment() {
         view.findViewById<View>(R.id.config_adas_swi133)?.visibility  = if (isKnown) View.VISIBLE else View.GONE
         view.findViewById<View>(R.id.config_adas_swi68)?.visibility   = View.GONE
 
+        setupShortcutsRail(view)
+
         // ── Bouton Fermer ─────────────────────────────────────────────
         view.findViewById<MaterialButton>(R.id.btn_shortcuts_close)?.setOnClickListener {
             findNavController().popBackStack(R.id.dashboardFragment, false)
@@ -121,6 +124,46 @@ class ShortcutsFragment : Fragment() {
     }
 
     // ── Spinners (un adapter par spinner) ────────────────────────────────
+
+    /**
+     * Rail de catégories. L'écran traitait quatre sujets à la fois — les deux boutons ★,
+     * la regen de retour, l'alternance ADAS — sans hiérarchie entre eux. Le volet de
+     * droite n'en montre plus qu'un ; la catégorie ADAS disparaît du rail quand le
+     * firmware n'est pas reconnu, comme la section qu'elle ouvre.
+     */
+    private fun setupShortcutsRail(view: View) {
+        val detail = view.findViewById<ViewFlipper>(R.id.shortcuts_detail)
+        val entries = listOf(
+            R.id.rail_shortcuts_btn1  to null,
+            R.id.rail_shortcuts_btn2  to null,
+            R.id.rail_shortcuts_pedal to null,
+            R.id.rail_shortcuts_adas  to R.id.config_adas_section
+        )
+        val buttons = entries.map { view.findViewById<MaterialButton>(it.first) }
+        val activeText   = requireContext().getColor(R.color.dash_accent)
+        val inactiveText = requireContext().getColor(R.color.text_secondary)
+        val activeBg     = requireContext().getColor(R.color.dash_accent_dim)
+
+        fun select(index: Int) {
+            detail.displayedChild = index
+            buttons.forEachIndexed { i, button ->
+                val current = i == index
+                button.backgroundTintList =
+                    ColorStateList.valueOf(if (current) activeBg else defColor)
+                button.setTextColor(if (current) activeText else inactiveText)
+                button.isSelected = current
+            }
+        }
+
+        entries.forEachIndexed { index, (_, sectionId) ->
+            val button = buttons[index]
+            val available = sectionId == null ||
+                view.findViewById<View>(sectionId)?.visibility == View.VISIBLE
+            button.visibility = if (available) View.VISIBLE else View.GONE
+            button.setOnClickListener { select(index) }
+        }
+        select(0)
+    }
 
     private fun setupSpinners(view: View) {
         for (slotKey in slotPressList) {

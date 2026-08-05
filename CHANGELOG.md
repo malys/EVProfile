@@ -53,6 +53,21 @@ All notable changes to this project are documented here. Format follows
 
 ### Changed
 
+- **Firmware generation moved from the top bar to Settings › Vehicle.** It spanned the
+  width of every screen for something you read once, in chips a few dp tall. It is now a
+  row of 72dp buttons next to the detected firmware string, clickable only when the
+  generation is unknown or already forced. The top bar loses 8dp with it — it cannot go
+  below 80dp while its navigation buttons hold the 72dp floor.
+- **About is a Settings category, not a window.** It was a dialog behind a button in the
+  same screen; it is now the last entry in the rail. Its firmware line is gone, the
+  Vehicle category owns that information. The three-taps-on-version gesture that opens
+  the diagnostic report is unchanged.
+- **Shortcuts follows the same list/detail shape.** It showed four unrelated subjects at
+  once — both steering-wheel star buttons, the one-pedal fallback, the ADAS cycle. Each
+  is a rail entry now; the ADAS entry disappears when the firmware is unrecognised, like
+  the section it opens. The global on/off switch stays above the rail: it gates all four.
+- The About credit read "Maintained by malys". This repository is a fork; the line now
+  reads as a contribution, and `info_based_on` keeps naming SliDeeN as the origin.
 - **Profile editor and Settings are now list/detail screens.** Both stacked their
   controls in a single scroll — the editor in three columns of 38-40dp buttons, Settings
   as one column of cards — and neither showed what it contained without scrolling. Each

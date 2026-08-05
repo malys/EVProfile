@@ -59,6 +59,57 @@ class SettingsFragment : Fragment() {
     ): View = inflater.inflate(R.layout.fragment_settings, container, false)
 
     /**
+     * Génération de firmware. L'indicateur vivait dans la barre du haut, où il occupait
+     * la largeur de chaque écran pour une information qu'on lit une fois — et où ses
+     * pastilles de quelques dp étaient invisibles à 70 cm. Il est ici, dans Véhicule,
+     * en boutons de 72 dp. Ils ne deviennent cliquables que si la génération est inconnue
+     * ou déjà forcée : forcer une génération change ce que l'application écrit dans la
+     * voiture, ce n'est pas un réglage à effleurer par erreur.
+     */
+    private fun setupFirmwareSection(view: View) {
+        val ctx = requireContext()
+        val gen = FirmwareInfo.getGeneration()
+        val forced = FirmwareInfo.isForced(ctx)
+
+        view.findViewById<TextView>(R.id.tv_firmware_detected).text =
+            FirmwareInfo.getDetectedString()
+
+        val chips = listOf(
+            R.id.chip_swi133 to FirmwareInfo.Gen.SWI133,
+            R.id.chip_swi132 to FirmwareInfo.Gen.SWI132,
+            R.id.chip_swi68  to FirmwareInfo.Gen.SWI68,
+            R.id.chip_swi69  to FirmwareInfo.Gen.SWI69,
+            R.id.chip_swi131 to FirmwareInfo.Gen.SWI131,
+            R.id.chip_swi165 to FirmwareInfo.Gen.SWI165
+        )
+        val selectable = gen == FirmwareInfo.Gen.UNKNOWN || forced
+
+        chips.forEach { (viewId, chipGen) ->
+            val button = view.findViewById<MaterialButton>(viewId)
+            val active = chipGen == gen
+            button.backgroundTintList = ColorStateList.valueOf(
+                ctx.getColor(if (active) R.color.dash_accent_dim else R.color.dash_btn))
+            button.setTextColor(ctx.getColor(when {
+                active     -> R.color.dash_accent
+                selectable -> R.color.dash_danger
+                else       -> R.color.text_secondary
+            }))
+            button.strokeColor = ColorStateList.valueOf(
+                ctx.getColor(if (active) R.color.dash_accent else R.color.dash_border))
+            button.isSelected = active
+            // Une génération qu'on ne peut pas choisir reste lisible, mais n'invite pas.
+            button.isEnabled = selectable
+            button.alpha = if (selectable || active) 1f else 0.5f
+            if (selectable) {
+                button.setOnClickListener {
+                    FirmwareInfo.forceGeneration(ctx, chipGen)
+                    requireActivity().recreate()
+                }
+            }
+        }
+    }
+
+    /**
      * Rail de catégories : le volet de droite n'affiche qu'une catégorie à la fois, au lieu
      * de la colonne unique de cartes qu'il fallait dérouler pour savoir ce qu'elle contenait.
      */
@@ -68,7 +119,8 @@ class SettingsFragment : Fragment() {
             R.id.rail_settings_language,
             R.id.rail_settings_display,
             R.id.rail_settings_vehicle,
-            R.id.rail_settings_app
+            R.id.rail_settings_app,
+            R.id.rail_settings_about
         ).map { view.findViewById<MaterialButton>(it) }
 
         val accentDim     = requireContext().getColor(R.color.dash_accent_dim)
@@ -95,6 +147,8 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupSettingsRail(view)
+        setupFirmwareSection(view)
+        bindAboutSection(view)
 
         val prefs = requireContext().getSharedPreferences("mg4_settings", Context.MODE_PRIVATE)
         val accentColor  = requireContext().getColor(R.color.dash_accent)
@@ -323,11 +377,6 @@ class SettingsFragment : Fragment() {
         // ── Bouton Diagnostic (caché par défaut — débloqué par 5 clics sur MAJ) ──
         btnDiagnostic.setOnClickListener {
             showDiagnosticDialog()
-        }
-
-        // ── Bouton Infos ─────────────────────────────────────────────────────
-        view.findViewById<MaterialButton>(R.id.btn_infos).setOnClickListener {
-            showInfosDialog()
         }
 
         // ── Bouton Fermer ─────────────────────────────────────────────────────
@@ -627,52 +676,32 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    // ── Dialog À propos ──────────────────────────────────────────────────────
+    // ── Section À propos ─────────────────────────────────────────────────────
 
-    private fun showInfosDialog() {
-        val dialogView = LayoutInflater.from(requireContext())
-            .inflate(R.layout.dialog_app_info, null)
-
-        // Version de l'app
+    /**
+     * « À propos » n'est plus une fenêtre à ouvrir : c'est la dernière catégorie du rail,
+     * au même titre que les autres. Rien n'y est actionnable en conduite, seulement lu.
+     */
+    private fun bindAboutSection(view: View) {
         val versionName = try {
             requireContext().packageManager
                 .getPackageInfo(requireContext().packageName, 0).versionName ?: "1.0"
         } catch (e: Exception) { "1.0" }
-        val tvVersion = dialogView.findViewById<TextView>(R.id.tv_app_version)
+        val tvVersion = view.findViewById<TextView>(R.id.tv_app_version)
         tvVersion.text = versionName
 
-        // Version firmware : même propriété système et même repli que la détection de
-        // génération, donc lue par la librairie plutôt qu'une seconde fois ici.
-        dialogView.findViewById<TextView>(R.id.tv_firmware_info).text =
-            FirmwareInfo.getDetectedString().takeIf { it != "?" } ?: "N/A"
+        QrCode.generate(githubUrl, 400)?.let {
+            view.findViewById<ImageView>(R.id.iv_qr_code_github).setImageBitmap(it)
+        }
+        QrCode.generate(gitlabUrl, 400)?.let {
+            view.findViewById<ImageView>(R.id.iv_qr_code_gitlab).setImageBitmap(it)
+        }
 
-        // QR Code GitHub
-        val ivQrGithub = dialogView.findViewById<ImageView>(R.id.iv_qr_code_github)
-        QrCode.generate(githubUrl, 400)?.let { ivQrGithub.setImageBitmap(it) }
-
-        // QR Code GitLab
-        val ivQrGitlab = dialogView.findViewById<ImageView>(R.id.iv_qr_code_gitlab)
-        QrCode.generate(gitlabUrl, 400)?.let { ivQrGitlab.setImageBitmap(it) }
-
-        // Lien GitHub cliquable
-        dialogView.findViewById<TextView>(R.id.tv_github_link).setOnClickListener {
+        view.findViewById<TextView>(R.id.tv_github_link).setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(githubUrl)))
         }
-
-        // Lien GitLab cliquable
-        dialogView.findViewById<TextView>(R.id.tv_gitlab_link).setOnClickListener {
+        view.findViewById<TextView>(R.id.tv_gitlab_link).setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(gitlabUrl)))
-        }
-
-        // Création du dialog sans chrome Android (fond transparent = layout seul visible)
-        val dialog = AlertDialog.Builder(requireContext(), R.style.Theme_MG4_Picker)
-            .setView(dialogView)
-            .setCancelable(true)
-            .create()
-
-        // Bouton Fermer intégré dans le layout
-        dialogView.findViewById<MaterialButton>(R.id.btn_info_close).setOnClickListener {
-            dialog.dismiss()
         }
 
         // Trois appuis sur la version ouvrent le diagnostic. Geste caché volontairement :
@@ -688,16 +717,9 @@ class SettingsFragment : Fragment() {
             lastTap = now
             if (taps >= VERSION_TAPS_FOR_DIAGNOSTIC) {
                 taps = 0
-                dialog.dismiss()
                 showDiagnosticDialog()
             }
         }
-
-        dialog.show()
-        dialog.window?.setLayout(
-            android.view.WindowManager.LayoutParams.MATCH_PARENT,
-            android.view.WindowManager.LayoutParams.MATCH_PARENT
-        )
     }
 
     private companion object {

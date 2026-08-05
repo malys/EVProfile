@@ -184,17 +184,15 @@
     <string name="btn_check_update">Controlla aggiornamenti</string>
     <string name="update_up_to_date">✓  Aggiornato</string>
     <string name="update_network_error">✕  Errore di rete</string>
-    <string name="btn_infos">Info</string>
     <string name="info_title">Informazioni</string>
     <string name="info_app_label">Applicazione</string>
     <string name="info_version_label">Versione</string>
     <string name="info_firmware_label">Firmware</string>
     <string name="info_github_link">github.com/malys/MG4Control</string>
     <string name="info_gitlab_link">gitlab.com/SliDeeN/mg4control</string>
-    <string name="info_made_with_love">Mantenuto da malys</string>
+    <string name="info_made_with_love">Contributi di malys</string>
     <string name="info_special_thanks">Grazie a confor1max per i test SWI68 🙏</string>
     <string name="info_based_on">Fork di SliDeeN/MG4Control · basato su DriveHub Dort di Merth4n &amp; hotboy_ist</string>
-    <string name="info_close">Chiudi</string>
 
     <!-- Dashboard — intestazioni schede -->
     <string name="card_drive">Impostazioni di guida</string>
