@@ -224,6 +224,8 @@ class ProfileFragment : Fragment() {
                 if (active) R.color.dash_accent else R.color.text_secondary))
             btn.strokeColor = ColorStateList.valueOf(
                 ctx.getColor(if (active) R.color.dash_accent else R.color.dash_border))
+            // TalkBack annonce « sélectionné » : la couleur ne porte pas l'état seule.
+            btn.isSelected = active
         }
 
         /** Lie un groupe de boutons : un seul actif à la fois. Retourne une lambda pour lire la valeur courante. */

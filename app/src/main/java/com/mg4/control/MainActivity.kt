@@ -335,18 +335,17 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val accent   = getColor(R.color.dash_accent_dim)
             val inactive = getColor(R.color.dash_btn)
-            btnAudio.backgroundTintList = android.content.res.ColorStateList.valueOf(
-                if (destination.id == R.id.audioFragment) accent else inactive
-            )
-            btnShortcuts.backgroundTintList = android.content.res.ColorStateList.valueOf(
-                if (destination.id == R.id.shortcutsFragment) accent else inactive
-            )
-            btnProfiles.backgroundTintList = android.content.res.ColorStateList.valueOf(
-                if (destination.id == R.id.profileFragment) accent else inactive
-            )
-            btnSettings.backgroundTintList = android.content.res.ColorStateList.valueOf(
-                if (destination.id == R.id.settingsFragment) accent else inactive
-            )
+            // isSelected en plus de la teinte : la destination courante doit être annoncée
+            // par TalkBack, pas seulement colorée.
+            fun mark(button: MaterialButton, current: Boolean) {
+                button.backgroundTintList =
+                    android.content.res.ColorStateList.valueOf(if (current) accent else inactive)
+                button.isSelected = current
+            }
+            mark(btnAudio,     destination.id == R.id.audioFragment)
+            mark(btnShortcuts, destination.id == R.id.shortcutsFragment)
+            mark(btnProfiles,  destination.id == R.id.profileFragment)
+            mark(btnSettings,  destination.id == R.id.settingsFragment)
         }
     }
 

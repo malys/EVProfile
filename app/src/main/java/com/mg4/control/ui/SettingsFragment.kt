@@ -82,6 +82,7 @@ class SettingsFragment : Fragment() {
                 val active = lang == code
                 btn.backgroundTintList = ColorStateList.valueOf(if (active) accentDim else inactiveColor)
                 btn.setTextColor(if (active) textActive else textInactive)
+                btn.isSelected = active
             }
         }
 
@@ -111,6 +112,7 @@ class SettingsFragment : Fragment() {
                 val active = key == selected
                 btn.backgroundTintList = ColorStateList.valueOf(if (active) accentDim else inactiveColor)
                 btn.setTextColor(if (active) textActive else textInactive)
+                btn.isSelected = active
             }
         }
 
@@ -136,6 +138,7 @@ class SettingsFragment : Fragment() {
                 val active = key == mode
                 btn.backgroundTintList = ColorStateList.valueOf(if (active) accentDim else inactiveColor)
                 btn.setTextColor(if (active) textActive else textInactive)
+                btn.isSelected = active
                 btn.strokeColor = ColorStateList.valueOf(
                     if (active) accentColor else requireContext().getColor(R.color.dash_border)
                 )

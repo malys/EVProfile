@@ -9,6 +9,7 @@ import android.os.Looper
 import android.widget.Toast
 import android.util.TypedValue
 import android.view.ContextThemeWrapper
+import android.view.KeyEvent
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -200,17 +201,28 @@ object ProfilePickerOverlay {
         view.findViewById<View>(R.id.overlay_card)?.setOnClickListener { /* consommer */ }
 
         // ── Paramètres WindowManager ──────────────────────────────────────
+        // La fenêtre est focusable : l'overlay demande un choix, il doit donc entrer dans
+        // l'ordre de focus et être lisible par TalkBack. FLAG_NOT_FOCUSABLE l'en excluait.
+        // En contrepartie elle reçoit les touches : RETOUR la ferme, comme un appui sur le fond.
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            0,
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.CENTER
         }
 
+        view.isFocusableInTouchMode = true
+        view.setOnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                dismissOnMainThread(context); true
+            } else false
+        }
+
         wm.addView(view, params)
+        view.requestFocus()
         overlayView = view
         AppLogger.i(TAG, "Overlay affiché — ${profilesToShow.size} profil(s)")
 

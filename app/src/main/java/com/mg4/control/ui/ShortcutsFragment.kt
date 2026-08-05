@@ -386,6 +386,7 @@ class ShortcutsFragment : Fragment() {
             val isActive = value == active
             btn?.backgroundTintList = ColorStateList.valueOf(if (isActive) accentColor else defColor)
             btn?.setTextColor(if (isActive) activeTextColor else inactiveTextColor)
+            btn?.isSelected = isActive
         }
     }
 

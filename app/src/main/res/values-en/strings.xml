@@ -101,6 +101,7 @@
     <string name="profile_name_required">Name is required</string>
     <string name="profile_save">Save</string>
     <string name="profile_cancel">Cancel</string>
+    <string name="a11y_qr_code">QR code for the link shown below</string>
     <!-- Catégories du rail de l'éditeur de profil -->
     <string name="profile_cat_general">General</string>
     <string name="profile_cat_drive">Driving</string>

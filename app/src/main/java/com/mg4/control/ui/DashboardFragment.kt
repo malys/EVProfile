@@ -81,6 +81,8 @@ class DashboardFragment : Fragment() {
     private var energySavingOn = false
     /** Dernier mode de conduite connu — nécessaire pour arbitrer les exclusions SNOW / Éco énergie. */
     private var currentDriveMode: DriveMode? = null
+    /** Dernier niveau de regen connu — sert à n'annoncer que les vrais changements. */
+    private var currentRegenLevel: RegenLevel? = null
 
     // ── AEB : page 0 pour VSM-based, page 1 (SWI133) pour les autres ───────────
     private var switchAeb: Switch? = null
@@ -179,10 +181,6 @@ class DashboardFragment : Fragment() {
         dashboardTabElk?.isEnabled = position != 1
         dashboardTabControls?.isSelected = position == 0
         dashboardTabElk?.isSelected = position == 1
-        dashboardTabControls?.contentDescription = getString(R.string.card_drive) +
-            if (position == 0) ", selected" else ""
-        dashboardTabElk?.contentDescription = getString(R.string.elk_card_title) +
-            if (position == 1) ", selected" else ""
     }
 
     private inner class DashboardPagerAdapter :
@@ -837,12 +835,18 @@ class DashboardFragment : Fragment() {
     private fun applyEnergySavingUI(active: Boolean) {
         energySavingOn = active
         btnEnergySaving?.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+        btnEnergySaving?.isSelected = active
         btnEnergySaving?.setTextColor(if (active) colorTextActive else colorTextInactive)
         // Regen : indisponible si Éco actif OU si SNOW sélectionné
         setRegenEnabled(!active && currentDriveMode != DriveMode.SNOW)
     }
 
     private fun applyDriveModeUI(mode: DriveMode) {
+        // Le changement de valeur est annoncé une fois, pas à chaque rafraîchissement
+        // périodique : sans cela TalkBack ne dit rien du tout quand le mode change.
+        if (mode != currentDriveMode) {
+            announceValue(R.string.card_drive, getString(mode.labelRes))
+        }
         currentDriveMode = mode
         driveModeButtons.forEach { (m, btn) ->
             val (bg, text) = when {
@@ -853,6 +857,7 @@ class DashboardFragment : Fragment() {
             }
             btn.backgroundTintList = ColorStateList.valueOf(bg)
             btn.setTextColor(text)
+            btn.isSelected = m == mode
         }
         // Regen : indisponible si SNOW OU si Éco énergie actif
         setRegenEnabled(mode != DriveMode.SNOW && !energySavingOn)
@@ -863,11 +868,21 @@ class DashboardFragment : Fragment() {
     }
 
     private fun applyRegenUI(level: RegenLevel) {
+        if (level != currentRegenLevel) {
+            announceValue(R.string.drive_section_regen, getString(level.labelRes))
+        }
+        currentRegenLevel = level
         regenButtons.forEach { (l, btn) ->
             val active = l == level
             btn.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+            btn.isSelected = active
             btn.setTextColor(if (active) colorTextActive else colorTextInactive)
         }
+    }
+
+    /** Annonce « <réglage> : <valeur> » à TalkBack. La couleur du bouton ne suffit pas. */
+    private fun announceValue(labelRes: Int, value: String) {
+        view?.announceForAccessibility("${getString(labelRes)} : $value")
     }
 
     private fun setRegenEnabled(enabled: Boolean) {
@@ -885,6 +900,7 @@ class DashboardFragment : Fragment() {
         swi133AdasMap.forEach { (modeIndex, btn) ->
             val active = modeIndex == activeMode
             btn?.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+            btn?.isSelected = active
             btn?.setTextColor(if (active) colorTextActive else colorTextInactive)
         }
     }
@@ -893,6 +909,7 @@ class DashboardFragment : Fragment() {
         swi68AdasMap.forEach { (modeValue, btn) ->
             val active = modeValue == activeMode
             btn?.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+            btn?.isSelected = active
             btn?.setTextColor(if (active) colorTextActive else colorTextInactive)
         }
     }
@@ -908,8 +925,10 @@ class DashboardFragment : Fragment() {
 
     private fun applyAebModeUI(activeMode: Int) {
         btnAebAlarm?.backgroundTintList      = ColorStateList.valueOf(if (activeMode == AebMode.ALARM)       colorActive else colorInactive)
+        btnAebAlarm?.isSelected              = activeMode == AebMode.ALARM
         btnAebAlarm?.setTextColor(                                    if (activeMode == AebMode.ALARM)       colorTextActive else colorTextInactive)
         btnAebAlarmBrake?.backgroundTintList = ColorStateList.valueOf(if (activeMode == AebMode.ALARM_BRAKE) colorActive else colorInactive)
+        btnAebAlarmBrake?.isSelected         = activeMode == AebMode.ALARM_BRAKE
         btnAebAlarmBrake?.setTextColor(                               if (activeMode == AebMode.ALARM_BRAKE) colorTextActive else colorTextInactive)
     }
 
@@ -924,6 +943,7 @@ class DashboardFragment : Fragment() {
         buttons.forEachIndexed { i, btn ->
             val active = i == activeIndex
             btn.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+            btn.isSelected = active
             btn.setTextColor(if (active) colorTextActive else colorTextInactive)
         }
     }
@@ -936,6 +956,7 @@ class DashboardFragment : Fragment() {
         elkModeMap.forEach { (mode, btn) ->
             val active = mode == activeMode
             btn?.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+            btn?.isSelected = active
             btn?.setTextColor(if (active) colorTextActive else colorTextInactive)
         }
     }
@@ -944,6 +965,7 @@ class DashboardFragment : Fragment() {
         elkSenMap.forEach { (level, btn) ->
             val active = level == activeLevel
             btn?.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+            btn?.isSelected = active
             btn?.setTextColor(if (active) colorTextActive else colorTextInactive)
         }
     }
@@ -952,6 +974,7 @@ class DashboardFragment : Fragment() {
         aebSenMap.forEach { (level, btn) ->
             val active = level == activeLevel
             btn?.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+            btn?.isSelected = active
             btn?.setTextColor(if (active) colorTextActive else colorTextInactive)
         }
     }

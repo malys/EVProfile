@@ -389,6 +389,7 @@
 
             <ImageView
                 android:id="@+id/iv_update_qr"
+                android:contentDescription="@string/a11y_qr_code"
                 android:layout_width="160dp"
                 android:layout_height="160dp"
                 android:background="@color/qr_quiet_zone"

@@ -158,6 +158,7 @@
 
                     <ImageView
                         android:id="@+id/iv_qr_code_github"
+                        android:contentDescription="@string/a11y_qr_code"
                         android:layout_width="160dp"
                         android:layout_height="160dp"
                         android:scaleType="fitCenter"
@@ -189,6 +190,7 @@
 
                     <ImageView
                         android:id="@+id/iv_qr_code_gitlab"
+                        android:contentDescription="@string/a11y_qr_code"
                         android:layout_width="160dp"
                         android:layout_height="160dp"
                         android:scaleType="fitCenter"
