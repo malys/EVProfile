@@ -1,6 +1,7 @@
 package com.mg4.control.ui
 
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -10,7 +11,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.mg4.control.MainActivity
 import com.mg4.control.util.ThemeHelper
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -231,7 +231,7 @@ class SettingsFragment : Fragment() {
                     withContext(Dispatchers.Main) {
                         if (!isAdded) return@withContext
                         if (inPark == true) {
-                            AlertDialog.Builder(requireContext())
+                            MaterialAlertDialogBuilder(requireContext())
                                 .setTitle(R.string.vehicle_power_dialog_title)
                                 .setMessage(R.string.vehicle_power_dialog_msg)
                                 .setNegativeButton(R.string.vehicle_power_dialog_cancel, null)
@@ -490,7 +490,7 @@ class SettingsFragment : Fragment() {
         else
             getString(R.string.diag_title)
 
-        val dialog = AlertDialog.Builder(ctx)
+        val dialog = MaterialAlertDialogBuilder(ctx)
             .setTitle(title)
             .setView(scrollView)
             .setPositiveButton(getString(R.string.diag_copy), null)
@@ -555,7 +555,7 @@ class SettingsFragment : Fragment() {
      * prendre à la place de l'utilisateur parce qu'il a touché un bouton "Partager".
      */
     private fun confirmDiagnosticShare(ctx: Context, report: () -> String) {
-        AlertDialog.Builder(ctx)
+        MaterialAlertDialogBuilder(ctx)
             .setTitle(getString(R.string.diag_share))
             .setMessage(getString(R.string.diag_share_confirm, PasteConfig.HOST))
             .setNegativeButton(getString(R.string.nav_close), null)
@@ -665,11 +665,10 @@ class SettingsFragment : Fragment() {
         }
 
         // Création du dialog sans chrome Android (fond transparent = layout seul visible)
-        val dialog = AlertDialog.Builder(requireContext())
+        val dialog = AlertDialog.Builder(requireContext(), R.style.Theme_MG4_Picker)
             .setView(dialogView)
             .setCancelable(true)
             .create()
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         // Bouton Fermer intégré dans le layout
         dialogView.findViewById<MaterialButton>(R.id.btn_info_close).setOnClickListener {
@@ -695,6 +694,10 @@ class SettingsFragment : Fragment() {
         }
 
         dialog.show()
+        dialog.window?.setLayout(
+            android.view.WindowManager.LayoutParams.MATCH_PARENT,
+            android.view.WindowManager.LayoutParams.MATCH_PARENT
+        )
     }
 
     private companion object {

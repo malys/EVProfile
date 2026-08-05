@@ -1,6 +1,7 @@
 package com.mg4.control.service
 
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.PixelFormat
@@ -330,7 +331,7 @@ object ProfilePickerOverlay {
             handler.post {
                 if (inPark == true) {
                     val themed = ContextThemeWrapper(LocaleHelper.applyLocale(context), R.style.Theme_MG4Control)
-                    val dialog = AlertDialog.Builder(themed)
+                    val dialog = MaterialAlertDialogBuilder(themed)
                         .setTitle(R.string.vehicle_power_dialog_title)
                         .setMessage(R.string.vehicle_power_dialog_msg)
                         .setNegativeButton(R.string.vehicle_power_dialog_cancel, null)

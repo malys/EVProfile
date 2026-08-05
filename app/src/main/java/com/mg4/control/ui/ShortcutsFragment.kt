@@ -1,6 +1,7 @@
 package com.mg4.control.ui
 
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -218,7 +219,7 @@ class ShortcutsFragment : Fragment() {
         val labels   = resolveList.map { it.loadLabel(pm).toString() }.toTypedArray()
         val packages = resolveList.map { it.activityInfo.packageName }
 
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.shortcuts_pick_app_title)
             .setItems(labels) { _, which ->
                 val pkg      = packages[which]
@@ -249,7 +250,7 @@ class ShortcutsFragment : Fragment() {
             val spinner = spinnerViews[slotKey] ?: return
             spinner.setSelection(0)
             saveInt("shortcut_$slotKey", ShortcutAction.NONE.id)
-            AlertDialog.Builder(requireContext())
+            MaterialAlertDialogBuilder(requireContext())
                 .setMessage(R.string.shortcuts_no_profiles)
                 .setPositiveButton(android.R.string.ok, null)
                 .show()
@@ -258,7 +259,7 @@ class ShortcutsFragment : Fragment() {
 
         val labels = profiles.map { it.name }.toTypedArray()
 
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.shortcuts_pick_profile_title)
             .setItems(labels) { _, which ->
                 val profile  = profiles[which]
@@ -391,7 +392,7 @@ class ShortcutsFragment : Fragment() {
     }
 
     private fun showShortcutWarning() {
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.shortcuts_warning_title)
             .setMessage(R.string.shortcuts_warning_message)
             .setPositiveButton(R.string.shortcuts_warning_ok, null)

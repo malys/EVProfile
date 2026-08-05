@@ -102,6 +102,7 @@
     <string name="profile_save">Speichern</string>
     <string name="profile_cancel">Abbrechen</string>
     <string name="a11y_qr_code">QR-Code für den unten angezeigten Link</string>
+    <string name="profile_delete_confirm">„%1$s“ löschen?</string>
     <string name="settings_cat_language">Sprache</string>
     <string name="settings_cat_display">Anzeige</string>
     <string name="settings_cat_vehicle">Fahrzeug</string>

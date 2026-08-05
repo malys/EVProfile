@@ -1,6 +1,7 @@
 package com.mg4.control.ui
 
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -68,8 +69,8 @@ class ProfileFragment : Fragment() {
                 showProfileDialog(existing = profile, data = profile)
             },
             onDelete = { profile ->
-                AlertDialog.Builder(requireContext())
-                    .setTitle("Supprimer \"${profile.name}\" ?")
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(getString(R.string.profile_delete_confirm, profile.name))
                     .setPositiveButton(R.string.profile_delete) { _, _ ->
                         manager.delete(profile.id)
                         refreshList()

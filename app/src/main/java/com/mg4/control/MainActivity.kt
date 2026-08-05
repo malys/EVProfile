@@ -1,11 +1,10 @@
 package com.mg4.control
 
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -84,7 +83,7 @@ class MainActivity : AppCompatActivity() {
             if (backup == null || backup.profiles.isEmpty()) return@launch
             withContext(Dispatchers.Main) {
                 if (isFinishing || isDestroyed) return@withContext
-                AlertDialog.Builder(this@MainActivity)
+                MaterialAlertDialogBuilder(this@MainActivity)
                     .setTitle(R.string.profile_restore_title)
                     .setMessage(getString(R.string.profile_restore_msg, backup.profiles.size))
                     .setCancelable(false)
@@ -355,11 +354,10 @@ class MainActivity : AppCompatActivity() {
         val dialogView = LayoutInflater.from(this)
             .inflate(R.layout.dialog_language_picker, null)
 
-        val dialog = AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this, R.style.Theme_MG4_Picker)
             .setView(dialogView)
             .setCancelable(false)
             .create()
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         val buttons = mapOf(
             R.id.btn_pick_fr to "fr",
@@ -378,6 +376,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         dialog.show()
+        dialog.window?.setLayout(
+            android.view.WindowManager.LayoutParams.MATCH_PARENT,
+            android.view.WindowManager.LayoutParams.MATCH_PARENT
+        )
     }
 
     companion object {

@@ -102,6 +102,7 @@
     <string name="profile_save">Save</string>
     <string name="profile_cancel">Cancel</string>
     <string name="a11y_qr_code">QR code for the link shown below</string>
+    <string name="profile_delete_confirm">Delete “%1$s”?</string>
     <string name="settings_cat_language">Language</string>
     <string name="settings_cat_display">Display</string>
     <string name="settings_cat_vehicle">Vehicle</string>
