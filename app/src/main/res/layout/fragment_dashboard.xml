@@ -1,27 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Container dashboard — ViewPager2 horizontal pour naviguer entre les pages.
-    Page 0 : paramètres principaux (conduite, climat, alertes)
-    Page 1 : Assistant de sortie de voie (ELK)
+    Le pager occupe tout le fragment : ses deux destinations sont des boutons de la barre
+    du haut (dashboard_tab_controls / dashboard_tab_elk), pas une rangée d'onglets qui
+    reprendrait 104 dp de hauteur sur un panneau de 720. La navigation reste explicite et
+    tactile — le geste de balayage n'est jamais le seul chemin.
 -->
-<FrameLayout
+<androidx.viewpager2.widget.ViewPager2
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dashboard_pager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dash_bg">
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/dashboard_pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <!-- Indicateur de page (dots) — centré en bas -->
-    <LinearLayout
-        android:id="@+id/pager_dots"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="3dp"
-        android:orientation="horizontal" />
-
-</FrameLayout>
+    android:background="@color/mg4_background"
+    android:paddingStart="@dimen/spacing_lg"
+    android:paddingEnd="@dimen/spacing_lg"
+    android:paddingTop="@dimen/spacing_md" />

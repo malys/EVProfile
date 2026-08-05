@@ -5,6 +5,7 @@ import android.graphics.PixelFormat
 import android.os.Handler
 import android.os.Looper
 import android.view.ContextThemeWrapper
+import android.view.KeyEvent
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -85,14 +86,25 @@ object ProfileConfirmOverlay {
         view.findViewById<View>(R.id.confirm_backdrop).setOnClickListener { finish(false) }
 
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        // Focusable : c'est une confirmation d'écriture véhicule, elle doit être atteignable
+        // au clavier et annoncée par TalkBack. RETOUR vaut « Non », comme le fond.
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            0,
             PixelFormat.TRANSLUCENT
         ).apply { gravity = Gravity.CENTER }
+
+        view.isFocusableInTouchMode = true
+        view.setOnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                finish(false); true
+            } else false
+        }
+
         wm.addView(view, params)
+        view.requestFocus()
         overlayView = view
         AppLogger.i(TAG, "Confirm affiché pour '${profile.name}'")
 

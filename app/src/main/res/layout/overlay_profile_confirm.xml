@@ -1,88 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Confirmation d'application d'un profil — fenêtre plein écran.
+
+    C'était une carte flottante centrée sur un voile sombre. MG4Suite demande une fenêtre
+    plein écran pour une confirmation importante, et celle-ci écrit dans le véhicule :
+    le panneau remplit donc l'écran et les deux actions sont groupées en haut à droite,
+    là où le regard revient. Le compte à rebours reste à gauche de la même rangée.
+
+    L'identifiant confirm_backdrop reste sur la racine : ProfileConfirmOverlay y accroche
+    l'annulation. Le panneau, cliquable, couvre toute la surface et consomme les appuis,
+    de sorte qu'un appui n'annule plus par accident.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/confirm_backdrop"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#99000000"
+    android:background="@color/mg4_background"
     android:clickable="true"
     android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginHorizontal="40dp"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@drawable/bg_card_rounded"
-        android:paddingHorizontal="32dp"
-        android:paddingTop="28dp"
-        android:paddingBottom="20dp"
+        android:background="@color/mg4_background"
+        android:padding="@dimen/spacing_lg"
         android:clickable="true"
         android:focusable="true">
 
-        <!-- Message encadré -->
-        <TextView
-            android:id="@+id/confirm_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_confirm_message"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="22dp"
-            android:gravity="center"
-            android:textColor="@color/text_primary"
-            android:textSize="21sp"
-            android:lineSpacingExtra="6dp"
-            android:layout_marginBottom="28dp" />
-
-        <!-- Gros boutons OUI (gauche) / NON (droite) -->
+        <!-- Actions groupées en haut à droite ; compte à rebours à gauche -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/confirm_btn_yes"
+            <TextView
+                android:id="@+id/confirm_countdown"
                 android:layout_width="0dp"
-                android:layout_height="72dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginEnd="12dp"
-                android:text="@string/automation_confirm_yes"
-                android:textColor="@color/dash_accent"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textAllCaps="true"
-                app:backgroundTint="@color/dash_accent_dim"
-                app:strokeWidth="1dp"
-                app:strokeColor="@color/dash_accent"
-                app:cornerRadius="12dp" />
+                android:textColor="@color/dash_text_lo"
+                android:textSize="@dimen/text_body" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/confirm_btn_no"
-                android:layout_width="0dp"
-                android:layout_height="72dp"
-                android:layout_weight="1"
-                android:layout_marginStart="12dp"
+                style="@style/Widget.MG4.Button.Outlined"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/touch_target"
+                android:layout_marginEnd="@dimen/spacing_sm"
+                android:minWidth="220dp"
                 android:text="@string/automation_confirm_no"
                 android:textColor="@color/text_secondary"
-                android:textSize="22sp"
-                android:textStyle="bold"
                 android:textAllCaps="true"
                 app:backgroundTint="@color/dash_btn"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/dash_border"
-                app:cornerRadius="12dp" />
+                app:cornerRadius="@dimen/mg4_corner" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/confirm_btn_yes"
+                style="@style/Widget.MG4.Button.Outlined"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/touch_target"
+                android:minWidth="220dp"
+                android:text="@string/automation_confirm_yes"
+                android:textColor="@color/dash_accent"
+                android:textAllCaps="true"
+                app:backgroundTint="@color/dash_accent_dim"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/dash_accent"
+                app:cornerRadius="@dimen/mg4_corner" />
 
         </LinearLayout>
 
-        <!-- Timer (bas gauche) -->
+        <!-- Message : seul contenu de la fenêtre, lisible d'un regard -->
         <TextView
-            android:id="@+id/confirm_countdown"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textColor="@color/dash_text_lo"
-            android:textSize="15sp" />
+            android:id="@+id/confirm_message"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:background="@drawable/bg_confirm_message"
+            android:paddingHorizontal="@dimen/spacing_lg"
+            android:paddingVertical="@dimen/spacing_lg"
+            android:gravity="center"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_title"
+            android:lineSpacingExtra="6dp" />
 
     </LinearLayout>
 

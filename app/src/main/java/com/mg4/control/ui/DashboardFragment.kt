@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Switch
+import com.google.android.material.button.MaterialButton
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -35,7 +36,8 @@ class DashboardFragment : Fragment() {
 
     // ── ViewPager ────────────────────────────────────────────────────────────
     private var pager: ViewPager2? = null
-    private var dots: Array<View>? = null
+    private var dashboardTabControls: MaterialButton? = null
+    private var dashboardTabElk: MaterialButton? = null
 
     // ── Page 0 — Drive mode ─────────────────────────────────────────────────
     private val driveModeButtons = mutableMapOf<DriveMode, Button>()
@@ -79,6 +81,8 @@ class DashboardFragment : Fragment() {
     private var energySavingOn = false
     /** Dernier mode de conduite connu — nécessaire pour arbitrer les exclusions SNOW / Éco énergie. */
     private var currentDriveMode: DriveMode? = null
+    /** Dernier niveau de regen connu — sert à n'annoncer que les vrais changements. */
+    private var currentRegenLevel: RegenLevel? = null
 
     // ── AEB : page 0 pour VSM-based, page 1 (SWI133) pour les autres ───────────
     private var switchAeb: Switch? = null
@@ -152,34 +156,44 @@ class DashboardFragment : Fragment() {
     // ═════════════════════════════════════════════════════════════════════════
 
     private fun setupPager(root: View) {
-        pager = root.findViewById(R.id.dashboard_pager)
-        val dotsContainer = root.findViewById<LinearLayout>(R.id.pager_dots)
+        pager = if (root is ViewPager2) root else root.findViewById(R.id.dashboard_pager)
+        // Les deux destinations sont dans la barre du haut, qui appartient à l'activité :
+        // le fragment les emprunte le temps de sa vue et les relâche dans onDestroyView.
+        dashboardTabControls = requireActivity().findViewById(R.id.dashboard_tab_controls)
+        dashboardTabElk = requireActivity().findViewById(R.id.dashboard_tab_elk)
 
         pager?.adapter = DashboardPagerAdapter()
         pager?.offscreenPageLimit = 1  // garde les 2 pages en mémoire
 
-        // Dots
-        val dotCount = 2
-        val dotViews = Array(dotCount) { i ->
-            View(requireContext()).apply {
-                val size = 10
-                val lp = LinearLayout.LayoutParams(size, size)
-                lp.setMargins(6, 0, 6, 0)
-                layoutParams = lp
-                setBackgroundResource(R.drawable.dot_indicator)
-                isSelected = i == 0
-            }
-        }
-        dotViews.forEach { dotsContainer.addView(it) }
-        dots = dotViews
+        dashboardTabControls?.setOnClickListener { pager?.setCurrentItem(0, false) }
+        dashboardTabElk?.setOnClickListener { pager?.setCurrentItem(1, false) }
 
         pager?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                dots?.forEachIndexed { i, dot -> dot.isSelected = i == position }
+                updateDashboardTabs(position)
                 // Refresh ELK quand on arrive sur la page 1
                 if (position == 1) refreshElk()
             }
         })
+        updateDashboardTabs(0)
+    }
+
+    override fun onDestroyView() {
+        // Ces boutons survivent au fragment : sans ce nettoyage, leurs listeners
+        // retiendraient une vue détruite.
+        dashboardTabControls?.setOnClickListener(null)
+        dashboardTabElk?.setOnClickListener(null)
+        dashboardTabControls = null
+        dashboardTabElk = null
+        pager = null
+        super.onDestroyView()
+    }
+
+    private fun updateDashboardTabs(position: Int) {
+        dashboardTabControls?.isEnabled = position != 0
+        dashboardTabElk?.isEnabled = position != 1
+        dashboardTabControls?.isSelected = position == 0
+        dashboardTabElk?.isSelected = position == 1
     }
 
     private inner class DashboardPagerAdapter :
@@ -834,12 +848,18 @@ class DashboardFragment : Fragment() {
     private fun applyEnergySavingUI(active: Boolean) {
         energySavingOn = active
         btnEnergySaving?.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+        btnEnergySaving?.isSelected = active
         btnEnergySaving?.setTextColor(if (active) colorTextActive else colorTextInactive)
         // Regen : indisponible si Éco actif OU si SNOW sélectionné
         setRegenEnabled(!active && currentDriveMode != DriveMode.SNOW)
     }
 
     private fun applyDriveModeUI(mode: DriveMode) {
+        // Le changement de valeur est annoncé une fois, pas à chaque rafraîchissement
+        // périodique : sans cela TalkBack ne dit rien du tout quand le mode change.
+        if (mode != currentDriveMode) {
+            announceValue(R.string.card_drive, getString(mode.labelRes))
+        }
         currentDriveMode = mode
         driveModeButtons.forEach { (m, btn) ->
             val (bg, text) = when {
@@ -850,6 +870,7 @@ class DashboardFragment : Fragment() {
             }
             btn.backgroundTintList = ColorStateList.valueOf(bg)
             btn.setTextColor(text)
+            btn.isSelected = m == mode
         }
         // Regen : indisponible si SNOW OU si Éco énergie actif
         setRegenEnabled(mode != DriveMode.SNOW && !energySavingOn)
@@ -860,11 +881,21 @@ class DashboardFragment : Fragment() {
     }
 
     private fun applyRegenUI(level: RegenLevel) {
+        if (level != currentRegenLevel) {
+            announceValue(R.string.drive_section_regen, getString(level.labelRes))
+        }
+        currentRegenLevel = level
         regenButtons.forEach { (l, btn) ->
             val active = l == level
             btn.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+            btn.isSelected = active
             btn.setTextColor(if (active) colorTextActive else colorTextInactive)
         }
+    }
+
+    /** Annonce « <réglage> : <valeur> » à TalkBack. La couleur du bouton ne suffit pas. */
+    private fun announceValue(labelRes: Int, value: String) {
+        view?.announceForAccessibility("${getString(labelRes)} : $value")
     }
 
     private fun setRegenEnabled(enabled: Boolean) {
@@ -882,6 +913,7 @@ class DashboardFragment : Fragment() {
         swi133AdasMap.forEach { (modeIndex, btn) ->
             val active = modeIndex == activeMode
             btn?.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+            btn?.isSelected = active
             btn?.setTextColor(if (active) colorTextActive else colorTextInactive)
         }
     }
@@ -890,6 +922,7 @@ class DashboardFragment : Fragment() {
         swi68AdasMap.forEach { (modeValue, btn) ->
             val active = modeValue == activeMode
             btn?.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+            btn?.isSelected = active
             btn?.setTextColor(if (active) colorTextActive else colorTextInactive)
         }
     }
@@ -905,8 +938,10 @@ class DashboardFragment : Fragment() {
 
     private fun applyAebModeUI(activeMode: Int) {
         btnAebAlarm?.backgroundTintList      = ColorStateList.valueOf(if (activeMode == AebMode.ALARM)       colorActive else colorInactive)
+        btnAebAlarm?.isSelected              = activeMode == AebMode.ALARM
         btnAebAlarm?.setTextColor(                                    if (activeMode == AebMode.ALARM)       colorTextActive else colorTextInactive)
         btnAebAlarmBrake?.backgroundTintList = ColorStateList.valueOf(if (activeMode == AebMode.ALARM_BRAKE) colorActive else colorInactive)
+        btnAebAlarmBrake?.isSelected         = activeMode == AebMode.ALARM_BRAKE
         btnAebAlarmBrake?.setTextColor(                               if (activeMode == AebMode.ALARM_BRAKE) colorTextActive else colorTextInactive)
     }
 
@@ -921,6 +956,7 @@ class DashboardFragment : Fragment() {
         buttons.forEachIndexed { i, btn ->
             val active = i == activeIndex
             btn.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+            btn.isSelected = active
             btn.setTextColor(if (active) colorTextActive else colorTextInactive)
         }
     }
@@ -933,6 +969,7 @@ class DashboardFragment : Fragment() {
         elkModeMap.forEach { (mode, btn) ->
             val active = mode == activeMode
             btn?.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+            btn?.isSelected = active
             btn?.setTextColor(if (active) colorTextActive else colorTextInactive)
         }
     }
@@ -941,6 +978,7 @@ class DashboardFragment : Fragment() {
         elkSenMap.forEach { (level, btn) ->
             val active = level == activeLevel
             btn?.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+            btn?.isSelected = active
             btn?.setTextColor(if (active) colorTextActive else colorTextInactive)
         }
     }
@@ -949,6 +987,7 @@ class DashboardFragment : Fragment() {
         aebSenMap.forEach { (level, btn) ->
             val active = level == activeLevel
             btn?.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+            btn?.isSelected = active
             btn?.setTextColor(if (active) colorTextActive else colorTextInactive)
         }
     }

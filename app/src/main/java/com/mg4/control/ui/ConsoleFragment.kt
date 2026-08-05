@@ -1,6 +1,5 @@
 package com.mg4.control.ui
 
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ScrollView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.mg4.control.R
 import com.mg4.hardware.AppLogger
@@ -81,7 +81,7 @@ class ConsoleFragment : Fragment() {
 
         fun appendStatus(label: String, ok: Boolean) {
             val line = if (ok) "  ✓  $label\n" else "  ✗  $label\n"
-            val color = if (ok) Color.parseColor("#AAFFAA") else Color.parseColor("#FF5555")
+            val color = colorOf(if (ok) R.color.mg4_ok else R.color.console_error)
             val start = sb.length
             sb.append(line)
             sb.setSpan(ForegroundColorSpan(color), start, sb.length, 0)
@@ -131,16 +131,19 @@ class ConsoleFragment : Fragment() {
         val prefix = "[${entry.time}] "
         val tag    = "${entry.tag}: "
         val msg    = "${entry.msg}\n"
-        val color  = when (entry.level) {
-            AppLogger.Level.ERROR -> Color.parseColor("#FF5555")
-            AppLogger.Level.WARN  -> Color.parseColor("#FFAA00")
-            AppLogger.Level.DEBUG -> Color.parseColor("#888888")
-            AppLogger.Level.INFO  -> Color.parseColor("#CCCCCC")
-        }
+        val color  = colorOf(when (entry.level) {
+            AppLogger.Level.ERROR -> R.color.console_error
+            AppLogger.Level.WARN  -> R.color.console_warn
+            AppLogger.Level.DEBUG -> R.color.console_debug
+            AppLogger.Level.INFO  -> R.color.console_info
+        })
         val start = sb.length
         sb.append(prefix).append(tag).append(msg)
-        sb.setSpan(ForegroundColorSpan(Color.parseColor("#666666")), start, start + prefix.length, 0)
-        sb.setSpan(ForegroundColorSpan(Color.parseColor("#AAAAFF")), start + prefix.length, start + prefix.length + tag.length, 0)
+        sb.setSpan(ForegroundColorSpan(colorOf(R.color.console_timestamp)), start, start + prefix.length, 0)
+        sb.setSpan(ForegroundColorSpan(colorOf(R.color.console_tag)), start + prefix.length, start + prefix.length + tag.length, 0)
         sb.setSpan(ForegroundColorSpan(color), start + prefix.length + tag.length, sb.length, 0)
     }
+
+    /** Résout une couleur du thème courant (clair ou sombre) au moment du rendu. */
+    private fun colorOf(res: Int): Int = ContextCompat.getColor(requireContext(), res)
 }

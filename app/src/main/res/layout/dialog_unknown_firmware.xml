@@ -1,143 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Dialog "Firmware non reconnu"
-    Affiché au démarrage si le firmware n'est ni SWI133 ni SWI68.
-    Deux choix : fermer l'application ou continuer et sélectionner un mode manuellement.
--->
+<!-- Full-screen safety warning: all context stays readable at 70 cm. -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/bg_card_rounded"
-    android:minWidth="480dp">
+    android:background="@color/mg4_background"
+    android:padding="@dimen/spacing_lg">
 
-    <!-- ── En-tête warning ────────────────────────────────────────── -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/touch_target"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="14dp">
+        android:layout_marginBottom="@dimen/spacing_lg">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/fw_unknown_title"
-            android:textColor="@color/dash_danger"
-            android:textSize="9sp"
-            android:textStyle="bold"
-            android:letterSpacing="0.12"
-            android:textAllCaps="true" />
+            android:textColor="@color/mg4_error"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold" />
 
-        <!-- Badge firmware détecté -->
         <TextView
             android:id="@+id/tv_fw_detected_badge"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/dash_danger"
-            android:textSize="10sp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@color/mg4_error"
+            android:textSize="@dimen/text_body"
             android:textStyle="bold"
-            android:fontFamily="monospace"
             android:background="@drawable/bg_section_rounded"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:paddingTop="3dp"
-            android:paddingBottom="3dp" />
+            android:paddingStart="@dimen/spacing_md"
+            android:paddingEnd="@dimen/spacing_md"
+            android:layout_marginEnd="@dimen/spacing_lg" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_fw_close_app"
+            style="@style/Widget.MG4.Button.Outlined"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:text="@string/fw_unknown_btn_close"
+            android:textColor="@color/mg4_error"
+            android:textAllCaps="false"
+            app:strokeColor="@color/mg4_error"
+            app:cornerRadius="@dimen/mg4_corner"
+            android:layout_marginEnd="@dimen/spacing_sm" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_fw_continue"
+            style="@style/Widget.MG4.Button"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:text="@string/fw_unknown_btn_continue"
+            android:textAllCaps="false"
+            app:cornerRadius="@dimen/mg4_corner" />
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/dash_border" />
-
-    <!-- ── Corps ──────────────────────────────────────────────────── -->
-    <TextView
-        android:id="@+id/tv_fw_unknown_body"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/fw_unknown_body"
-        android:textColor="@color/text_secondary"
-        android:textSize="12sp"
-        android:lineSpacingMultiplier="1.3"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp" />
-
-    <!-- ── Indication chips ───────────────────────────────────────── -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical"
-        android:background="@drawable/bg_section_rounded"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="16dp"
-        android:padding="12dp">
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_card_rounded"
+        android:padding="@dimen/spacing_lg">
+
+        <TextView
+            android:id="@+id/tv_fw_unknown_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fw_unknown_body"
+            android:textColor="@color/mg4_text_primary"
+            android:textSize="@dimen/text_body"
+            android:lineSpacingMultiplier="1.35" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/fw_unknown_hint"
-            android:textColor="@color/dash_text_lo"
-            android:textSize="11sp"
-            android:lineSpacingMultiplier="1.3"
-            android:gravity="center" />
-
-    </LinearLayout>
-
-    <!-- ── Pied de page : boutons ─────────────────────────────────── -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/dash_border" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:padding="12dp">
-
-        <!-- Fermer l'application -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_fw_close_app"
-            style="@style/Widget.MG4.Button.Outlined"
-            android:layout_width="0dp"
-            android:layout_height="44dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:text="@string/fw_unknown_btn_close"
-            android:textColor="@color/dash_danger"
-            android:textSize="11sp"
-            android:textAllCaps="true"
-            android:backgroundTint="@color/dash_danger_dim"
-            app:strokeColor="@color/dash_danger"
-            app:strokeWidth="1dp"
-            app:cornerRadius="8dp" />
-
-        <!-- Continuer -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_fw_continue"
-            style="@style/Widget.MG4.Button.Outlined"
-            android:layout_width="0dp"
-            android:layout_height="44dp"
-            android:layout_weight="1"
-            android:text="@string/fw_unknown_btn_continue"
-            android:textColor="@color/dash_accent"
-            android:textSize="11sp"
-            android:textAllCaps="true"
-            android:backgroundTint="@color/dash_accent_dim"
-            app:strokeColor="@color/dash_accent"
-            app:strokeWidth="1dp"
-            app:cornerRadius="8dp" />
+            android:textColor="@color/mg4_text_secondary"
+            android:textSize="@dimen/text_secondary"
+            android:lineSpacingMultiplier="1.35"
+            android:background="@drawable/bg_section_rounded"
+            android:padding="@dimen/spacing_lg"
+            android:layout_marginTop="@dimen/spacing_lg" />
 
     </LinearLayout>
 

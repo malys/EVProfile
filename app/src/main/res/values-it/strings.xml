@@ -16,6 +16,8 @@
     <string name="nav_adas">ADAS</string>
     <string name="nav_settings">Impostazioni</string>
     <string name="nav_shortcuts">Scorciatoie</string>
+    <string name="nav_tasker">Automazione</string>
+    <string name="nav_tasker_unavailable">Impossibile aprire MG4Tasker</string>
 
     <!-- Scorciatoie al volante -->
     <string name="shortcuts_enabled_label">Attiva scorciatoie al volante</string>
@@ -101,6 +103,20 @@
     <string name="profile_name_required">Il nome è obbligatorio</string>
     <string name="profile_save">Salva</string>
     <string name="profile_cancel">Annulla</string>
+    <string name="a11y_qr_code">Codice QR del link mostrato sotto</string>
+    <string name="tab_dashboard_main">Guida</string>
+    <string name="tab_dashboard_elk">Uscita corsia</string>
+    <string name="profile_delete_confirm">Eliminare «%1$s»?</string>
+    <string name="settings_cat_language">Lingua</string>
+    <string name="settings_cat_display">Schermo</string>
+    <string name="settings_cat_vehicle">Veicolo</string>
+    <string name="settings_cat_app">Applicazione</string>
+    <!-- Catégories du rail de l'éditeur de profil -->
+    <string name="profile_cat_general">Generale</string>
+    <string name="profile_cat_drive">Guida</string>
+    <string name="profile_cat_comfort">Comfort</string>
+    <string name="profile_cat_adas">ADAS</string>
+    <string name="profile_cat_safety">Sicurezza</string>
     <string name="profile_applied">Profilo applicato: %s</string>
     <string name="profile_max_reached">Massimo %d profili raggiunto</string>
     <string name="profile_auto_applied">Profilo predefinito applicato all\'avvio</string>
@@ -172,17 +188,15 @@
     <string name="btn_check_update">Controlla aggiornamenti</string>
     <string name="update_up_to_date">✓  Aggiornato</string>
     <string name="update_network_error">✕  Errore di rete</string>
-    <string name="btn_infos">Info</string>
     <string name="info_title">Informazioni</string>
     <string name="info_app_label">Applicazione</string>
     <string name="info_version_label">Versione</string>
     <string name="info_firmware_label">Firmware</string>
     <string name="info_github_link">github.com/malys/MG4Control</string>
     <string name="info_gitlab_link">gitlab.com/SliDeeN/mg4control</string>
-    <string name="info_made_with_love">Mantenuto da malys</string>
+    <string name="info_made_with_love">Contributi di malys</string>
     <string name="info_special_thanks">Grazie a confor1max per i test SWI68 🙏</string>
     <string name="info_based_on">Fork di SliDeeN/MG4Control · basato su DriveHub Dort di Merth4n &amp; hotboy_ist</string>
-    <string name="info_close">Chiudi</string>
 
     <!-- Dashboard — intestazioni schede -->
     <string name="card_drive">Impostazioni di guida</string>

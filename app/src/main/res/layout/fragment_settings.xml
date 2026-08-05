@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Réglages — navigation liste/détail.
+
+    L'écran était une seule colonne de cartes dans un ScrollView : il fallait faire
+    défiler avant même de savoir ce qu'il contenait. Le rail de gauche tient les quatre
+    catégories, toujours visibles, et le volet de droite n'en montre qu'une.
+
+    Les identifiants sont inchangés : SettingsFragment lie les mêmes vues.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -6,20 +15,103 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/dash_bg"
-    android:padding="14dp">
+    android:padding="@dimen/spacing_md">
 
-    <!-- ── Sections + boutons scrollables ────────────────────────────── -->
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:fillViewport="false"
-        android:overScrollMode="ifContentScrolls">
+        android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/settings_rail"
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/spacing_md">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rail_settings_language"
+            style="@style/Widget.MG4.Button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="@dimen/touch_target"
+            android:layout_marginBottom="@dimen/spacing_sm"
+            android:gravity="center_vertical|start"
+            android:text="@string/settings_cat_language"
+            android:textAllCaps="false"
+            app:cornerRadius="@dimen/mg4_corner" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rail_settings_display"
+            style="@style/Widget.MG4.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/touch_target"
+            android:layout_marginBottom="@dimen/spacing_sm"
+            android:gravity="center_vertical|start"
+            android:text="@string/settings_cat_display"
+            android:textAllCaps="false"
+            app:cornerRadius="@dimen/mg4_corner" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rail_settings_vehicle"
+            style="@style/Widget.MG4.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/touch_target"
+            android:layout_marginBottom="@dimen/spacing_sm"
+            android:gravity="center_vertical|start"
+            android:text="@string/settings_cat_vehicle"
+            android:textAllCaps="false"
+            app:cornerRadius="@dimen/mg4_corner" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rail_settings_app"
+            style="@style/Widget.MG4.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/touch_target"
+            android:layout_marginBottom="@dimen/spacing_sm"
+            android:gravity="center_vertical|start"
+            android:text="@string/settings_cat_app"
+            android:textAllCaps="false"
+            app:cornerRadius="@dimen/mg4_corner" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rail_settings_about"
+            style="@style/Widget.MG4.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/touch_target"
+            android:layout_marginBottom="@dimen/spacing_sm"
+            android:gravity="center_vertical|start"
+            android:text="@string/info_title"
+            android:textAllCaps="false"
+            app:cornerRadius="@dimen/mg4_corner" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/dash_border" />
+
+        <ViewFlipper
+            android:id="@+id/settings_detail"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+        <ScrollView
+            android:id="@+id/page_settings_language"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/spacing_md"
+                android:paddingEnd="@dimen/spacing_md">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
             <!-- ── Section LANGUE ──────────────────────────────────────────── -->
             <LinearLayout
@@ -34,7 +126,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/settings_language"
                     android:textColor="@color/dash_text_lo"
-                    android:textSize="9sp"
+                    android:textSize="@dimen/text_label"
                     android:textStyle="bold"
                     android:letterSpacing="0.12"
                     android:textAllCaps="true"
@@ -57,45 +149,45 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_lang_fr"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
-                        android:layout_marginEnd="4dp"
+                        android:layout_marginEnd="@dimen/spacing_sm"
                         android:text="@string/settings_language_fr"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp"
+                        android:textSize="@dimen/text_label"
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="8dp" />
+                        app:cornerRadius="@dimen/mg4_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_lang_en"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="4dp"
+                        android:layout_marginStart="@dimen/spacing_sm"
+                        android:layout_marginEnd="@dimen/spacing_sm"
                         android:text="@string/settings_language_en"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp"
+                        android:textSize="@dimen/text_label"
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="8dp" />
+                        app:cornerRadius="@dimen/mg4_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_lang_de"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
-                        android:layout_marginStart="4dp"
+                        android:layout_marginStart="@dimen/spacing_sm"
                         android:text="@string/settings_language_de"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp"
+                        android:textSize="@dimen/text_label"
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="8dp" />
+                        app:cornerRadius="@dimen/mg4_corner" />
 
                 </LinearLayout>
 
@@ -110,49 +202,73 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_lang_es"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
-                        android:layout_marginEnd="4dp"
+                        android:layout_marginEnd="@dimen/spacing_sm"
                         android:text="@string/settings_language_es"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp"
+                        android:textSize="@dimen/text_label"
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="8dp" />
+                        app:cornerRadius="@dimen/mg4_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_lang_pt"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="4dp"
+                        android:layout_marginStart="@dimen/spacing_sm"
+                        android:layout_marginEnd="@dimen/spacing_sm"
                         android:text="@string/settings_language_pt"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp"
+                        android:textSize="@dimen/text_label"
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="8dp" />
+                        app:cornerRadius="@dimen/mg4_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_lang_it"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
-                        android:layout_marginStart="4dp"
+                        android:layout_marginStart="@dimen/spacing_sm"
                         android:text="@string/settings_language_it"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp"
+                        android:textSize="@dimen/text_label"
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="8dp" />
+                        app:cornerRadius="@dimen/mg4_corner" />
 
                 </LinearLayout>
 
             </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+        <ScrollView
+            android:id="@+id/page_settings_display"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/spacing_md"
+                android:paddingEnd="@dimen/spacing_md">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="@dimen/spacing_sm">
 
             <!-- ── Section ÉCRAN PAR DÉFAUT ─────────────────────────────────── -->
             <LinearLayout
@@ -167,7 +283,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/settings_default_screen"
                     android:textColor="@color/dash_text_lo"
-                    android:textSize="9sp"
+                    android:textSize="@dimen/text_label"
                     android:textStyle="bold"
                     android:letterSpacing="0.12"
                     android:textAllCaps="true"
@@ -190,49 +306,57 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_default_dashboard"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginEnd="@dimen/spacing_sm"
                         android:text="@string/settings_default_screen_dashboard"
                         android:textColor="@color/text_secondary"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/text_label"
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="8dp" />
+                        app:cornerRadius="@dimen/mg4_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_default_profiles"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="@dimen/spacing_sm"
+                        android:layout_marginEnd="@dimen/spacing_sm"
                         android:text="@string/nav_profiles"
                         android:textColor="@color/text_secondary"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/text_label"
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="8dp" />
+                        app:cornerRadius="@dimen/mg4_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_default_shortcuts"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
-                        android:layout_marginStart="5dp"
+                        android:layout_marginStart="@dimen/spacing_sm"
                         android:text="@string/nav_shortcuts"
                         android:textColor="@color/text_secondary"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/text_label"
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="8dp" />
+                        app:cornerRadius="@dimen/mg4_corner" />
 
                 </LinearLayout>
 
             </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
             <!-- ── Section APPARENCE ────────────────────────────────────────── -->
             <LinearLayout
@@ -247,7 +371,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/settings_theme"
                     android:textColor="@color/dash_text_lo"
-                    android:textSize="9sp"
+                    android:textSize="@dimen/text_label"
                     android:textStyle="bold"
                     android:letterSpacing="0.12"
                     android:textAllCaps="true"
@@ -270,31 +394,31 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_theme_auto"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
-                        android:layout_marginEnd="4dp"
+                        android:layout_marginEnd="@dimen/spacing_sm"
                         android:text="@string/settings_theme_auto"
                         android:textColor="@color/text_secondary"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/text_label"
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="8dp" />
+                        app:cornerRadius="@dimen/mg4_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_theme_dark"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="4dp"
+                        android:layout_marginStart="@dimen/spacing_sm"
+                        android:layout_marginEnd="@dimen/spacing_sm"
                         android:text="@string/settings_theme_dark"
                         android:textColor="@color/text_secondary"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/text_label"
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="8dp"
+                        app:cornerRadius="@dimen/mg4_corner"
                         app:icon="@android:drawable/ic_menu_month"
                         app:iconTint="@color/dash_text_lo"
                         app:iconSize="16dp"
@@ -303,20 +427,161 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_theme_light"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
-                        android:layout_marginStart="4dp"
+                        android:layout_marginStart="@dimen/spacing_sm"
                         android:text="@string/settings_theme_light"
                         android:textColor="@color/text_secondary"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/text_label"
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="8dp"
+                        app:cornerRadius="@dimen/mg4_corner"
                         app:icon="@android:drawable/ic_menu_today"
                         app:iconTint="@color/dash_text_lo"
                         app:iconSize="16dp"
                         app:iconGravity="textStart" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+        <ScrollView
+            android:id="@+id/page_settings_vehicle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/spacing_md"
+                android:paddingEnd="@dimen/spacing_md">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+            <!-- ── Section FIRMWARE ────────────────────────────────────────
+                 Remontée depuis la barre du haut : elle occupait la largeur de chaque
+                 écran pour une information qu'on consulte une fois. Les six pastilles
+                 étaient hautes de quelques dp ; ce sont maintenant des boutons de 72 dp,
+                 cliquables quand la génération est inconnue ou forcée. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_card_rounded"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_firmware_version"
+                    android:textColor="@color/dash_text_lo"
+                    android:textSize="@dimen/text_label"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.12"
+                    android:textAllCaps="true"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="8dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/dash_border" />
+
+                <TextView
+                    android:id="@+id/tv_firmware_detected"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:paddingTop="10dp"
+                    android:text="@string/settings_firmware_loading"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_body" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="14dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/chip_swi133"
+                        style="@style/Widget.MG4.Button.Outlined"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/touch_target"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="@dimen/spacing_sm"
+                        android:text="SWI133"
+                        android:textAllCaps="true"
+                        app:cornerRadius="@dimen/mg4_corner" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/chip_swi132"
+                        style="@style/Widget.MG4.Button.Outlined"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/touch_target"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="@dimen/spacing_sm"
+                        android:text="SWI132"
+                        android:textAllCaps="true"
+                        app:cornerRadius="@dimen/mg4_corner" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/chip_swi68"
+                        style="@style/Widget.MG4.Button.Outlined"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/touch_target"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="@dimen/spacing_sm"
+                        android:text="SWI68"
+                        android:textAllCaps="true"
+                        app:cornerRadius="@dimen/mg4_corner" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/chip_swi69"
+                        style="@style/Widget.MG4.Button.Outlined"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/touch_target"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="@dimen/spacing_sm"
+                        android:text="SWI69"
+                        android:textAllCaps="true"
+                        app:cornerRadius="@dimen/mg4_corner" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/chip_swi131"
+                        style="@style/Widget.MG4.Button.Outlined"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/touch_target"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="@dimen/spacing_sm"
+                        android:text="SWI131"
+                        android:textAllCaps="true"
+                        app:cornerRadius="@dimen/mg4_corner" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/chip_swi165"
+                        style="@style/Widget.MG4.Button.Outlined"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/touch_target"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/spacing_sm"
+                        android:text="SWI165"
+                        android:textAllCaps="true"
+                        app:cornerRadius="@dimen/mg4_corner" />
 
                 </LinearLayout>
 
@@ -335,7 +600,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/settings_auto_apply"
                     android:textColor="@color/dash_text_lo"
-                    android:textSize="9sp"
+                    android:textSize="@dimen/text_label"
                     android:textStyle="bold"
                     android:letterSpacing="0.12"
                     android:textAllCaps="true"
@@ -362,7 +627,7 @@
                         android:layout_weight="1"
                         android:text="@string/settings_auto_apply_desc"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/text_label" />
 
                     <Switch
                         android:id="@+id/switch_auto_apply"
@@ -391,7 +656,7 @@
                         android:layout_weight="1"
                         android:text="@string/settings_auto_update_desc"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/text_label" />
 
                     <Switch
                         android:id="@+id/switch_auto_update"
@@ -422,22 +687,22 @@
                         android:layout_weight="1"
                         android:text="@string/settings_vehicle_power_desc"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/text_label" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_vehicle_power_off"
                         android:layout_width="wrap_content"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/touch_target"
                         android:layout_marginStart="8dp"
                         android:text="@string/settings_vehicle_power_btn"
                         android:textColor="@color/dash_accent"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/text_label"
                         android:letterSpacing="0.06"
                         android:textAllCaps="true"
                         app:backgroundTint="@color/dash_accent_dim"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_accent"
-                        app:cornerRadius="10dp" />
+                        app:cornerRadius="@dimen/mg4_corner" />
 
                 </LinearLayout>
 
@@ -461,7 +726,7 @@
                         android:layout_weight="1"
                         android:text="@string/settings_speed_gate_desc"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/text_label" />
 
                     <Switch
                         android:id="@+id/switch_speed_gate"
@@ -489,7 +754,7 @@
                         android:layout_weight="1"
                         android:text="@string/settings_speed_gate_max_label"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/text_label" />
 
                     <EditText
                         android:id="@+id/input_speed_gate_max"
@@ -500,18 +765,42 @@
                         android:gravity="end"
                         android:hint="@string/settings_speed_gate_max_hint"
                         android:textColor="@color/text_primary"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_label"
                         android:imeOptions="actionDone" />
 
                 </LinearLayout>
 
             </LinearLayout>
 
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+        <ScrollView
+            android:id="@+id/page_settings_app"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/spacing_md"
+                android:paddingEnd="@dimen/spacing_md">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="@dimen/spacing_sm">
+
             <!-- ── Boutons MAJ (2 colonnes : Vérifier | Nettoyer) ──────────── -->
             <LinearLayout
                 android:id="@+id/row_update_buttons"
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
+                android:layout_height="@dimen/touch_target"
                 android:orientation="horizontal"
                 android:layout_marginBottom="8dp">
 
@@ -520,16 +809,16 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
+                    android:layout_marginEnd="@dimen/spacing_sm"
                     android:text="@string/btn_check_update"
                     android:textColor="@color/dash_accent"
-                    android:textSize="11sp"
+                    android:textSize="@dimen/text_label"
                     android:letterSpacing="0.06"
                     android:textAllCaps="true"
                     app:backgroundTint="@color/dash_accent_dim"
                     app:strokeWidth="1dp"
                     app:strokeColor="@color/dash_accent"
-                    app:cornerRadius="10dp"
+                    app:cornerRadius="@dimen/mg4_corner"
                     app:icon="@android:drawable/stat_sys_download"
                     app:iconTint="@color/dash_accent"
                     app:iconGravity="textStart" />
@@ -541,13 +830,13 @@
                     android:layout_weight="1"
                     android:text="@string/btn_clean_apk"
                     android:textColor="@color/text_secondary"
-                    android:textSize="11sp"
+                    android:textSize="@dimen/text_label"
                     android:letterSpacing="0.06"
                     android:textAllCaps="true"
                     app:backgroundTint="@color/dash_btn"
                     app:strokeWidth="1dp"
                     app:strokeColor="@color/dash_border"
-                    app:cornerRadius="10dp"
+                    app:cornerRadius="@dimen/mg4_corner"
                     app:icon="@android:drawable/ic_menu_delete"
                     app:iconTint="@color/dash_text_lo"
                     app:iconGravity="textStart" />
@@ -558,60 +847,245 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_diagnostic"
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
+                android:layout_height="@dimen/touch_target"
                 android:layout_marginBottom="8dp"
                 android:visibility="gone"
                 android:text="@string/btn_diagnostic"
                 android:textColor="@color/dash_warn"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_label"
                 android:letterSpacing="0.06"
                 android:textAllCaps="true"
                 app:backgroundTint="@color/dash_warn_dim"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/dash_warn"
-                app:cornerRadius="10dp"
+                app:cornerRadius="@dimen/mg4_corner"
                 app:icon="@android:drawable/ic_menu_info_details"
                 app:iconTint="@color/dash_warn"
                 app:iconGravity="textStart" />
 
-            <!-- ── Bouton INFOS ──────────────────────────────────────────────── -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_infos"
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <ScrollView
+            android:id="@+id/page_settings_about"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:layout_marginBottom="8dp"
-                android:text="@string/btn_infos"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp"
-                android:letterSpacing="0.06"
-                android:textAllCaps="true"
-                app:backgroundTint="@color/dash_btn"
-                app:strokeWidth="1dp"
-                app:strokeColor="@color/dash_border"
-                app:cornerRadius="10dp"
-                app:icon="@android:drawable/ic_dialog_info"
-                app:iconTint="@color/dash_text_lo"
-                app:iconGravity="textStart" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/spacing_md"
+                android:paddingEnd="@dimen/spacing_md">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginEnd="24dp">
+
+            <!-- Nom app -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textColor="@color/text_primary"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
+
+            <!-- Basé sur DriveHub Dort -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/info_based_on"
+                android:textColor="@color/dash_text_lo"
+                android:textSize="@dimen/text_label"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Version -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/info_version_label"
+                    android:textColor="@color/dash_text_lo"
+                    android:textSize="@dimen/text_label"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.08"
+                    android:layout_marginEnd="10dp" />
+
+                <TextView
+                    android:id="@+id/tv_app_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="16sp"
+                    android:fontFamily="monospace" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
-    </ScrollView>
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/dash_border"
+                    android:layout_marginEnd="@dimen/spacing_lg" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- QR codes : GitHub | GitLab -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="12dp">
+
+                <!-- GitHub -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginEnd="8dp">
+
+                    <ImageView
+                        android:id="@+id/iv_qr_code_github"
+                        android:contentDescription="@string/a11y_qr_code"
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
+                        android:scaleType="fitCenter"
+                        android:background="@color/qr_quiet_zone"
+                        android:padding="4dp"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/tv_github_link"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/info_github_link"
+                        android:textColor="@color/dash_accent"
+                        android:textSize="@dimen/text_label"
+                        android:textStyle="italic"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                </LinearLayout>
+
+                <!-- GitLab -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginStart="8dp">
+
+                    <ImageView
+                        android:id="@+id/iv_qr_code_gitlab"
+                        android:contentDescription="@string/a11y_qr_code"
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
+                        android:scaleType="fitCenter"
+                        android:background="@color/qr_quiet_zone"
+                        android:padding="4dp"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/tv_gitlab_link"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/info_gitlab_link"
+                        android:textColor="@color/dash_accent"
+                        android:textSize="@dimen/text_label"
+                        android:textStyle="italic"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Séparateur -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/dash_border"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Made with love -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/info_made_with_love"
+                android:textColor="@color/dash_text_lo"
+                android:textSize="@dimen/text_label"
+                android:gravity="center" />
+
+            <!-- Remerciements spéciaux -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/info_special_thanks"
+                android:textColor="@color/dash_text_lo"
+                android:textSize="@dimen/text_label"
+                android:gravity="center"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        </ViewFlipper>
+
+    </LinearLayout>
 
     <!-- ── Bouton FERMER — fixe en bas ───────────────────────────────── -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_close_settings"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="@dimen/touch_target"
+        android:layout_marginTop="@dimen/spacing_sm"
         android:text="@string/nav_close"
         android:textColor="@color/text_secondary"
-        android:textSize="11sp"
+        android:textSize="@dimen/text_label"
         android:letterSpacing="0.06"
         android:textAllCaps="true"
         app:backgroundTint="@color/dash_btn"
         app:strokeWidth="1dp"
         app:strokeColor="@color/dash_border"
-        app:cornerRadius="10dp"
+        app:cornerRadius="@dimen/mg4_corner"
         app:icon="@android:drawable/ic_menu_close_clear_cancel"
         app:iconTint="@color/dash_text_lo"
         app:iconGravity="textStart" />

@@ -11,7 +11,7 @@
     android:id="@+id/overlay_backdrop"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#99000000"
+    android:background="@color/mg4_scrim"
     android:clickable="true"
     android:focusable="true">
 
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/overlay_brightness_title"
                 android:textColor="@color/dash_text_lo"
-                android:textSize="15sp"
+                android:textSize="@dimen/text_label"
                 android:textStyle="bold"
                 android:letterSpacing="0.08"
                 android:textAllCaps="true"
@@ -71,28 +71,28 @@
                     android:id="@+id/overlay_bri_night"
                     style="@style/Widget.MG4.Button.Outlined"
                     android:layout_width="0dp" android:layout_height="74dp" android:layout_weight="1"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginEnd="@dimen/spacing_sm"
                     android:text="@string/overlay_brightness_night"
                     android:textColor="@color/text_secondary" android:textSize="18sp" android:textAllCaps="true"
-                    app:backgroundTint="@color/dash_btn" app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="10dp" />
+                    app:backgroundTint="@color/dash_btn" app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/overlay_bri_mid"
                     style="@style/Widget.MG4.Button.Outlined"
                     android:layout_width="0dp" android:layout_height="74dp" android:layout_weight="1"
-                    android:layout_marginStart="5dp" android:layout_marginEnd="5dp"
+                    android:layout_marginStart="@dimen/spacing_sm" android:layout_marginEnd="@dimen/spacing_sm"
                     android:text="@string/overlay_brightness_mid"
                     android:textColor="@color/text_secondary" android:textSize="18sp" android:textAllCaps="true"
-                    app:backgroundTint="@color/dash_btn" app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="10dp" />
+                    app:backgroundTint="@color/dash_btn" app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/overlay_bri_day"
                     style="@style/Widget.MG4.Button.Outlined"
                     android:layout_width="0dp" android:layout_height="74dp" android:layout_weight="1"
-                    android:layout_marginStart="5dp"
+                    android:layout_marginStart="@dimen/spacing_sm"
                     android:text="@string/overlay_brightness_day"
                     android:textColor="@color/text_secondary" android:textSize="18sp" android:textAllCaps="true"
-                    app:backgroundTint="@color/dash_btn" app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="10dp" />
+                    app:backgroundTint="@color/dash_btn" app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
 
             </LinearLayout>
 
@@ -184,15 +184,15 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/overlay_btn_close"
                     android:layout_width="wrap_content"
-                    android:layout_height="48dp"
+                    android:layout_height="@dimen/touch_target"
                     android:text="@string/nav_close"
                     android:textColor="@color/text_secondary"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/text_label"
                     android:textAllCaps="true"
                     app:backgroundTint="@color/dash_btn"
                     app:strokeWidth="1dp"
                     app:strokeColor="@color/dash_border"
-                    app:cornerRadius="8dp"
+                    app:cornerRadius="@dimen/mg4_corner"
                     app:icon="@android:drawable/ic_menu_close_clear_cancel"
                     app:iconTint="@color/dash_text_lo"
                     app:iconGravity="textStart" />
@@ -203,7 +203,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:textColor="@color/dash_text_lo"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/text_label" />
 
             </LinearLayout>
 
@@ -211,15 +211,15 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/overlay_btn_poweroff"
                 android:layout_width="wrap_content"
-                android:layout_height="48dp"
+                android:layout_height="@dimen/touch_target"
                 android:text="@string/shortcuts_action_vehicle_power_off"
                 android:textColor="@color/text_secondary"
-                android:textSize="15sp"
+                android:textSize="@dimen/text_label"
                 android:textAllCaps="true"
                 app:backgroundTint="@color/dash_btn"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/dash_border"
-                app:cornerRadius="8dp"
+                app:cornerRadius="@dimen/mg4_corner"
                 app:icon="@android:drawable/ic_lock_power_off"
                 app:iconTint="@color/dash_text_lo"
                 app:iconGravity="textStart" />
@@ -235,15 +235,15 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/overlay_btn_open_app"
                     android:layout_width="wrap_content"
-                    android:layout_height="48dp"
+                    android:layout_height="@dimen/touch_target"
                     android:text="@string/overlay_open_app"
                     android:textColor="@color/text_secondary"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/text_label"
                     android:textAllCaps="true"
                     app:backgroundTint="@color/dash_btn"
                     app:strokeWidth="1dp"
                     app:strokeColor="@color/dash_border"
-                    app:cornerRadius="8dp" />
+                    app:cornerRadius="@dimen/mg4_corner" />
 
             </LinearLayout>
 

@@ -1,6 +1,7 @@
 package com.mg4.control.ui
 
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -14,6 +15,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Switch
+import android.widget.ViewFlipper
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
@@ -109,6 +111,8 @@ class ShortcutsFragment : Fragment() {
         view.findViewById<View>(R.id.config_adas_swi133)?.visibility  = if (isKnown) View.VISIBLE else View.GONE
         view.findViewById<View>(R.id.config_adas_swi68)?.visibility   = View.GONE
 
+        setupShortcutsRail(view)
+
         // ── Bouton Fermer ─────────────────────────────────────────────
         view.findViewById<MaterialButton>(R.id.btn_shortcuts_close)?.setOnClickListener {
             findNavController().popBackStack(R.id.dashboardFragment, false)
@@ -120,6 +124,46 @@ class ShortcutsFragment : Fragment() {
     }
 
     // ── Spinners (un adapter par spinner) ────────────────────────────────
+
+    /**
+     * Rail de catégories. L'écran traitait quatre sujets à la fois — les deux boutons ★,
+     * la regen de retour, l'alternance ADAS — sans hiérarchie entre eux. Le volet de
+     * droite n'en montre plus qu'un ; la catégorie ADAS disparaît du rail quand le
+     * firmware n'est pas reconnu, comme la section qu'elle ouvre.
+     */
+    private fun setupShortcutsRail(view: View) {
+        val detail = view.findViewById<ViewFlipper>(R.id.shortcuts_detail)
+        val entries = listOf(
+            R.id.rail_shortcuts_btn1  to null,
+            R.id.rail_shortcuts_btn2  to null,
+            R.id.rail_shortcuts_pedal to null,
+            R.id.rail_shortcuts_adas  to R.id.config_adas_section
+        )
+        val buttons = entries.map { view.findViewById<MaterialButton>(it.first) }
+        val activeText   = requireContext().getColor(R.color.dash_accent)
+        val inactiveText = requireContext().getColor(R.color.text_secondary)
+        val activeBg     = requireContext().getColor(R.color.dash_accent_dim)
+
+        fun select(index: Int) {
+            detail.displayedChild = index
+            buttons.forEachIndexed { i, button ->
+                val current = i == index
+                button.backgroundTintList =
+                    ColorStateList.valueOf(if (current) activeBg else defColor)
+                button.setTextColor(if (current) activeText else inactiveText)
+                button.isSelected = current
+            }
+        }
+
+        entries.forEachIndexed { index, (_, sectionId) ->
+            val button = buttons[index]
+            val available = sectionId == null ||
+                view.findViewById<View>(sectionId)?.visibility == View.VISIBLE
+            button.visibility = if (available) View.VISIBLE else View.GONE
+            button.setOnClickListener { select(index) }
+        }
+        select(0)
+    }
 
     private fun setupSpinners(view: View) {
         for (slotKey in slotPressList) {
@@ -218,7 +262,7 @@ class ShortcutsFragment : Fragment() {
         val labels   = resolveList.map { it.loadLabel(pm).toString() }.toTypedArray()
         val packages = resolveList.map { it.activityInfo.packageName }
 
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.shortcuts_pick_app_title)
             .setItems(labels) { _, which ->
                 val pkg      = packages[which]
@@ -249,7 +293,7 @@ class ShortcutsFragment : Fragment() {
             val spinner = spinnerViews[slotKey] ?: return
             spinner.setSelection(0)
             saveInt("shortcut_$slotKey", ShortcutAction.NONE.id)
-            AlertDialog.Builder(requireContext())
+            MaterialAlertDialogBuilder(requireContext())
                 .setMessage(R.string.shortcuts_no_profiles)
                 .setPositiveButton(android.R.string.ok, null)
                 .show()
@@ -258,7 +302,7 @@ class ShortcutsFragment : Fragment() {
 
         val labels = profiles.map { it.name }.toTypedArray()
 
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.shortcuts_pick_profile_title)
             .setItems(labels) { _, which ->
                 val profile  = profiles[which]
@@ -386,11 +430,12 @@ class ShortcutsFragment : Fragment() {
             val isActive = value == active
             btn?.backgroundTintList = ColorStateList.valueOf(if (isActive) accentColor else defColor)
             btn?.setTextColor(if (isActive) activeTextColor else inactiveTextColor)
+            btn?.isSelected = isActive
         }
     }
 
     private fun showShortcutWarning() {
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.shortcuts_warning_title)
             .setMessage(R.string.shortcuts_warning_message)
             .setPositiveButton(R.string.shortcuts_warning_ok, null)

@@ -1,6 +1,7 @@
 package com.mg4.control.service
 
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.PixelFormat
@@ -9,6 +10,7 @@ import android.os.Looper
 import android.widget.Toast
 import android.util.TypedValue
 import android.view.ContextThemeWrapper
+import android.view.KeyEvent
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -136,7 +138,7 @@ object ProfilePickerOverlay {
                 backgroundTintList = ColorStateList.valueOf(accentDimColor)
                 strokeColor        = ColorStateList.valueOf(accentColor)
                 strokeWidth        = dp(1f)
-                cornerRadius       = dp(10f)
+                cornerRadius       = dp(12f)
                 setOnClickListener {
                     AppLogger.i(TAG, "Profil sélectionné : '${profile.name}'")
                     CoroutineScope(Dispatchers.IO).launch {
@@ -200,17 +202,28 @@ object ProfilePickerOverlay {
         view.findViewById<View>(R.id.overlay_card)?.setOnClickListener { /* consommer */ }
 
         // ── Paramètres WindowManager ──────────────────────────────────────
+        // La fenêtre est focusable : l'overlay demande un choix, il doit donc entrer dans
+        // l'ordre de focus et être lisible par TalkBack. FLAG_NOT_FOCUSABLE l'en excluait.
+        // En contrepartie elle reçoit les touches : RETOUR la ferme, comme un appui sur le fond.
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            0,
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.CENTER
         }
 
+        view.isFocusableInTouchMode = true
+        view.setOnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                dismissOnMainThread(context); true
+            } else false
+        }
+
         wm.addView(view, params)
+        view.requestFocus()
         overlayView = view
         AppLogger.i(TAG, "Overlay affiché — ${profilesToShow.size} profil(s)")
 
@@ -318,7 +331,7 @@ object ProfilePickerOverlay {
             handler.post {
                 if (inPark == true) {
                     val themed = ContextThemeWrapper(LocaleHelper.applyLocale(context), R.style.Theme_MG4Control)
-                    val dialog = AlertDialog.Builder(themed)
+                    val dialog = MaterialAlertDialogBuilder(themed)
                         .setTitle(R.string.vehicle_power_dialog_title)
                         .setMessage(R.string.vehicle_power_dialog_msg)
                         .setNegativeButton(R.string.vehicle_power_dialog_cancel, null)

@@ -299,6 +299,7 @@ class AdasFragment : Fragment() {
         val def    = requireContext().getColor(R.color.bg_button)
         swi133Buttons.forEachIndexed { i, btn ->
             btn.backgroundTintList = ColorStateList.valueOf(if (i == activeMode) accent else def)
+            btn.isSelected = i == activeMode
         }
     }
 
@@ -307,6 +308,7 @@ class AdasFragment : Fragment() {
         val def    = requireContext().getColor(R.color.bg_button)
         swi68Buttons.forEach { (modeValue, btn) ->
             btn?.backgroundTintList = ColorStateList.valueOf(if (modeValue == activeMode) accent else def)
+            btn?.isSelected = modeValue == activeMode
         }
     }
 
@@ -314,7 +316,9 @@ class AdasFragment : Fragment() {
         val accent = requireContext().getColor(R.color.accent_eco)
         val def    = requireContext().getColor(R.color.bg_button)
         btnAebAlarm?.backgroundTintList      = ColorStateList.valueOf(if (activeMode == AebMode.ALARM) accent else def)
+        btnAebAlarm?.isSelected              = activeMode == AebMode.ALARM
         btnAebAlarmBrake?.backgroundTintList = ColorStateList.valueOf(if (activeMode == AebMode.ALARM_BRAKE) accent else def)
+        btnAebAlarmBrake?.isSelected         = activeMode == AebMode.ALARM_BRAKE
     }
 
     private fun applyAebModeButtonsEnabled(enabled: Boolean) {

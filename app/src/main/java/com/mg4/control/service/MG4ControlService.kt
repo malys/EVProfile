@@ -1,6 +1,7 @@
 package com.mg4.control.service
 
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -315,7 +316,7 @@ class MG4ControlService : Service() {
             Handler(Looper.getMainLooper()).post {
                 if (inPark == true) {
                     val themed = ContextThemeWrapper(LocaleHelper.applyLocale(this@MG4ControlService), R.style.Theme_MG4Control)
-                    val dialog = AlertDialog.Builder(themed)
+                    val dialog = MaterialAlertDialogBuilder(themed)
                         .setTitle(R.string.vehicle_power_dialog_title)
                         .setMessage(R.string.vehicle_power_dialog_msg)
                         .setNegativeButton(R.string.vehicle_power_dialog_cancel, null)

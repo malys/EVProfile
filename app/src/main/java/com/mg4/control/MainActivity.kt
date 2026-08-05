@@ -1,11 +1,9 @@
 package com.mg4.control
 
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -61,10 +59,9 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        setupFirmwareChips()
         setupNavButtons()
         setupDiagnosticUnlock()
-        checkUnknownFirmware()  // après setupFirmwareChips pour que les chips soient prêtes
+        checkUnknownFirmware()
         navigateToDefaultScreen(savedInstanceState)
         checkForUpdates()
         checkProfileRestore()
@@ -84,7 +81,7 @@ class MainActivity : AppCompatActivity() {
             if (backup == null || backup.profiles.isEmpty()) return@launch
             withContext(Dispatchers.Main) {
                 if (isFinishing || isDestroyed) return@withContext
-                AlertDialog.Builder(this@MainActivity)
+                MaterialAlertDialogBuilder(this@MainActivity)
                     .setTitle(R.string.profile_restore_title)
                     .setMessage(getString(R.string.profile_restore_msg, backup.profiles.size))
                     .setCancelable(false)
@@ -159,103 +156,6 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    // ── Indicateur firmware (chips SWI133 / SWI68 / SWI69 / SWI131 / SWI165) ──
-
-    private fun setupFirmwareChips() {
-        val chip133 = findViewById<TextView>(R.id.chip_swi133)
-        val chip132 = findViewById<TextView>(R.id.chip_swi132)
-        val chip68  = findViewById<TextView>(R.id.chip_swi68)
-        val chip69  = findViewById<TextView>(R.id.chip_swi69)
-        val chip131 = findViewById<TextView>(R.id.chip_swi131)
-        val chip165 = findViewById<TextView>(R.id.chip_swi165)
-        val gen     = FirmwareInfo.getGeneration()
-        val forced  = FirmwareInfo.isForced(this)
-
-        fun styleChipActive(tv: TextView) {
-            tv.setBackgroundResource(R.drawable.bg_chip_active)
-            tv.setTextColor(getColor(R.color.dash_accent))
-            tv.alpha = 1f
-            tv.paintFlags = tv.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-        }
-
-        fun styleChipInactive(tv: TextView) {
-            tv.setBackgroundResource(R.drawable.bg_chip_inactive)
-            tv.setTextColor(getColor(R.color.dash_text_lo))
-            tv.alpha = 0.4f
-            tv.paintFlags = tv.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-        }
-
-        fun styleChipSelectable(tv: TextView) {
-            // Firmware inconnu sans choix forcé : chip cliquable, surlignée en rouge
-            tv.setBackgroundResource(R.drawable.bg_chip_inactive)
-            tv.setTextColor(getColor(R.color.dash_danger))
-            tv.alpha = 0.75f
-            tv.paintFlags = tv.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-        }
-
-        val isNaturalUnknown = gen == FirmwareInfo.Gen.UNKNOWN && !forced
-        val allChips = listOf(chip133, chip132, chip68, chip69, chip131, chip165)
-
-        when {
-            isNaturalUnknown -> {
-                // Les six chips en mode "à choisir" (rouge dim, aucune barrée)
-                allChips.forEach { styleChipSelectable(it) }
-            }
-            gen == FirmwareInfo.Gen.SWI165 -> {
-                styleChipActive(chip165)
-                listOf(chip133, chip132, chip68, chip69, chip131).forEach { styleChipInactive(it) }
-            }
-            gen == FirmwareInfo.Gen.SWI131 -> {
-                styleChipActive(chip131)
-                listOf(chip133, chip132, chip68, chip69, chip165).forEach { styleChipInactive(it) }
-            }
-            gen == FirmwareInfo.Gen.SWI69 -> {
-                styleChipActive(chip69)
-                listOf(chip133, chip132, chip68, chip131, chip165).forEach { styleChipInactive(it) }
-            }
-            gen == FirmwareInfo.Gen.SWI68 -> {
-                styleChipActive(chip68)
-                listOf(chip133, chip132, chip69, chip131, chip165).forEach { styleChipInactive(it) }
-            }
-            gen == FirmwareInfo.Gen.SWI132 -> {
-                styleChipActive(chip132)
-                listOf(chip133, chip68, chip69, chip131, chip165).forEach { styleChipInactive(it) }
-            }
-            else -> { // SWI133 ou forcé SWI133
-                styleChipActive(chip133)
-                listOf(chip132, chip68, chip69, chip131, chip165).forEach { styleChipInactive(it) }
-            }
-        }
-
-        // Chips cliquables si firmware inconnu (naturel ou forcé) pour changer de mode
-        if (gen == FirmwareInfo.Gen.UNKNOWN || forced) {
-            chip133.setOnClickListener {
-                FirmwareInfo.forceGeneration(this, FirmwareInfo.Gen.SWI133)
-                recreate()
-            }
-            chip132.setOnClickListener {
-                FirmwareInfo.forceGeneration(this, FirmwareInfo.Gen.SWI132)
-                recreate()
-            }
-            chip68.setOnClickListener {
-                FirmwareInfo.forceGeneration(this, FirmwareInfo.Gen.SWI68)
-                recreate()
-            }
-            chip69.setOnClickListener {
-                FirmwareInfo.forceGeneration(this, FirmwareInfo.Gen.SWI69)
-                recreate()
-            }
-            chip131.setOnClickListener {
-                FirmwareInfo.forceGeneration(this, FirmwareInfo.Gen.SWI131)
-                recreate()
-            }
-            chip165.setOnClickListener {
-                FirmwareInfo.forceGeneration(this, FirmwareInfo.Gen.SWI165)
-                recreate()
-            }
-        }
-    }
-
     // ── Dialog firmware non reconnu ───────────────────────────────────────────
 
     private fun checkUnknownFirmware() {
@@ -270,11 +170,10 @@ class MainActivity : AppCompatActivity() {
         dialogView.findViewById<TextView>(R.id.tv_fw_detected_badge).text =
             FirmwareInfo.getDetectedString()
 
-        val dialog = AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this, R.style.Theme_MG4_Picker)
             .setView(dialogView)
             .setCancelable(false)
             .create()
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialogView.findViewById<MaterialButton>(R.id.btn_fw_close_app).setOnClickListener {
             finishAffinity()
@@ -286,6 +185,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         dialog.show()
+        dialog.window?.setLayout(
+            android.view.WindowManager.LayoutParams.MATCH_PARENT,
+            android.view.WindowManager.LayoutParams.MATCH_PARENT
+        )
     }
 
     // ── Boutons de navigation dans la top-bar ─────────────────────────────────
@@ -295,6 +198,7 @@ class MainActivity : AppCompatActivity() {
         val btnShortcuts = findViewById<MaterialButton>(R.id.btn_nav_shortcuts)
         val btnProfiles  = findViewById<MaterialButton>(R.id.btn_nav_profiles)
         val btnSettings  = findViewById<MaterialButton>(R.id.btn_nav_settings)
+        setupTaskerButton()
 
         // Bouton Audio : contrôle vendor caradapter dispo uniquement sur A9 → masqué ailleurs.
         if (MG4Hardware.hasAudioControl()) {
@@ -332,19 +236,68 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val accent   = getColor(R.color.dash_accent_dim)
             val inactive = getColor(R.color.dash_btn)
-            btnAudio.backgroundTintList = android.content.res.ColorStateList.valueOf(
-                if (destination.id == R.id.audioFragment) accent else inactive
-            )
-            btnShortcuts.backgroundTintList = android.content.res.ColorStateList.valueOf(
-                if (destination.id == R.id.shortcutsFragment) accent else inactive
-            )
-            btnProfiles.backgroundTintList = android.content.res.ColorStateList.valueOf(
-                if (destination.id == R.id.profileFragment) accent else inactive
-            )
-            btnSettings.backgroundTintList = android.content.res.ColorStateList.valueOf(
-                if (destination.id == R.id.settingsFragment) accent else inactive
-            )
+            // isSelected en plus de la teinte : la destination courante doit être annoncée
+            // par TalkBack, pas seulement colorée.
+            fun mark(button: MaterialButton, current: Boolean) {
+                button.backgroundTintList =
+                    android.content.res.ColorStateList.valueOf(if (current) accent else inactive)
+                button.isSelected = current
+            }
+            // Les onglets du dashboard ne désignent rien ailleurs : ils disparaissent
+            // plutôt que de rester affichés sans cible.
+            val onDashboard = destination.id == R.id.dashboardFragment
+            val tabVisibility = if (onDashboard) View.VISIBLE else View.GONE
+            findViewById<MaterialButton>(R.id.dashboard_tab_controls).visibility = tabVisibility
+            findViewById<MaterialButton>(R.id.dashboard_tab_elk).visibility = tabVisibility
+
+            mark(btnAudio,     destination.id == R.id.audioFragment)
+            mark(btnShortcuts, destination.id == R.id.shortcutsFragment)
+            mark(btnProfiles,  destination.id == R.id.profileFragment)
+            mark(btnSettings,  destination.id == R.id.settingsFragment)
         }
+    }
+
+    // ── Bouton Automatisation (MG4Tasker) ────────────────────────────────────
+
+    /**
+     * MG4Tasker automatise ce que MG4Control règle à la main : le bouton l'ouvre, il ne le
+     * remplace pas et ne propose pas de l'installer.
+     *
+     * Le clic revérifie l'intent plutôt que de faire confiance à l'affichage : entre le
+     * moment où le bouton apparaît et celui où le doigt arrive, l'app peut avoir été
+     * désinstallée, et un startActivity() sur un paquet absent ferait tomber MG4Control.
+     */
+    private fun setupTaskerButton() {
+        findViewById<MaterialButton>(R.id.btn_nav_tasker)?.setOnClickListener { button ->
+            val intent = taskerLaunchIntent()
+            if (intent == null) {
+                button.visibility = View.GONE
+                return@setOnClickListener
+            }
+            try {
+                startActivity(intent)
+            } catch (_: Exception) {
+                Toast.makeText(this, R.string.nav_tasker_unavailable, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    /**
+     * Réévaluée à chaque reprise : installer MG4Tasker pendant que MG4Control tourne ne doit
+     * pas demander un redémarrage pour que le bouton apparaisse.
+     */
+    private fun refreshTaskerButton() {
+        findViewById<MaterialButton>(R.id.btn_nav_tasker)?.visibility =
+            if (taskerLaunchIntent() != null) View.VISIBLE else View.GONE
+    }
+
+    /** L'intent de lancement de MG4Tasker, stable d'abord, instable ensuite. */
+    private fun taskerLaunchIntent(): Intent? =
+        TASKER_PACKAGES.firstNotNullOfOrNull { packageManager.getLaunchIntentForPackage(it) }
+
+    override fun onResume() {
+        super.onResume()
+        refreshTaskerButton()
     }
 
     // ── Dialogue de choix de langue au premier lancement ─────────────────────
@@ -353,11 +306,10 @@ class MainActivity : AppCompatActivity() {
         val dialogView = LayoutInflater.from(this)
             .inflate(R.layout.dialog_language_picker, null)
 
-        val dialog = AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this, R.style.Theme_MG4_Picker)
             .setView(dialogView)
             .setCancelable(false)
             .create()
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         val buttons = mapOf(
             R.id.btn_pick_fr to "fr",
@@ -376,9 +328,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         dialog.show()
+        dialog.window?.setLayout(
+            android.view.WindowManager.LayoutParams.MATCH_PARENT,
+            android.view.WindowManager.LayoutParams.MATCH_PARENT
+        )
     }
 
     companion object {
+        /** MG4Tasker, build stable puis build instable (les deux peuvent coexister). */
+        private val TASKER_PACKAGES = listOf("com.mg4.tasker", "com.mg4.tasker.unstable")
+
         /**
          * Débloqué via 5 clics sur le logo en haut à gauche. En mémoire uniquement :
          * réinitialisé au redémarrage du process (le bouton Diagnostic reste masqué par défaut).

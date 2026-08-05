@@ -93,6 +93,7 @@ class DriveRegenFragment : Fragment() {
             btn.backgroundTintList = android.content.res.ColorStateList.valueOf(
                 if (m == mode) driveModeColors[mode] ?: inactive else inactive
             )
+            btn.isSelected = m == mode
         }
         // SNOW : regen forcée faible par le véhicule → griser les boutons regen
         setRegenEnabled(mode != DriveMode.SNOW)
@@ -105,6 +106,7 @@ class DriveRegenFragment : Fragment() {
             btn.backgroundTintList = android.content.res.ColorStateList.valueOf(
                 if (l == level) active else inactive
             )
+            btn.isSelected = l == level
         }
     }
 

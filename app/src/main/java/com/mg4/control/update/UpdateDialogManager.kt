@@ -1,6 +1,7 @@
 package com.mg4.control.update
 
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
@@ -42,7 +43,7 @@ object UpdateDialogManager {
     fun show(activity: AppCompatActivity, info: UpdateInfo) {
         val view = LayoutInflater.from(activity).inflate(R.layout.dialog_update, null)
 
-        val dialog = AlertDialog.Builder(activity)
+        val dialog = MaterialAlertDialogBuilder(activity)
             .setView(view)
             .setCancelable(false)
             .create()
@@ -124,7 +125,7 @@ object UpdateDialogManager {
         // ── Bouton TÉLÉCHARGER L'APK ──────────────────────────────────────────
         btnAuto.setOnClickListener {
             if (!onWifi) {
-                AlertDialog.Builder(activity)
+                MaterialAlertDialogBuilder(activity)
                     .setTitle(R.string.update_data_warn_title)
                     .setMessage(R.string.update_data_warn_message)
                     .setPositiveButton(R.string.update_continue) { _, _ ->

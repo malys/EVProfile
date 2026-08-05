@@ -82,6 +82,7 @@ class ClimateFragment : Fragment() {
         val inactive = requireContext().getColor(R.color.bg_button)
         buttons.forEachIndexed { i, btn ->
             btn.backgroundTintList = ColorStateList.valueOf(if (i == activeIndex) active else inactive)
+            btn.isSelected = i == activeIndex
         }
     }
 }

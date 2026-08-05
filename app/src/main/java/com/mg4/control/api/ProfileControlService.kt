@@ -9,13 +9,15 @@ import com.mg4.hardware.MG4Hardware
 import com.mg4.hardware.VehicleWriteGate
 import com.mg4.control.profile.ProfileApplier
 import com.mg4.control.profile.ProfileManager
+import com.mg4.control.service.ProfilePickerOverlay
 
 /**
  * MG4Control's external control API — driving profiles (see [IProfileControl]).
  *
  * Lets any app signed with the same platform key list and apply MG4Control's driving
- * profiles over IPC. Deliberately narrow: profiles only, no vehicle read and no raw
- * property write. It is not tied to any particular caller.
+ * profiles over IPC, or hand the choice to the driver through MG4Control's own picker.
+ * Deliberately narrow: profiles only, no vehicle read and no raw property write. It is not
+ * tied to any particular caller.
  *
  * Guarded by the signature permission com.mg4.control.permission.CONTROL_PROFILES: only an
  * app signed with the same platform key can bind.
@@ -77,6 +79,25 @@ class ProfileControlService : Service() {
             ProfileApplier.apply(profile, autoStart = true)
             AppLogger.i(TAG, "applyProfile(${profile.name}) verdict=$verdict")
             return result(true, verdict, profile.name)
+        }
+
+        /**
+         * The gate and the profile count are checked here rather than left to the overlay:
+         * the overlay simply does not appear in either case, and a caller that only learns
+         * "nothing happened" cannot tell a moving car from an empty profile list.
+         */
+        override fun showProfilePicker(): Bundle {
+            val verdict = verdictOf(VehicleWriteGate.decide(MG4Hardware.getVehicleSpeedKmh()))
+            if (verdict != VERDICT_ALLOWED) {
+                AppLogger.i(TAG, "showProfilePicker() refused verdict=$verdict")
+                return result(false, verdict)
+            }
+            val count = profileManager.getAll().size
+            if (count == 0) return result(false, VERDICT_UNSUPPORTED, "no profile to show")
+
+            ProfilePickerOverlay.show(applicationContext)
+            AppLogger.i(TAG, "showProfilePicker() shown ($count profiles)")
+            return result(true, verdict, "$count")
         }
     }
 
