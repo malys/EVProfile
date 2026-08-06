@@ -379,19 +379,4 @@
 
     </LinearLayout>
 
-    <!-- ── Bouton Fermer ─────────────────────────────────────────────── -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_shortcuts_close"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/touch_target"
-        android:layout_gravity="end"
-        android:layout_marginTop="@dimen/spacing_sm"
-        android:text="@string/nav_close"
-        android:textColor="@color/text_secondary"
-        android:textSize="@dimen/text_label"
-        app:backgroundTint="@color/bg_button"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/dash_border"
-        app:cornerRadius="@dimen/mg4_corner" />
-
 </LinearLayout>

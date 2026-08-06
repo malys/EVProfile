@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
@@ -83,11 +82,6 @@ class ProfileFragment : Fragment() {
         view.findViewById<RecyclerView>(R.id.recycler_profiles).apply {
             layoutManager = LinearLayoutManager(context)
             adapter = this@ProfileFragment.adapter
-        }
-
-        // ── Bouton Fermer ─────────────────────────────────────────────────────
-        view.findViewById<MaterialButton>(R.id.btn_close_profiles).setOnClickListener {
-            findNavController().popBackStack(R.id.dashboardFragment, false)
         }
 
         view.findViewById<View>(R.id.btn_add_profile).setOnClickListener {

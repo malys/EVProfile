@@ -7,6 +7,7 @@
 -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -134,7 +135,13 @@
                     android:textColor="@color/text_secondary"
                     android:backgroundTint="@color/dash_btn"
                     android:textSize="16sp"
-                    android:textAllCaps="true" />
+                    android:textAllCaps="true"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:maxLines="1"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeMaxTextSize="16sp" />
 
                 <Button
                     android:id="@+id/btn_aeb_alarm_brake_p2"
@@ -145,7 +152,13 @@
                     android:textColor="@color/text_secondary"
                     android:backgroundTint="@color/dash_btn"
                     android:textSize="16sp"
-                    android:textAllCaps="true" />
+                    android:textAllCaps="true"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:maxLines="1"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeMaxTextSize="16sp" />
 
             </LinearLayout>
 
@@ -186,7 +199,13 @@
                     android:textColor="@color/text_secondary"
                     android:backgroundTint="@color/dash_btn"
                     android:textSize="16sp"
-                    android:textAllCaps="true" />
+                    android:textAllCaps="true"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:maxLines="1"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeMaxTextSize="16sp" />
 
                 <Button
                     android:id="@+id/btn_aeb_sen_standard"
@@ -198,7 +217,13 @@
                     android:textColor="@color/text_secondary"
                     android:backgroundTint="@color/dash_btn"
                     android:textSize="16sp"
-                    android:textAllCaps="true" />
+                    android:textAllCaps="true"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:maxLines="1"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeMaxTextSize="16sp" />
 
                 <Button
                     android:id="@+id/btn_aeb_sen_high"
@@ -209,7 +234,13 @@
                     android:textColor="@color/text_secondary"
                     android:backgroundTint="@color/dash_btn"
                     android:textSize="16sp"
-                    android:textAllCaps="true" />
+                    android:textAllCaps="true"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:maxLines="1"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeMaxTextSize="16sp" />
 
             </LinearLayout>
 
@@ -412,7 +443,13 @@
                     android:textColor="@color/text_secondary"
                     android:backgroundTint="@color/dash_btn"
                     android:textSize="16sp"
-                    android:textAllCaps="true" />
+                    android:textAllCaps="true"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:maxLines="1"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeMaxTextSize="16sp" />
 
                 <Button
                     android:id="@+id/btn_elk_assist"
@@ -424,7 +461,13 @@
                     android:textColor="@color/text_secondary"
                     android:backgroundTint="@color/dash_btn"
                     android:textSize="16sp"
-                    android:textAllCaps="true" />
+                    android:textAllCaps="true"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:maxLines="1"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeMaxTextSize="16sp" />
 
                 <Button
                     android:id="@+id/btn_elk_emergency"
@@ -435,7 +478,13 @@
                     android:textColor="@color/text_secondary"
                     android:backgroundTint="@color/dash_btn"
                     android:textSize="16sp"
-                    android:textAllCaps="true" />
+                    android:textAllCaps="true"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:maxLines="1"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeMaxTextSize="16sp" />
 
             </LinearLayout>
 
@@ -476,7 +525,13 @@
                     android:textColor="@color/text_secondary"
                     android:backgroundTint="@color/dash_btn"
                     android:textSize="16sp"
-                    android:textAllCaps="true" />
+                    android:textAllCaps="true"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:maxLines="1"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeMaxTextSize="16sp" />
 
                 <Button
                     android:id="@+id/btn_elk_sen_standard"
@@ -488,7 +543,13 @@
                     android:textColor="@color/text_secondary"
                     android:backgroundTint="@color/dash_btn"
                     android:textSize="16sp"
-                    android:textAllCaps="true" />
+                    android:textAllCaps="true"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:maxLines="1"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeMaxTextSize="16sp" />
 
                 <Button
                     android:id="@+id/btn_elk_sen_high"
@@ -499,7 +560,13 @@
                     android:textColor="@color/text_secondary"
                     android:backgroundTint="@color/dash_btn"
                     android:textSize="16sp"
-                    android:textAllCaps="true" />
+                    android:textAllCaps="true"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:maxLines="1"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeMaxTextSize="16sp" />
 
             </LinearLayout>
 

@@ -100,16 +100,16 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.material)
     implementation(libs.androidx.fragment.ktx)
-    implementation(libs.androidx.navigation.fragment)
-    implementation(libs.androidx.navigation.ui)
     implementation(libs.gson)
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.viewpager2)
 
-    // QR code (génération dans le dialog Infos) — flavor online uniquement.
-    // Le flavor offline n'embarque PAS ZXing (réduction de surface, pas de dépendance superflue).
-    "onlineImplementation"("com.google.zxing:core:3.5.3")
+    // QR code (génération dans le dialog Infos), dans les deux flavors. Le QR est le seul
+    // moyen de sortir une URL d'un écran de voiture vers un téléphone : le build offline en a
+    // besoin davantage que l'autre, puisqu'il ne peut rien télécharger lui-même. ZXing core
+    // est du Java pur, sans réseau ni permission.
+    implementation("com.google.zxing:core:3.5.3")
 
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)

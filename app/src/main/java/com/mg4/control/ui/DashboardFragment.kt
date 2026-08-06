@@ -6,12 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.Switch
-import com.google.android.material.button.MaterialButton
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.mg4.control.R
 import com.mg4.hardware.MG4Hardware
 import com.mg4.hardware.MG4Hardware.AebMode
@@ -28,16 +24,20 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Fragment principal du dashboard — ViewPager2 horizontal.
- *   Page 0 : paramètres de conduite, climat, alertes, AEB
- *   Page 1 : Assistant de sortie de voie (ELK)
+ * Une page du dashboard.
+ *   [PAGE_CONTROLS] : paramètres de conduite, climat, alertes
+ *   [PAGE_ELK]      : assistant de sortie de voie (ELK) et AEB
+ *
+ * Le fragment n'a plus de ViewPager2 à lui : les deux pages sont deux instances, et c'est
+ * le pager de [com.mg4.control.MainActivity] qui les tient, au même rang que Profils ou
+ * Réglages. Un pager imbriqué dans un pager n'aurait pas chaîné le balayage — le geste se
+ * serait arrêté au bord du dashboard au lieu de continuer vers les écrans suivants.
  */
 class DashboardFragment : Fragment() {
 
-    // ── ViewPager ────────────────────────────────────────────────────────────
-    private var pager: ViewPager2? = null
-    private var dashboardTabControls: MaterialButton? = null
-    private var dashboardTabElk: MaterialButton? = null
+    /** Laquelle des deux pages cette instance affiche. */
+    private val page: Int
+        get() = arguments?.getInt(ARG_PAGE) ?: PAGE_CONTROLS
 
     // ── Page 0 — Drive mode ─────────────────────────────────────────────────
     private val driveModeButtons = mutableMapOf<DriveMode, Button>()
@@ -131,11 +131,15 @@ class DashboardFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.fragment_dashboard, container, false)
+    ): View = inflater.inflate(
+        if (page == PAGE_ELK) R.layout.page_dashboard_elk else R.layout.page_dashboard_main,
+        container,
+        false
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupPager(view)
+        if (page == PAGE_ELK) bindElkPage(view) else bindMainPage(view)
     }
 
     override fun onResume() {
@@ -149,74 +153,6 @@ class DashboardFragment : Fragment() {
             }
         }
         refreshElk()  // SWI133 — sVsm133 indépendant de Katman4
-    }
-
-    // ═════════════════════════════════════════════════════════════════════════
-    //  ViewPager2 — Adapter + Dots
-    // ═════════════════════════════════════════════════════════════════════════
-
-    private fun setupPager(root: View) {
-        pager = if (root is ViewPager2) root else root.findViewById(R.id.dashboard_pager)
-        // Les deux destinations sont dans la barre du haut, qui appartient à l'activité :
-        // le fragment les emprunte le temps de sa vue et les relâche dans onDestroyView.
-        dashboardTabControls = requireActivity().findViewById(R.id.dashboard_tab_controls)
-        dashboardTabElk = requireActivity().findViewById(R.id.dashboard_tab_elk)
-
-        pager?.adapter = DashboardPagerAdapter()
-        pager?.offscreenPageLimit = 1  // garde les 2 pages en mémoire
-
-        dashboardTabControls?.setOnClickListener { pager?.setCurrentItem(0, false) }
-        dashboardTabElk?.setOnClickListener { pager?.setCurrentItem(1, false) }
-
-        pager?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                updateDashboardTabs(position)
-                // Refresh ELK quand on arrive sur la page 1
-                if (position == 1) refreshElk()
-            }
-        })
-        updateDashboardTabs(0)
-    }
-
-    override fun onDestroyView() {
-        // Ces boutons survivent au fragment : sans ce nettoyage, leurs listeners
-        // retiendraient une vue détruite.
-        dashboardTabControls?.setOnClickListener(null)
-        dashboardTabElk?.setOnClickListener(null)
-        dashboardTabControls = null
-        dashboardTabElk = null
-        pager = null
-        super.onDestroyView()
-    }
-
-    private fun updateDashboardTabs(position: Int) {
-        dashboardTabControls?.isEnabled = position != 0
-        dashboardTabElk?.isEnabled = position != 1
-        dashboardTabControls?.isSelected = position == 0
-        dashboardTabElk?.isSelected = position == 1
-    }
-
-    private inner class DashboardPagerAdapter :
-        RecyclerView.Adapter<DashboardPagerAdapter.PageHolder>() {
-
-        inner class PageHolder(val view: View) : RecyclerView.ViewHolder(view)
-
-        override fun getItemCount() = 2
-        override fun getItemViewType(position: Int) = position
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PageHolder {
-            val layoutId = if (viewType == 0) R.layout.page_dashboard_main
-                           else               R.layout.page_dashboard_elk
-            val v = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
-            return PageHolder(v)
-        }
-
-        override fun onBindViewHolder(holder: PageHolder, position: Int) {
-            when (position) {
-                0 -> bindMainPage(holder.view)
-                1 -> bindElkPage(holder.view)
-            }
-        }
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -1004,5 +940,16 @@ class DashboardFragment : Fragment() {
         switchElkSound?.alpha = if (enabled) 1f else 0.35f
         switchElkVibration?.isEnabled = enabled
         switchElkVibration?.alpha = if (enabled) 1f else 0.35f
+    }
+
+    companion object {
+        const val PAGE_CONTROLS = 0
+        const val PAGE_ELK = 1
+
+        private const val ARG_PAGE = "page"
+
+        fun newInstance(page: Int) = DashboardFragment().apply {
+            arguments = Bundle().apply { putInt(ARG_PAGE, page) }
+        }
     }
 }

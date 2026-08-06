@@ -17,7 +17,6 @@ import android.widget.Spinner
 import android.widget.Switch
 import android.widget.ViewFlipper
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.mg4.control.R
 import com.mg4.hardware.model.RegenLevel
@@ -112,11 +111,6 @@ class ShortcutsFragment : Fragment() {
         view.findViewById<View>(R.id.config_adas_swi68)?.visibility   = View.GONE
 
         setupShortcutsRail(view)
-
-        // ── Bouton Fermer ─────────────────────────────────────────────
-        view.findViewById<MaterialButton>(R.id.btn_shortcuts_close)?.setOnClickListener {
-            findNavController().popBackStack(R.id.dashboardFragment, false)
-        }
 
         setupSpinners(view)
         setupConfigListeners(view)

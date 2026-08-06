@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Layout principal de l'activité.
-    Remplace la BottomNavigationView par une top-bar fixe avec :
-      • Logo "MG4Control"
-      • Onglets du dashboard (Conduite / ELK), masqués hors dashboard
-      • Bouton PROFILS
-      • Bouton RÉGLAGES
-    La zone de contenu en dessous est gérée par le NavController.
+    Layout principal de l'activité : une top-bar fixe au-dessus d'un ViewPager2 unique.
+
+    Tous les écrans — Conduite, ELK, Audio, Profils, Raccourcis, Réglages — sont des pages
+    du même pager, dans l'ordre de la barre du haut. Chaque bouton de la barre amène à sa
+    page, et le balayage horizontal les parcourt toutes : le geste et le bouton désignent
+    la même chose, ce qui rend le bouton « Fermer » de chaque écran inutile (il n'existe
+    plus de sous-écran d'où revenir).
+
+    Automatisation (MG4Tasker) n'est pas un écran : c'est un raccourci vers une autre
+    application, rangé dans Réglages plutôt que dans cette barre de pages.
 -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -40,30 +43,37 @@
 
         <!-- Destinations du dashboard. Elles vivaient dans une rangée à elles sous la
              barre : 72 dp de boutons plus 32 dp de marges, sur un panneau qui en fait
-             720. Ici elles ne coûtent plus de hauteur, et MainActivity ne les montre que
-             sur le dashboard — ailleurs elles ne désignent rien. -->
+             720. Ici elles ne coûtent plus de hauteur, et comme tous les écrans sont des
+             pages du même pager, elles restent affichées partout : ce sont deux
+             destinations parmi les six, pas un sous-menu du dashboard. -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/dashboard_tab_controls"
-            style="@style/Widget.MG4.Button"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/touch_target"
-            android:layout_marginEnd="@dimen/spacing_sm"
+            android:layout_marginEnd="8dp"
             android:text="@string/tab_dashboard_main"
-            android:textAllCaps="false"
-            android:paddingStart="@dimen/spacing_md"
-            android:paddingEnd="@dimen/spacing_md"
+            android:textSize="@dimen/text_label"
+            android:letterSpacing="0.06"
+            android:textAllCaps="true"
+            android:textColor="@color/text_secondary"
+            app:backgroundTint="@color/dash_btn"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/dash_border"
             app:cornerRadius="@dimen/mg4_corner" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/dashboard_tab_elk"
-            style="@style/Widget.MG4.Button.Outlined"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/touch_target"
             android:layout_marginEnd="@dimen/spacing_lg"
             android:text="@string/tab_dashboard_elk"
-            android:textAllCaps="false"
-            android:paddingStart="@dimen/spacing_md"
-            android:paddingEnd="@dimen/spacing_md"
+            android:textSize="@dimen/text_label"
+            android:letterSpacing="0.06"
+            android:textAllCaps="true"
+            android:textColor="@color/text_secondary"
+            app:backgroundTint="@color/dash_btn"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/dash_border"
             app:cornerRadius="@dimen/mg4_corner" />
 
         <!-- Bouton AUDIO (A9 uniquement — masqué par le code sur les autres firmwares) -->
@@ -72,22 +82,6 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/touch_target"
             android:text="@string/nav_audio"
-            android:textSize="@dimen/text_label"
-            android:letterSpacing="0.06"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            app:backgroundTint="@color/dash_btn"
-            android:layout_marginEnd="8dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="@color/dash_border"
-            app:cornerRadius="@dimen/mg4_corner" />
-
-        <!-- Bouton RACCOURCIS -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_nav_shortcuts"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/touch_target"
-            android:text="@string/nav_shortcuts"
             android:textSize="@dimen/text_label"
             android:letterSpacing="0.06"
             android:textAllCaps="true"
@@ -114,14 +108,12 @@
             app:strokeColor="@color/dash_border"
             app:cornerRadius="@dimen/mg4_corner" />
 
-        <!-- Bouton AUTOMATISATION — ouvre MG4Tasker. Masqué par le code quand l'app
-             n'est pas installée : un bouton qui n'ouvre rien vaut moins que pas de bouton. -->
+        <!-- Bouton RACCOURCIS -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_nav_tasker"
+            android:id="@+id/btn_nav_shortcuts"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/touch_target"
-            android:visibility="gone"
-            android:text="@string/nav_tasker"
+            android:text="@string/nav_shortcuts"
             android:textSize="@dimen/text_label"
             android:letterSpacing="0.06"
             android:textAllCaps="true"
@@ -149,14 +141,11 @@
 
     </LinearLayout>
 
-    <!-- ── ZONE DE CONTENU (NavController) ────────────────────────── -->
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nav_host_fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <!-- ── ZONE DE CONTENU (pager de tous les écrans) ────────────────── -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/main_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_graph" />
+        android:layout_weight="1" />
 
 </LinearLayout>

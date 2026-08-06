@@ -29,7 +29,6 @@ import android.widget.TextView
 import android.widget.Toast
 import android.widget.ViewFlipper
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.mg4.control.BuildConfig
 import com.mg4.control.R
@@ -379,11 +378,51 @@ class SettingsFragment : Fragment() {
             showDiagnosticDialog()
         }
 
-        // ── Bouton Fermer ─────────────────────────────────────────────────────
-        view.findViewById<MaterialButton>(R.id.btn_close_settings).setOnClickListener {
-            findNavController().popBackStack(R.id.dashboardFragment, false)
+        // ── Bouton Automatisation (MG4Tasker) ────────────────────────────────
+        setupTaskerButton(view)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshTaskerButton(requireView())
+    }
+
+    /**
+     * MG4Tasker automatise ce que MG4Control règle à la main : le bouton l'ouvre, il ne le
+     * remplace pas et ne propose pas de l'installer.
+     *
+     * Le clic revérifie l'intent plutôt que de faire confiance à l'affichage : entre le
+     * moment où le bouton apparaît et celui où le doigt arrive, l'app peut avoir été
+     * désinstallée, et un startActivity() sur un paquet absent ferait tomber MG4Control.
+     */
+    private fun setupTaskerButton(view: View) {
+        refreshTaskerButton(view)
+        view.findViewById<MaterialButton>(R.id.btn_open_tasker).setOnClickListener { button ->
+            val intent = taskerLaunchIntent()
+            if (intent == null) {
+                button.visibility = View.GONE
+                return@setOnClickListener
+            }
+            try {
+                startActivity(intent)
+            } catch (_: Exception) {
+                Toast.makeText(requireContext(), R.string.nav_tasker_unavailable, Toast.LENGTH_SHORT).show()
+            }
         }
     }
+
+    /**
+     * Réévaluée à chaque reprise : installer MG4Tasker pendant que MG4Control tourne ne doit
+     * pas demander un redémarrage pour que le bouton apparaisse.
+     */
+    private fun refreshTaskerButton(view: View) {
+        view.findViewById<MaterialButton>(R.id.btn_open_tasker).visibility =
+            if (taskerLaunchIntent() != null) View.VISIBLE else View.GONE
+    }
+
+    /** L'intent de lancement de MG4Tasker, stable d'abord, instable ensuite. */
+    private fun taskerLaunchIntent(): Intent? =
+        TASKER_PACKAGES.firstNotNullOfOrNull { requireContext().packageManager.getLaunchIntentForPackage(it) }
 
     // ── Feedback "application à jour" sur le bouton ──────────────────────────
 
@@ -727,5 +766,20 @@ class SettingsFragment : Fragment() {
 
         const val VERSION_TAPS_FOR_DIAGNOSTIC = 3
         const val VERSION_TAP_WINDOW_MS = 1_000L
+
+        /**
+         * MG4Tasker, tous canaux confondus, du plus « officiel » au plus expérimental.
+         *
+         * Les suffixes viennent des flavors : `.unstable` pour les pré-versions publiées à
+         * chaque push, `.offline` pour un build sans réseau. Ils s'installent côte à côte, et
+         * un testeur qui n'a que le canal instable a bel et bien MG4Tasker — n'énumérer que
+         * l'id stable revenait à lui masquer le bouton.
+         */
+        val TASKER_PACKAGES = listOf(
+            "com.mg4.tasker",
+            "com.mg4.tasker.offline",
+            "com.mg4.tasker.unstable",
+            "com.mg4.tasker.offline.unstable"
+        )
     }
 }

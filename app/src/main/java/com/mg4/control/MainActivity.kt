@@ -10,9 +10,15 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.fragment.app.Fragment
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.button.MaterialButton
+import com.mg4.control.ui.AudioFragment
+import com.mg4.control.ui.DashboardFragment
+import com.mg4.control.ui.ProfileFragment
+import com.mg4.control.ui.SettingsFragment
+import com.mg4.control.ui.ShortcutsFragment
 import com.mg4.hardware.MG4Hardware
 import com.mg4.control.profile.ProfileManager
 import com.mg4.control.service.MG4ControlService
@@ -28,7 +34,19 @@ import com.mg4.control.util.ThemeHelper
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var navController: NavController
+    /**
+     * One screen of the application, in the order the top bar lists them.
+     *
+     * [buttonId] is the top-bar button that selects it — the same button the page-change
+     * callback marks as current. The pair being declared once is what keeps the button and
+     * the swipe agreeing about where they lead.
+     */
+    private class Screen(val buttonId: Int, val create: () -> Fragment)
+
+    private lateinit var pager: ViewPager2
+
+    /** Built in [setupNavButtons]; Audio is absent on firmwares with no vendor audio control. */
+    private var screens: List<Screen> = emptyList()
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.applyLocale(newBase))
@@ -55,9 +73,7 @@ class MainActivity : AppCompatActivity() {
         startForegroundService(Intent(this, MG4ControlService::class.java))
         MG4Hardware.initAudio(applicationContext)  // connecte le helper audio vendor (A9 uniquement, no-op ailleurs)
 
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.navController
+        pager = findViewById(R.id.main_pager)
 
         setupNavButtons()
         setupDiagnosticUnlock()
@@ -131,11 +147,15 @@ class MainActivity : AppCompatActivity() {
         // Ne naviguer que si c'est un vrai démarrage (pas une rotation / recreate)
         if (savedInstanceState != null) return
         val prefs = getSharedPreferences("mg4_settings", android.content.Context.MODE_PRIVATE)
-        when (prefs.getString("default_screen", "dashboard")) {
-            "profiles"  -> navController.navigate(R.id.profileFragment)
-            "shortcuts" -> navController.navigate(R.id.shortcutsFragment)
-            // "dashboard" → rien à faire, c'est déjà le startDestination
+        val buttonId = when (prefs.getString("default_screen", "dashboard")) {
+            "profiles"  -> R.id.btn_nav_profiles
+            "shortcuts" -> R.id.btn_nav_shortcuts
+            else        -> return  // "dashboard" → c'est déjà la première page
         }
+        val index = screens.indexOfFirst { it.buttonId == buttonId }
+        // Sans animation : au démarrage il n'y a pas de mouvement à expliquer, seulement un
+        // écran de départ.
+        if (index >= 0) pager.setCurrentItem(index, false)
     }
 
     // ── Vérification de mise à jour au démarrage ──────────────────────────────
@@ -193,111 +213,72 @@ class MainActivity : AppCompatActivity() {
 
     // ── Boutons de navigation dans la top-bar ─────────────────────────────────
 
-    private fun setupNavButtons() {
-        val btnAudio     = findViewById<MaterialButton>(R.id.btn_nav_audio)
-        val btnShortcuts = findViewById<MaterialButton>(R.id.btn_nav_shortcuts)
-        val btnProfiles  = findViewById<MaterialButton>(R.id.btn_nav_profiles)
-        val btnSettings  = findViewById<MaterialButton>(R.id.btn_nav_settings)
-        setupTaskerButton()
-
-        // Bouton Audio : contrôle vendor caradapter dispo uniquement sur A9 → masqué ailleurs.
-        if (MG4Hardware.hasAudioControl()) {
-            btnAudio.setOnClickListener {
-                when (navController.currentDestination?.id) {
-                    R.id.audioFragment -> navController.popBackStack(R.id.dashboardFragment, false)
-                    else               -> navController.navigate(R.id.audioFragment)
-                }
-            }
-        } else {
-            btnAudio.visibility = View.GONE
-        }
-
-        btnShortcuts.setOnClickListener {
-            when (navController.currentDestination?.id) {
-                R.id.shortcutsFragment -> navController.popBackStack(R.id.dashboardFragment, false)
-                else                   -> navController.navigate(R.id.shortcutsFragment)
-            }
-        }
-
-        btnProfiles.setOnClickListener {
-            when (navController.currentDestination?.id) {
-                R.id.profileFragment -> navController.popBackStack(R.id.dashboardFragment, false)
-                else                 -> navController.navigate(R.id.profileFragment)
-            }
-        }
-
-        btnSettings.setOnClickListener {
-            when (navController.currentDestination?.id) {
-                R.id.settingsFragment -> navController.popBackStack(R.id.dashboardFragment, false)
-                else                  -> navController.navigate(R.id.settingsFragment)
-            }
-        }
-
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            val accent   = getColor(R.color.dash_accent_dim)
-            val inactive = getColor(R.color.dash_btn)
-            // isSelected en plus de la teinte : la destination courante doit être annoncée
-            // par TalkBack, pas seulement colorée.
-            fun mark(button: MaterialButton, current: Boolean) {
-                button.backgroundTintList =
-                    android.content.res.ColorStateList.valueOf(if (current) accent else inactive)
-                button.isSelected = current
-            }
-            // Les onglets du dashboard ne désignent rien ailleurs : ils disparaissent
-            // plutôt que de rester affichés sans cible.
-            val onDashboard = destination.id == R.id.dashboardFragment
-            val tabVisibility = if (onDashboard) View.VISIBLE else View.GONE
-            findViewById<MaterialButton>(R.id.dashboard_tab_controls).visibility = tabVisibility
-            findViewById<MaterialButton>(R.id.dashboard_tab_elk).visibility = tabVisibility
-
-            mark(btnAudio,     destination.id == R.id.audioFragment)
-            mark(btnShortcuts, destination.id == R.id.shortcutsFragment)
-            mark(btnProfiles,  destination.id == R.id.profileFragment)
-            mark(btnSettings,  destination.id == R.id.settingsFragment)
-        }
-    }
-
-    // ── Bouton Automatisation (MG4Tasker) ────────────────────────────────────
-
     /**
-     * MG4Tasker automatise ce que MG4Control règle à la main : le bouton l'ouvre, il ne le
-     * remplace pas et ne propose pas de l'installer.
+     * Wires the top bar to the pager: every button is a page, and every page is a button.
      *
-     * Le clic revérifie l'intent plutôt que de faire confiance à l'affichage : entre le
-     * moment où le bouton apparaît et celui où le doigt arrive, l'app peut avoir été
-     * désinstallée, et un startActivity() sur un paquet absent ferait tomber MG4Control.
+     * There is no "close" anywhere any more. Profils, Réglages and Raccourcis used to be
+     * sub-screens reached by a button and left by a Fermer button in their own bottom row —
+     * a row that cost 72 dp on a 480 dp panel and existed only to undo the previous tap. As
+     * pages they are left the way they were reached: another button, or a swipe.
      */
-    private fun setupTaskerButton() {
-        findViewById<MaterialButton>(R.id.btn_nav_tasker)?.setOnClickListener { button ->
-            val intent = taskerLaunchIntent()
-            if (intent == null) {
-                button.visibility = View.GONE
-                return@setOnClickListener
-            }
-            try {
-                startActivity(intent)
-            } catch (_: Exception) {
-                Toast.makeText(this, R.string.nav_tasker_unavailable, Toast.LENGTH_SHORT).show()
+    private fun setupNavButtons() {
+        // Bouton Audio : contrôle vendor caradapter dispo uniquement sur A9. Ailleurs, ni
+        // bouton ni page — un écran vide atteignable au balayage serait pire que son absence.
+        val hasAudio = MG4Hardware.hasAudioControl()
+        findViewById<MaterialButton>(R.id.btn_nav_audio).visibility =
+            if (hasAudio) View.VISIBLE else View.GONE
+
+        screens = buildList {
+            add(Screen(R.id.dashboard_tab_controls) {
+                DashboardFragment.newInstance(DashboardFragment.PAGE_CONTROLS)
+            })
+            add(Screen(R.id.dashboard_tab_elk) {
+                DashboardFragment.newInstance(DashboardFragment.PAGE_ELK)
+            })
+            if (hasAudio) add(Screen(R.id.btn_nav_audio) { AudioFragment() })
+            add(Screen(R.id.btn_nav_profiles) { ProfileFragment() })
+            add(Screen(R.id.btn_nav_shortcuts) { ShortcutsFragment() })
+            add(Screen(R.id.btn_nav_settings) { SettingsFragment() })
+        }
+
+        pager.adapter = object : FragmentStateAdapter(this) {
+            override fun getItemCount() = screens.size
+            override fun createFragment(position: Int) = screens[position].create()
+        }
+        // Only the neighbours are kept alive. Holding all six would mean six vehicle-reading
+        // fragments refreshing at once on a head unit that has other work to do.
+        pager.offscreenPageLimit = 1
+
+        screens.forEachIndexed { index, screen ->
+            findViewById<MaterialButton>(screen.buttonId).setOnClickListener {
+                // Animated, so the button does the same thing the swipe does: the direction
+                // of travel is what tells the driver where they are in the row.
+                pager.setCurrentItem(index, true)
             }
         }
+
+        pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) = markCurrentPage(position)
+        })
+        markCurrentPage(0)
     }
 
     /**
-     * Réévaluée à chaque reprise : installer MG4Tasker pendant que MG4Control tourne ne doit
-     * pas demander un redémarrage pour que le bouton apparaisse.
+     * Colours the top bar to match the page on screen.
+     *
+     * `isSelected` as well as the tint: the current destination must be announced by
+     * TalkBack, not only coloured.
      */
-    private fun refreshTaskerButton() {
-        findViewById<MaterialButton>(R.id.btn_nav_tasker)?.visibility =
-            if (taskerLaunchIntent() != null) View.VISIBLE else View.GONE
-    }
-
-    /** L'intent de lancement de MG4Tasker, stable d'abord, instable ensuite. */
-    private fun taskerLaunchIntent(): Intent? =
-        TASKER_PACKAGES.firstNotNullOfOrNull { packageManager.getLaunchIntentForPackage(it) }
-
-    override fun onResume() {
-        super.onResume()
-        refreshTaskerButton()
+    private fun markCurrentPage(position: Int) {
+        val accent   = getColor(R.color.dash_accent_dim)
+        val inactive = getColor(R.color.dash_btn)
+        screens.forEachIndexed { index, screen ->
+            val button = findViewById<MaterialButton>(screen.buttonId)
+            button.backgroundTintList = android.content.res.ColorStateList.valueOf(
+                if (index == position) accent else inactive
+            )
+            button.isSelected = index == position
+        }
     }
 
     // ── Dialogue de choix de langue au premier lancement ─────────────────────
@@ -335,9 +316,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        /** MG4Tasker, build stable puis build instable (les deux peuvent coexister). */
-        private val TASKER_PACKAGES = listOf("com.mg4.tasker", "com.mg4.tasker.unstable")
-
         /**
          * Débloqué via 5 clics sur le logo en haut à gauche. En mémoire uniquement :
          * réinitialisé au redémarrage du process (le bouton Diagnostic reste masqué par défaut).

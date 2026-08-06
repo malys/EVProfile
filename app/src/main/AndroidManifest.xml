@@ -38,9 +38,14 @@
 
     <!-- API 30+ : sans ça, MG4Tasker est invisible pour getLaunchIntentForPackage() et le
          bouton Automatisation resterait masqué sur une voiture où l'app est installée. -->
+    <!-- MG4Tasker, tous canaux confondus. Un testeur qui installe le canal unstable, ou la
+         variante offline, a la même app : ne déclarer que l'id stable rendait le bouton
+         Automatisation invisible sur ces installations. -->
     <queries>
         <package android:name="com.mg4.tasker" />
         <package android:name="com.mg4.tasker.unstable" />
+        <package android:name="com.mg4.tasker.offline" />
+        <package android:name="com.mg4.tasker.offline.unstable" />
     </queries>
 
     <application

@@ -843,6 +843,24 @@
 
             </LinearLayout>
 
+            <!-- ── Bouton AUTOMATISATION — ouvre MG4Tasker. Caché par le code quand l'app
+                 n'est pas installée : un bouton qui n'ouvre rien vaut moins que pas de bouton. ── -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_open_tasker"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/touch_target"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"
+                android:text="@string/nav_tasker"
+                android:textColor="@color/dash_accent"
+                android:textSize="@dimen/text_label"
+                android:letterSpacing="0.06"
+                android:textAllCaps="true"
+                app:backgroundTint="@color/dash_accent_dim"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/dash_accent"
+                app:cornerRadius="@dimen/mg4_corner" />
+
             <!-- ── Bouton DIAGNOSTIC (caché — 5 clics sur "Vérifier les mises à jour") ── -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_diagnostic"
@@ -1070,24 +1088,5 @@
         </ViewFlipper>
 
     </LinearLayout>
-
-    <!-- ── Bouton FERMER — fixe en bas ───────────────────────────────── -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_close_settings"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/touch_target"
-        android:layout_marginTop="@dimen/spacing_sm"
-        android:text="@string/nav_close"
-        android:textColor="@color/text_secondary"
-        android:textSize="@dimen/text_label"
-        android:letterSpacing="0.06"
-        android:textAllCaps="true"
-        app:backgroundTint="@color/dash_btn"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/dash_border"
-        app:cornerRadius="@dimen/mg4_corner"
-        app:icon="@android:drawable/ic_menu_close_clear_cancel"
-        app:iconTint="@color/dash_text_lo"
-        app:iconGravity="textStart" />
 
 </LinearLayout>
