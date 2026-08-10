@@ -4,6 +4,9 @@
      hold in both themes and are not repeated - Android falls back to values/ for
      anything missing here. -->
 <resources>
+    <!-- Brand red. This lighter variant provides 7.8:1 contrast on mg4_surface. -->
+    <color name="mg4_brand_red">#FFFF8A80</color>
+
     <!-- Tinted chip backgrounds. In dark these are very low tints, not darkened versions
          of the light ones: a pastel on black turns grey. Each background/text pair
          clears at least 8.5:1. -->

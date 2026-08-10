@@ -52,6 +52,11 @@
     <color name="accent_custom">#FF4A0E6B</color>  <!-- white 13.4:1 -->
     <color name="accent_regen">#FF00565E</color>   <!-- white 8.4:1 -->
 
+    <!-- Brand red used by the “4” in the logotype. The banner's #E53935 reaches only
+         3.9:1 on a light surface, below the suite floor. This darker red reaches 8:1 on
+         white; values-night supplies the lighter dark-theme variant. -->
+    <color name="mg4_brand_red">#FF9E1B1B</color>
+
     <!-- An active button's label stays white in both themes: its background is a
          saturated product hue, not the accent surface. Do not replace this with
          mg4_on_accent, which is almost black in the dark theme. -->

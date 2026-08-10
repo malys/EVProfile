@@ -264,20 +264,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Colours the top bar to match the page on screen.
+     * Marks the top-bar tab of the page on screen.
      *
-     * `isSelected` as well as the tint: the current destination must be announced by
-     * TalkBack, not only coloured.
+     * Only `isSelected` is set: fill, text, icon and stroke come from the
+     * res/color/nav_tab_*.xml selectors applied by Widget.MG4.NavTab. Painting the
+     * colours here as well would declare them twice, and the code copy would win even
+     * for states it does not understand (pressed and disabled). `isSelected` also lets
+     * TalkBack announce the current destination instead of relying on colour alone.
      */
     private fun markCurrentPage(position: Int) {
-        val accent   = getColor(R.color.dash_accent_dim)
-        val inactive = getColor(R.color.dash_btn)
         screens.forEachIndexed { index, screen ->
-            val button = findViewById<MaterialButton>(screen.buttonId)
-            button.backgroundTintList = android.content.res.ColorStateList.valueOf(
-                if (index == position) accent else inactive
-            )
-            button.isSelected = index == position
+            findViewById<MaterialButton>(screen.buttonId).isSelected = index == position
         }
     }
 

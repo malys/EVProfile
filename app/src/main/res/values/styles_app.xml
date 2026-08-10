@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Styles propres à MG4 Control. Les styles partagés de la suite sont dans
+     styles_mg4.xml, généré par tools/sync-tokens.mjs — ne rien ajouter là-bas. -->
+<resources>
+
+    <!-- Un onglet de la barre de pages (activity_main.xml).
+
+         Icône au-dessus du libellé plutôt qu'à côté : six onglets doivent tenir sur la
+         largeur du panneau quelle que soit sa densité, et un libellé empilé dispose de
+         toute la largeur de l'onglet au lieu de la partager avec l'icône. « Sortie de
+         voie » ne s'y tronque pas.
+
+         L'icône double le libellé, elle ne le remplace pas : une barre d'icônes seules
+         se devine, et on ne devine pas en conduisant.
+
+         Toutes les couleurs viennent de sélecteurs sur android:state_selected
+         (res/color/nav_tab_*.xml) : l'onglet actif se peint tout seul, le code n'a plus
+         qu'à poser isSelected. -->
+    <style name="Widget.MG4.NavTab" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingStart">@dimen/spacing_xs</item>
+        <item name="android:paddingEnd">@dimen/spacing_xs</item>
+        <item name="android:paddingTop">@dimen/spacing_xs</item>
+        <item name="android:paddingBottom">@dimen/spacing_xs</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/nav_tab_foreground</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeMinTextSize">12sp</item>
+        <item name="autoSizeMaxTextSize">@dimen/text_label</item>
+        <item name="icon">@null</item>
+        <item name="iconGravity">top</item>
+        <item name="iconSize">28dp</item>
+        <item name="iconPadding">@dimen/spacing_xs</item>
+        <item name="iconTint">@color/nav_tab_foreground</item>
+        <item name="backgroundTint">@color/nav_tab_background</item>
+        <item name="strokeColor">@color/nav_tab_stroke</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cornerRadius">@dimen/mg4_corner</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+</resources>

@@ -2,6 +2,11 @@
 <resources>
     <string name="app_name">MG4 Control</string>
 
+    <!-- Three parts of the top-bar logotype. A brand is not translated. -->
+    <string name="brand_mg" translatable="false">MG</string>
+    <string name="brand_four" translatable="false">4</string>
+    <string name="brand_control" translatable="false">Control</string>
+
     <!-- Fermer (bouton retour dashboard) -->
     <string name="nav_close">Fermer</string>
     <!-- Nettoyage APK -->

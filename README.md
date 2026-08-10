@@ -5,7 +5,7 @@
 [![Tests](https://github.com/SliDeeN/MG4Control/actions/workflows/tests.yml/badge.svg)](https://github.com/SliDeeN/MG4Control/actions/workflows/tests.yml)
 [![Security](https://github.com/SliDeeN/MG4Control/actions/workflows/security.yml/badge.svg)](https://github.com/SliDeeN/MG4Control/actions/workflows/security.yml)
 [![Release](https://github.com/SliDeeN/MG4Control/actions/workflows/release.yml/badge.svg)](https://github.com/SliDeeN/MG4Control/actions/workflows/release.yml)
-[![License](https://img.shields.io/badge/license-see%20LICENSE-blue.svg)](LICENSE.md)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 
 Android Automotive app for advanced driving-settings control on the MG4 electric vehicle.
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Texte et icône d'un onglet. Sur l'onglet actif le fond est @color/dash_accent, donc
+     l'avant-plan est mg4_on_accent — blanc en thème clair, presque noir en thème sombre.
+     Les deux paires dépassent 7:1, le plancher de la suite. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true" android:color="@color/mg4_on_accent" />
+    <item android:color="@color/mg4_text_primary" />
+</selector>

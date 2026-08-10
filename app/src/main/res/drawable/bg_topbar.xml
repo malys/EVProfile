@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Barre de pages : la surface, plus un filet accent de 2 dp en bas. Sans ce filet, la
+     barre et la page se touchent sans frontière visible dès que la page a un fond clair,
+     et la rangée d'onglets cesse de se lire comme une barre. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/mg4_surface" />
+        </shape>
+    </item>
+    <item android:gravity="bottom" android:height="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/dash_accent" />
+        </shape>
+    </item>
+</layer-list>
