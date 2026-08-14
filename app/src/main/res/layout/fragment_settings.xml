@@ -32,55 +32,70 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/rail_settings_language"
-            style="@style/Widget.MG4.Button"
+            style="@style/Widget.EV.Button"
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target"
             android:layout_marginBottom="@dimen/spacing_sm"
             android:gravity="center_vertical|start"
             android:text="@string/settings_cat_language"
             android:textAllCaps="false"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/rail_settings_display"
-            style="@style/Widget.MG4.Button.Outlined"
+            style="@style/Widget.EV.Button.Outlined"
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target"
             android:layout_marginBottom="@dimen/spacing_sm"
             android:gravity="center_vertical|start"
             android:text="@string/settings_cat_display"
             android:textAllCaps="false"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/rail_settings_vehicle"
-            style="@style/Widget.MG4.Button.Outlined"
+            style="@style/Widget.EV.Button.Outlined"
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target"
             android:layout_marginBottom="@dimen/spacing_sm"
             android:gravity="center_vertical|start"
             android:text="@string/settings_cat_vehicle"
             android:textAllCaps="false"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/rail_settings_app"
-            style="@style/Widget.MG4.Button.Outlined"
+            style="@style/Widget.EV.Button.Outlined"
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target"
             android:layout_marginBottom="@dimen/spacing_sm"
             android:gravity="center_vertical|start"
             android:text="@string/settings_cat_app"
             android:textAllCaps="false"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
+
+        <!-- ── AUTOMATISATION — seule entrée du rail qui n'ouvre pas une catégorie : elle
+             lance EVTasker. Caché par le code quand l'app n'est pas installée : un bouton
+             qui n'ouvre rien vaut moins que pas de bouton. ── -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_open_tasker"
+            style="@style/Widget.EV.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/touch_target"
+            android:layout_marginBottom="@dimen/spacing_sm"
+            android:visibility="gone"
+            android:gravity="center_vertical|start"
+            android:text="@string/nav_tasker"
+            android:textAllCaps="false"
+            app:cornerRadius="@dimen/ev_corner" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/rail_settings_about"
-            style="@style/Widget.MG4.Button.Outlined"
+            style="@style/Widget.EV.Button.Outlined"
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target"
             android:layout_marginBottom="@dimen/spacing_sm"
             android:gravity="center_vertical|start"
             android:text="@string/info_title"
             android:textAllCaps="false"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
 
         </LinearLayout>
 
@@ -158,7 +173,7 @@
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="@dimen/mg4_corner" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_lang_en"
@@ -173,7 +188,7 @@
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="@dimen/mg4_corner" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_lang_de"
@@ -187,7 +202,7 @@
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="@dimen/mg4_corner" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                 </LinearLayout>
 
@@ -211,7 +226,7 @@
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="@dimen/mg4_corner" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_lang_pt"
@@ -226,7 +241,7 @@
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="@dimen/mg4_corner" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_lang_it"
@@ -240,7 +255,7 @@
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="@dimen/mg4_corner" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                 </LinearLayout>
 
@@ -315,7 +330,7 @@
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="@dimen/mg4_corner" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_default_profiles"
@@ -330,7 +345,7 @@
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="@dimen/mg4_corner" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_default_shortcuts"
@@ -344,7 +359,7 @@
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="@dimen/mg4_corner" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                 </LinearLayout>
 
@@ -403,7 +418,7 @@
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="@dimen/mg4_corner" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_theme_dark"
@@ -418,7 +433,7 @@
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="@dimen/mg4_corner"
+                        app:cornerRadius="@dimen/ev_corner"
                         app:icon="@android:drawable/ic_menu_month"
                         app:iconTint="@color/dash_text_lo"
                         app:iconSize="16dp"
@@ -436,7 +451,7 @@
                         app:backgroundTint="@color/dash_btn"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_border"
-                        app:cornerRadius="@dimen/mg4_corner"
+                        app:cornerRadius="@dimen/ev_corner"
                         app:icon="@android:drawable/ic_menu_today"
                         app:iconTint="@color/dash_text_lo"
                         app:iconSize="16dp"
@@ -519,69 +534,69 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/chip_swi133"
-                        style="@style/Widget.MG4.Button.Outlined"
+                        style="@style/Widget.EV.Button.Outlined"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
                         android:layout_marginEnd="@dimen/spacing_sm"
                         android:text="SWI133"
                         android:textAllCaps="true"
-                        app:cornerRadius="@dimen/mg4_corner" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/chip_swi132"
-                        style="@style/Widget.MG4.Button.Outlined"
+                        style="@style/Widget.EV.Button.Outlined"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
                         android:layout_marginEnd="@dimen/spacing_sm"
                         android:text="SWI132"
                         android:textAllCaps="true"
-                        app:cornerRadius="@dimen/mg4_corner" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/chip_swi68"
-                        style="@style/Widget.MG4.Button.Outlined"
+                        style="@style/Widget.EV.Button.Outlined"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
                         android:layout_marginEnd="@dimen/spacing_sm"
                         android:text="SWI68"
                         android:textAllCaps="true"
-                        app:cornerRadius="@dimen/mg4_corner" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/chip_swi69"
-                        style="@style/Widget.MG4.Button.Outlined"
+                        style="@style/Widget.EV.Button.Outlined"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
                         android:layout_marginEnd="@dimen/spacing_sm"
                         android:text="SWI69"
                         android:textAllCaps="true"
-                        app:cornerRadius="@dimen/mg4_corner" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/chip_swi131"
-                        style="@style/Widget.MG4.Button.Outlined"
+                        style="@style/Widget.EV.Button.Outlined"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
                         android:layout_marginEnd="@dimen/spacing_sm"
                         android:text="SWI131"
                         android:textAllCaps="true"
-                        app:cornerRadius="@dimen/mg4_corner" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/chip_swi165"
-                        style="@style/Widget.MG4.Button.Outlined"
+                        style="@style/Widget.EV.Button.Outlined"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
                         android:layout_marginStart="@dimen/spacing_sm"
                         android:text="SWI165"
                         android:textAllCaps="true"
-                        app:cornerRadius="@dimen/mg4_corner" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                 </LinearLayout>
 
@@ -702,71 +717,7 @@
                         app:backgroundTint="@color/dash_accent_dim"
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/dash_accent"
-                        app:cornerRadius="@dimen/mg4_corner" />
-
-                </LinearLayout>
-
-                <!-- ── Sécurité conduite : verrou d'écriture par vitesse ─────── -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/dash_border" />
-
-                <LinearLayout
-                    android:id="@+id/row_speed_gate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:padding="12dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/settings_speed_gate_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="@dimen/text_label" />
-
-                    <Switch
-                        android:id="@+id/switch_speed_gate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/row_speed_gate_max"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="12dp"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/settings_speed_gate_max_label"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="@dimen/text_label" />
-
-                    <EditText
-                        android:id="@+id/input_speed_gate_max"
-                        android:layout_width="72dp"
-                        android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:maxLength="3"
-                        android:gravity="end"
-                        android:hint="@string/settings_speed_gate_max_hint"
-                        android:textColor="@color/text_primary"
-                        android:textSize="@dimen/text_label"
-                        android:imeOptions="actionDone" />
+                        app:cornerRadius="@dimen/ev_corner" />
 
                 </LinearLayout>
 
@@ -818,7 +769,7 @@
                     app:backgroundTint="@color/dash_accent_dim"
                     app:strokeWidth="1dp"
                     app:strokeColor="@color/dash_accent"
-                    app:cornerRadius="@dimen/mg4_corner"
+                    app:cornerRadius="@dimen/ev_corner"
                     app:icon="@android:drawable/stat_sys_download"
                     app:iconTint="@color/dash_accent"
                     app:iconGravity="textStart" />
@@ -836,30 +787,12 @@
                     app:backgroundTint="@color/dash_btn"
                     app:strokeWidth="1dp"
                     app:strokeColor="@color/dash_border"
-                    app:cornerRadius="@dimen/mg4_corner"
+                    app:cornerRadius="@dimen/ev_corner"
                     app:icon="@android:drawable/ic_menu_delete"
                     app:iconTint="@color/dash_text_lo"
                     app:iconGravity="textStart" />
 
             </LinearLayout>
-
-            <!-- ── Bouton AUTOMATISATION — ouvre MG4Tasker. Caché par le code quand l'app
-                 n'est pas installée : un bouton qui n'ouvre rien vaut moins que pas de bouton. ── -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_open_tasker"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/touch_target"
-                android:layout_marginBottom="8dp"
-                android:visibility="gone"
-                android:text="@string/nav_tasker"
-                android:textColor="@color/dash_accent"
-                android:textSize="@dimen/text_label"
-                android:letterSpacing="0.06"
-                android:textAllCaps="true"
-                app:backgroundTint="@color/dash_accent_dim"
-                app:strokeWidth="1dp"
-                app:strokeColor="@color/dash_accent"
-                app:cornerRadius="@dimen/mg4_corner" />
 
             <!-- ── Bouton DIAGNOSTIC (caché — 5 clics sur "Vérifier les mises à jour") ── -->
             <com.google.android.material.button.MaterialButton
@@ -876,7 +809,7 @@
                 app:backgroundTint="@color/dash_warn_dim"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/dash_warn"
-                app:cornerRadius="@dimen/mg4_corner"
+                app:cornerRadius="@dimen/ev_corner"
                 app:icon="@android:drawable/ic_menu_info_details"
                 app:iconTint="@color/dash_warn"
                 app:iconGravity="textStart" />

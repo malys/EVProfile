@@ -61,7 +61,7 @@ body:
       label: "Steps to Reproduce"
       description: "Exact steps to reproduce the bug"
       placeholder: |
-        1. Open MG4Control
+        1. Open EVProfile
         2. Set vehicle speed to 50 km/h
         3. Tap "Drive Profile" → "Sport Mode"
         4. Observe crash

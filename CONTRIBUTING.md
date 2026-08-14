@@ -1,4 +1,4 @@
-# Contributing to MG4 Control
+# Contributing to EVProfile
 
 ## Critical context
 
@@ -47,14 +47,14 @@ Before opening a pull request:
 
 ## User interface changes
 
-The interface follows [DESIGN.md](DESIGN.md), which is shared by every MG4 app. In
+The interface follows [DESIGN.md](DESIGN.md), which is shared by every EVSuite app. In
 particular:
 
 - Colour, spacing, type sizes and component styles come from the shared tokens. Do not
-  introduce a hex value or a `dp` literal in a layout — use `@color/mg4_*`,
-  `@dimen/*` and the `Widget.MG4.*` / `Text.MG4.*` styles.
+  introduce a hex value or a `dp` literal in a layout — use `@color/ev_*`,
+  `@dimen/*` and the `Widget.EV.*` / `Text.EV.*` styles.
 - The token files `values/colors.xml`, `values-night/colors.xml`, `values/dimens.xml` and
-  `values/styles_mg4.xml` are **generated**. Edit `tools/tokens/` in the workspace root and
+  `values/styles_ev.xml` are **generated**. Edit `tools/tokens/` in the workspace root and
   run `node tools/sync-tokens.mjs`; a change made directly in an app is overwritten.
 - App-specific colours and dimensions go in `colors_app.xml` and `dimens_app.xml`, with a
   comment saying why the shared token does not fit.
@@ -65,7 +65,8 @@ particular:
 
 - Kotlin, matching the surrounding file. No new lint suppressions without a reason in the
   diff.
-- No network calls. This app is offline by design.
+- No network calls in `main` or `stable`. The only network/OTA code belongs in
+  `src/unstable`, behind the existing HTTPS host and APK-certificate checks.
 - No new permissions without discussion. Minimal rights is a security property here, not a
   preference.
 - Anything reaching the vehicle goes through the existing gate. If your code path cannot

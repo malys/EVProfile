@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MG4 Control</string>
+    <string name="app_name">EVProfile</string>
 
     <!-- Pulsante chiudi (torna alla dashboard) -->
     <string name="nav_close">Chiudi</string>
@@ -17,7 +17,7 @@
     <string name="nav_settings">Impostazioni</string>
     <string name="nav_shortcuts">Scorciatoie</string>
     <string name="nav_tasker">Automazione</string>
-    <string name="nav_tasker_unavailable">Impossibile aprire MG4Tasker</string>
+    <string name="nav_tasker_unavailable">Impossibile aprire EVTasker</string>
 
     <!-- Scorciatoie al volante -->
     <string name="shortcuts_enabled_label">Attiva scorciatoie al volante</string>
@@ -45,18 +45,18 @@
     <string name="overlay_brightness_mid">Medio</string>
     <string name="overlay_brightness_day">Giorno</string>
 <string name="overlay_profile_title">Profili di guida</string>
-    <string name="overlay_open_app">Apri MG4Control</string>
+    <string name="overlay_open_app">Apri EVProfile</string>
     <string name="overlay_countdown">Chiusura tra %1$ds</string>
     <string name="shortcuts_profile_prefix">Avvia profilo</string>
     <string name="shortcuts_pick_profile_title">Scegli un profilo</string>
     <string name="shortcuts_profile_not_found">Profilo non trovato</string>
     <string name="shortcuts_no_profiles">Nessun profilo creato</string>
-    <string name="shortcuts_action_open_app">Apri MG4Control</string>
+    <string name="shortcuts_action_open_app">Apri EVProfile</string>
     <string name="shortcuts_action_open_custom_app">Avvia un\'app</string>
     <string name="shortcuts_pick_app_title">Scegli un\'app</string>
     <string name="shortcuts_open_custom_prefix">Avvia</string>
     <string name="shortcuts_warning_title">Scorciatoie al volante</string>
-    <string name="shortcuts_warning_message">⚠ Se il launcher ufficiale è configurato su un tasto, avrà la priorità su MG4Control.\n\nEsempio: se la telecamera 360° è assegnata alla pressione singola nel launcher, MG4Control non riuscirà a intercettare quel tasto e la telecamera si attiverà al suo posto.\n\nSi consiglia di disattivare le scorciatoie del launcher ufficiale per evitare conflitti.</string>
+    <string name="shortcuts_warning_message">⚠ Se il launcher ufficiale è configurato su un tasto, avrà la priorità su EVProfile.\n\nEsempio: se la telecamera 360° è assegnata alla pressione singola nel launcher, EVProfile non riuscirà a intercettare quel tasto e la telecamera si attiverà al suo posto.\n\nSi consiglia di disattivare le scorciatoie del launcher ufficiale per evitare conflitti.</string>
     <string name="shortcuts_warning_ok">Capito</string>
 
     <!-- Configurazione scorciatoie -->
@@ -192,11 +192,11 @@
     <string name="info_app_label">Applicazione</string>
     <string name="info_version_label">Versione</string>
     <string name="info_firmware_label">Firmware</string>
-    <string name="info_github_link">github.com/malys/MG4Control</string>
-    <string name="info_gitlab_link">gitlab.com/SliDeeN/mg4control</string>
+    <string name="info_github_link">github.com/malys/EVProfile</string>
+    <string name="info_gitlab_link">gitlab.com/SliDeeN/evprofile</string>
     <string name="info_made_with_love">Contributi di malys</string>
     <string name="info_special_thanks">Grazie a confor1max per i test SWI68 🙏</string>
-    <string name="info_based_on">Fork di SliDeeN/MG4Control · basato su DriveHub Dort di Merth4n &amp; hotboy_ist</string>
+    <string name="info_based_on">Basato su DriveHub Dort di Merth4n &amp; hotboy_ist</string>
 
     <!-- Dashboard — intestazioni schede -->
     <string name="card_drive">Impostazioni di guida</string>
@@ -225,25 +225,22 @@
     <string name="update_error_signature">Aggiornamento rifiutato: l\'APK scaricato non è firmato con la chiave attesa. File eliminato.</string>
     <string name="write_refused_moving">Impostazione di guida rifiutata: %1$s km/h (limite %2$d km/h). Rallenta per modificarla.</string>
     <string name="write_refused_unknown_speed">Impostazione rifiutata: velocità del veicolo non leggibile.</string>
-    <string name="settings_speed_gate_desc">Blocca le impostazioni di guida oltre una velocità</string>
-    <string name="settings_speed_gate_max_label">Velocità massima (km/h)</string>
-    <string name="settings_speed_gate_max_hint">0–250</string>
     <string name="update_error_install">Installazione fallita.</string>
     <string name="update_install_error">Errore di installazione: %s</string>
     <string name="update_manual_title">Installazione manuale</string>
-    <string name="update_manual_instructions">1. Scansiona il QR code o apri il link\n2. Scarica il file MG4Control.apk\n3. Copialo su una chiavetta USB FAT32\n4. Inserisci la chiavetta nel tuo MG4\n5. Apri il Gestore file\n6. Seleziona il file APK e installalo</string>
+    <string name="update_manual_instructions">1. Scansiona il QR code o apri il link\n2. Scarica il file EVProfile.apk\n3. Copialo su una chiavetta USB FAT32\n4. Inserisci la chiavetta nel tuo MG4\n5. Apri il Gestore file\n6. Seleziona il file APK e installalo</string>
     <string name="update_downloaded_title">APK scaricato ✓</string>
-    <string name="update_downloaded_instructions">La cartella Download è stata aperta automaticamente.\n\nTocca MG4Control-*.apk per installare.\n\nSe la cartella non si è aperta, apri il Gestore file e vai in Download.</string>
-    <string name="update_gh_releases_link">github.com/SliDeeN/MG4Control/releases</string>
+    <string name="update_downloaded_instructions">La cartella Download è stata aperta automaticamente.\n\nTocca EVProfile-*.apk per installare.\n\nSe la cartella non si è aperta, apri il Gestore file e vai in Download.</string>
+    <string name="update_gh_releases_link">github.com/malys/EVProfile/releases</string>
     <string name="update_skip_btn">Non ricordarmi più</string>
 
     <!-- Console (debug) -->
-    <string name="console_title">⬛  Console MG4</string>
+    <string name="console_title">⬛  Console EV</string>
     <string name="console_clear">Cancella</string>
 
     <!-- Firmware sconosciuto -->
     <string name="fw_unknown_title">⚠ Firmware sconosciuto</string>
-    <string name="fw_unknown_body">Questo firmware non è ancora supportato nativamente da MG4 Control.\n\nPuoi continuare selezionando manualmente una modalità di compatibilità, ma alcune funzioni potrebbero non funzionare correttamente.</string>
+    <string name="fw_unknown_body">Questo firmware non è ancora supportato nativamente da EVProfile.\n\nPuoi continuare selezionando manualmente una modalità di compatibilità, ma alcune funzioni potrebbero non funzionare correttamente.</string>
     <string name="fw_unknown_hint">Dopo aver chiuso questa finestra, tocca SWI133 o SWI68 nella barra superiore per scegliere la tua modalità di compatibilità.</string>
     <string name="fw_unknown_btn_close">Chiudi app</string>
     <string name="fw_unknown_btn_continue">Continua</string>

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<paths>
-    <!-- Stockage interne cache -->
-    <cache-path name="apk_cache" path="." />
-    <!-- Stockage externe (carte SD / émulé) -->
-    <external-files-path name="apk_external" path="." />
-</paths>

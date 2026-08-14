@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MG4 Control</string>
+    <string name="app_name">EVProfile</string>
 
     <!-- Close button (back to dashboard) -->
     <string name="nav_close">Close</string>
@@ -17,7 +17,7 @@
     <string name="nav_settings">Settings</string>
     <string name="nav_shortcuts">Shortcuts</string>
     <string name="nav_tasker">Automation</string>
-    <string name="nav_tasker_unavailable">Cannot open MG4Tasker</string>
+    <string name="nav_tasker_unavailable">Cannot open EVTasker</string>
 
     <!-- Steering wheel shortcuts -->
     <string name="shortcuts_enabled_label">Enable steering wheel shortcuts</string>
@@ -45,18 +45,18 @@
     <string name="overlay_brightness_mid">Medium</string>
     <string name="overlay_brightness_day">Day</string>
 <string name="overlay_profile_title">Driving profiles</string>
-    <string name="overlay_open_app">Open MG4Control</string>
+    <string name="overlay_open_app">Open EVProfile</string>
     <string name="overlay_countdown">Closing in %1$ds</string>
     <string name="shortcuts_profile_prefix">Launch profile</string>
     <string name="shortcuts_pick_profile_title">Choose a profile</string>
     <string name="shortcuts_profile_not_found">Profile not found</string>
     <string name="shortcuts_no_profiles">No profiles created</string>
-    <string name="shortcuts_action_open_app">Open MG4Control</string>
+    <string name="shortcuts_action_open_app">Open EVProfile</string>
     <string name="shortcuts_action_open_custom_app">Launch an app</string>
     <string name="shortcuts_pick_app_title">Choose an app</string>
     <string name="shortcuts_open_custom_prefix">Launch</string>
     <string name="shortcuts_warning_title">Steering wheel shortcuts</string>
-    <string name="shortcuts_warning_message">⚠ If the official launcher is configured on a button, it will take priority over MG4Control.\n\nExample: if the 360° camera is assigned to a single press in the launcher, MG4Control will not be able to intercept that button and the camera will activate instead.\n\nIt is recommended to disable the official launcher\'s shortcuts to avoid conflicts.</string>
+    <string name="shortcuts_warning_message">⚠ If the official launcher is configured on a button, it will take priority over EVProfile.\n\nExample: if the 360° camera is assigned to a single press in the launcher, EVProfile will not be able to intercept that button and the camera will activate instead.\n\nIt is recommended to disable the official launcher\'s shortcuts to avoid conflicts.</string>
     <string name="shortcuts_warning_ok">Got it</string>
 
     <!-- Shortcut config -->
@@ -192,11 +192,11 @@
     <string name="info_app_label">Application</string>
     <string name="info_version_label">Version</string>
     <string name="info_firmware_label">Firmware</string>
-    <string name="info_github_link">github.com/malys/MG4Control</string>
-    <string name="info_gitlab_link">gitlab.com/SliDeeN/mg4control</string>
+    <string name="info_github_link">github.com/malys/EVProfile</string>
+    <string name="info_gitlab_link">gitlab.com/SliDeeN/evprofile</string>
     <string name="info_made_with_love">Contributions by malys</string>
     <string name="info_special_thanks">Thanks to confor1max for SWI68 testing 🙏</string>
-    <string name="info_based_on">Fork of SliDeeN/MG4Control · based on DriveHub Dort by Merth4n &amp; hotboy_ist</string>
+    <string name="info_based_on">Based on DriveHub Dort by Merth4n &amp; hotboy_ist</string>
 
     <!-- Dashboard — card headers -->
     <string name="card_drive">Drive settings</string>
@@ -225,25 +225,22 @@
     <string name="update_error_signature">Update refused: the downloaded APK is not signed by the expected key. File deleted.</string>
     <string name="write_refused_moving">Driving setting refused: %1$s km/h (limit %2$d km/h). Slow down to change it.</string>
     <string name="write_refused_unknown_speed">Setting refused: vehicle speed could not be read.</string>
-    <string name="settings_speed_gate_desc">Block driving settings above a speed</string>
-    <string name="settings_speed_gate_max_label">Maximum speed (km/h)</string>
-    <string name="settings_speed_gate_max_hint">0–250</string>
     <string name="update_error_install">Installation failed.</string>
     <string name="update_install_error">Install error: %s</string>
     <string name="update_manual_title">Manual installation</string>
-    <string name="update_manual_instructions">1. Scan the QR code or open the link\n2. Download the MG4Control.apk file\n3. Copy it to a FAT32 USB drive\n4. Plug the USB drive into your MG4\n5. Open the File Manager\n6. Select the APK file and install it</string>
+    <string name="update_manual_instructions">1. Scan the QR code or open the link\n2. Download the EVProfile.apk file\n3. Copy it to a FAT32 USB drive\n4. Plug the USB drive into your MG4\n5. Open the File Manager\n6. Select the APK file and install it</string>
     <string name="update_downloaded_title">APK downloaded ✓</string>
-    <string name="update_downloaded_instructions">The Downloads folder should have opened automatically.\n\nTap MG4Control-*.apk to install.\n\nIf the folder did not open, go to the File Manager and navigate to Downloads.</string>
-    <string name="update_gh_releases_link">github.com/SliDeeN/MG4Control/releases</string>
+    <string name="update_downloaded_instructions">The Downloads folder should have opened automatically.\n\nTap EVProfile-*.apk to install.\n\nIf the folder did not open, go to the File Manager and navigate to Downloads.</string>
+    <string name="update_gh_releases_link">github.com/malys/EVProfile/releases</string>
     <string name="update_skip_btn">Don\'t remind me again</string>
 
     <!-- Console (debug) -->
-    <string name="console_title">⬛  MG4 Console</string>
+    <string name="console_title">⬛  EV Console</string>
     <string name="console_clear">Clear</string>
 
     <!-- Unknown firmware -->
     <string name="fw_unknown_title">⚠ Unknown firmware</string>
-    <string name="fw_unknown_body">This firmware is not yet natively supported by MG4 Control.\n\nYou can continue by manually selecting a compatibility mode, but some features may not work correctly.</string>
+    <string name="fw_unknown_body">This firmware is not yet natively supported by EVProfile.\n\nYou can continue by manually selecting a compatibility mode, but some features may not work correctly.</string>
     <string name="fw_unknown_hint">After closing this window, tap SWI133 or SWI68 in the top bar to choose your compatibility mode.</string>
     <string name="fw_unknown_btn_close">Close app</string>
     <string name="fw_unknown_btn_continue">Continue</string>

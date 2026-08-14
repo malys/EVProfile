@@ -13,10 +13,10 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MG4Control"
+rootProject.name = "EVProfile"
 include(":app")
 
-// Shared vehicle layer, vendored as a git submodule at ./MG4Hardware and consumed as a
-// Gradle subproject. One implementation of MG4Hardware/VehicleWriteGate/FirmwareInfo/models.
-include(":mg4hardware")
-project(":mg4hardware").projectDir = file("MG4Hardware/lib")
+// Shared vehicle layer, vendored as a git submodule at ./EVHardware and consumed as a
+// Gradle subproject. One implementation of EVHardware/VehicleWriteGate/FirmwareInfo/models.
+include(":evhardware")
+project(":evhardware").projectDir = file("EVHardware/lib")

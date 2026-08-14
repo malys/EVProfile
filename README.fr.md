@@ -1,20 +1,32 @@
-# MG4 Control
+# EVProfile
 
-![image info](mg4control_github_banner.svg)
+![image info](evprofile_github_banner.svg)
 
-[![Security](https://github.com/SliDeeN/MG4Control/actions/workflows/security.yml/badge.svg)](https://github.com/SliDeeN/MG4Control/actions/workflows/security.yml)
-[![Release](https://github.com/SliDeeN/MG4Control/actions/workflows/release.yml/badge.svg)](https://github.com/SliDeeN/MG4Control/actions/workflows/release.yml)
+[![Security](https://github.com/malys/EVProfile/actions/workflows/security.yml/badge.svg)](https://github.com/malys/EVProfile/actions/workflows/security.yml)
+[![Unstable](https://github.com/malys/EVProfile/actions/workflows/unstable.yml/badge.svg)](https://github.com/malys/EVProfile/actions/workflows/unstable.yml)
+[![Release](https://github.com/malys/EVProfile/actions/workflows/release.yml/badge.svg)](https://github.com/malys/EVProfile/actions/workflows/release.yml)
 
 > Application Android Automotive pour le contrôle avancé des paramètres de conduite du MG4 électrique.
 > Android Automotive app for advanced driving settings control on the MG4 electric vehicle.
 
-> Vous appréciez MG4Control et souhaitez soutenir son développement ?  
-You enjoy MG4Control and want to support its development ?  
-[![PayPal](https://img.shields.io/badge/Donate-PayPal-blue?logo=paypal)](https://www.paypal.com/paypalme/pfauquembergue)
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/slideen)
----
+> ⚠️ Cette application modifie des réglages du véhicule. Lisez le
+> [DISCLAIMER.md](DISCLAIMER.md) avant installation. Ce projet indépendant n’est ni affilié
+> à SAIC Motor ou MG Motor, ni approuvé par eux. MG et MG4 sont des marques tierces utilisées
+> uniquement pour indiquer la compatibilité.
 
 > 🇬🇧 An English version of this document is available: **[README.md](README.md)**.
+
+## Canaux de diffusion
+
+- **Stable** (`com.evsuite.profile`) : APK hors ligne, sans code de mise à jour ni
+  permission réseau. Installation et mises à jour manuelles depuis une release taguée.
+- **Unstable** (`com.evsuite.profile.unstable`) : pré-release continue installable à côté
+  de stable. Elle contrôle les origines HTTPS et la signature de l’APK avant de demander
+  une installation manuelle explicite.
+
+Migration : l’ancien paquet `online` devient stable sans réinstallation car son identifiant
+est inchangé. L’ancien `com.evsuite.profile.offline` reste une application distincte :
+sauvegardez ses profils, installez stable, restaurez-les, puis désinstallez l’ancien paquet.
 
 ## Table des matières
 1. [Présentation](#présentation)
@@ -32,14 +44,14 @@ You enjoy MG4Control and want to support its development ?
 
 ## Présentation
 
-**MG4Control** est une application système conçue pour Android Automotive OS, destinée à fonctionner sur les écrans de bord des véhicules MG4 équipés du SoC **SAIC MT2712**. Elle offre un accès direct et unifié aux réglages de conduite qui ne sont pas accessibles — ou difficilement accessibles — via l'interface constructeur.
+**EVProfile** est une application système conçue pour Android Automotive OS, destinée à fonctionner sur les écrans de bord des véhicules MG4 équipés du SoC **SAIC MT2712**. Elle offre un accès direct et unifié aux réglages de conduite qui ne sont pas accessibles — ou difficilement accessibles — via l'interface constructeur.
 
 L'application communique avec le véhicule via le SDK propriétaire SAIC, en accédant aux services Android Automotive (`CarPropertyManager`, `CarHvacManager`) ainsi qu'aux services de bas niveau exposés par le firmware du véhicule.
 
 > **Important :** Cette application nécessite des privilèges système (`sharedUserId="android.uid.system"`) et doit être signée avec la clé de la ROM. Elle ne peut pas fonctionner sur un appareil standard débloqué.
 
 > [!WARNING]
-> **MG4Control est un projet communautaire indépendant. Il n'est en aucun cas affilié, approuvé ou soutenu par MG Motor, SAIC Motor ou l'une de leurs filiales.**
+> **EVProfile est un projet communautaire indépendant. Il n'est en aucun cas affilié, approuvé ou soutenu par MG Motor, SAIC Motor ou l'une de leurs filiales.**
 > L'utilisation de cette application se fait entièrement à vos risques. Des réglages incorrects peuvent affecter le comportement du véhicule. Procédez avec précaution.
 
 ---
@@ -73,8 +85,8 @@ L'application communique avec le véhicule via le SDK propriétaire SAIC, en acc
 ### Réglages
 - Choix de la langue (Français / English)
 - Activation/désactivation de l'application automatique du profil
-- **Mise à jour automatique** : vérification GitHub + téléchargement APK vers le dossier Téléchargements
-- **Nettoyage APK** : suppression des anciens fichiers `MGControl*.apk` du dossier Téléchargements
+- **Unstable uniquement — OTA** : vérification de la pré-release GitHub et téléchargement vérifié
+- **Unstable uniquement — nettoyage APK** : suppression des anciens `EVProfile*.apk`
 - Dialog "À propos" avec version de l'app, version firmware et QR code GitHub
 - Bouton "Fermer" pour revenir directement au dashboard
 
@@ -126,14 +138,14 @@ L'application communique avec le véhicule via le SDK propriétaire SAIC, en acc
 └──────────────────────────────────────────────────────┘
                          │
 ┌──────────────────────────────────────────────────────┐
-│            ABSTRACTION MATÉRIELLE (MG4Hardware)       │
+│            ABSTRACTION MATÉRIELLE (EVHardware)       │
 │  Katman1 (Car API) → Katman2 (Binder) → Katman4      │
 │                      (ADAS / SWI133 / SWI68)          │
 └──────────────────────────────────────────────────────┘
                          │
 ┌──────────────────────────────────────────────────────┐
 │              SERVICES SYSTÈME & BOOT                  │
-│      MG4ControlService  ─────  BootReceiver          │
+│      EVProfileService  ─────  BootReceiver          │
 └──────────────────────────────────────────────────────┘
 ```
 
@@ -146,8 +158,8 @@ Démarrage véhicule
 BootReceiver.onReceive()
        │
        ▼
-MG4ControlService.onCreate()
-  └─ MG4Hardware.init()
+EVProfileService.onCreate()
+  └─ EVHardware.init()
   └─ Découverte des services Katman1 / Katman4
   └─ Application du profil par défaut (si activé)
        │
@@ -165,10 +177,10 @@ MainActivity (IHM)
 ## Structure du projet
 
 ```
-MG4Control/
+EVProfile/
 ├── app/src/main/
-│   ├── java/com/mg4/control/
-│   │   ├── MG4App.kt                  # Application — mode nuit, locale
+│   ├── java/com/evsuite/profile/
+│   │   ├── EVApp.kt                  # Application — mode nuit, locale
 │   │   ├── MainActivity.kt            # Activité principale, top bar, navigation
 │   │   │
 │   │   ├── model/
@@ -181,7 +193,7 @@ MG4Control/
 │   │   │   └── ProfileApplier.kt      # Application des réglages au véhicule (async)
 │   │   │
 │   │   ├── hardware/
-│   │   │   └── MG4Hardware.kt         # Abstraction matérielle (4 couches)
+│   │   │   └── EVHardware.kt         # Abstraction matérielle (4 couches)
 │   │   │
 │   │   ├── ui/
 │   │   │   ├── DashboardFragment.kt   # Écran principal unifié
@@ -194,7 +206,7 @@ MG4Control/
 │   │   │   └── AdasFragment.kt        # Héritage (non utilisé en v2)
 │   │   │
 │   │   ├── service/
-│   │   │   └── MG4ControlService.kt   # Service de premier plan (boot + auto-apply)
+│   │   │   └── EVProfileService.kt   # Service de premier plan (boot + auto-apply)
 │   │   │
 │   │   ├── receiver/
 │   │   │   └── BootReceiver.kt        # Récepteur de démarrage système
@@ -236,7 +248,7 @@ MG4Control/
 
 ## Couches matérielles
 
-`MG4Hardware` est organisé en **4 couches d'accès**, du plus haut niveau au plus bas, avec repli automatique en cas d'échec.
+`EVHardware` est organisé en **4 couches d'accès**, du plus haut niveau au plus bas, avec repli automatique en cas d'échec.
 
 ### Katman1 — Android Automotive Car API
 Couche principale. Utilise les APIs officielles Android Automotive :
@@ -350,7 +362,7 @@ Disposition en **2 rangées** (ratio 2:1) optimisée pour 1280×480 :
 
 ## Compilation et installation
 
-Vous pouvez directement télécharger la dernière version de MG4Control via les releases : https://github.com/SliDeeN/MG4Control/releases
+Vous pouvez directement télécharger la dernière version de EVProfile via les releases : https://github.com/malys/EVProfile/releases
 Il ne vous faut qu'une clé USB et l'accès aux paramètres AAOS afin d'installer l'APK.
 
 
@@ -365,7 +377,9 @@ Vous pouvez aussi compiler vous même le projet :
 
 ```bash
 # Avec le JDK d'Android Studio
-JAVA_HOME="/path/to/Android Studio/jbr" ./gradlew assembleDebug
+JAVA_HOME="/path/to/Android Studio/jbr" ./gradlew assembleStableDebug
+# Canal de test avec OTA :
+JAVA_HOME="/path/to/Android Studio/jbr" ./gradlew assembleUnstableDebug
 ```
 
 L'APK se trouve dans :
@@ -393,10 +407,11 @@ adb shell pm install -r --system /sdcard/app-debug.apk
 | `FOREGROUND_SERVICE` | Service de premier plan pour l'auto-apply |
 | `WAKE_LOCK` | Empêche le sleep pendant l'application des réglages |
 | `RECEIVE_BOOT_COMPLETED` | Démarrage automatique au boot |
+| `BLUETOOTH` *(Android 11 et antérieur)* | Association d’un appareil appairé à un profil automatique |
+| `BLUETOOTH_CONNECT` *(Android 12+)* | Association d’un appareil appairé à un profil automatique |
 | `CAR_POWERTRAIN` | Contrôle du mode de conduite et de la régénération |
 | `CONTROL_CAR_CLIMATE` | Contrôle des sièges et du volant chauffants |
 | `CAR_VENDOR_EXTENSION` | Extensions propriétaires SAIC |
 | `CAR_ENERGY` | Informations batterie / motorisation |
-| `INTERNET` | Vérification des mises à jour (GitHub API) |
-| `DOWNLOAD_WITHOUT_NOTIFICATION` | Téléchargement silencieux de l'APK de mise à jour |
-| `WRITE_EXTERNAL_STORAGE` | Enregistrement APK dans le dossier Téléchargements |
+| `INTERNET` *(unstable uniquement)* | Vérification et téléchargement de la pré-release |
+| `ACCESS_NETWORK_STATE` *(unstable uniquement)* | Avertissement avant un téléchargement hors Wi-Fi |

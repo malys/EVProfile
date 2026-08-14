@@ -31,6 +31,6 @@
         app:backgroundTint="@color/dash_accent_dim"
         app:strokeWidth="1dp"
         app:strokeColor="@color/dash_accent"
-        app:cornerRadius="@dimen/mg4_corner" />
+        app:cornerRadius="@dimen/ev_corner" />
 
 </LinearLayout>

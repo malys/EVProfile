@@ -1,8 +1,9 @@
 # Security policy
 
-MG4Control is the component that actually writes to the car. It holds no credentials and
-contacts no server, but it runs with system privilege and owns the gate that every other
-MG4 app has to go through — so security reports are welcome and taken seriously.
+EVProfile is the component that actually writes to the car. It holds no credentials; the
+stable channel contacts no server, while unstable contacts GitHub only for OTA. It runs
+with system privilege and owns the gate that every other
+vehicle-writing app has to go through — so security reports are welcome and taken seriously.
 
 ## Reporting a vulnerability
 
@@ -14,16 +15,18 @@ moving. A proof of concept helps; a working exploit is not required.
 
 ## What is in scope
 
-- Anything that lets another application on the head unit **bind the MG4Control bridge**
+- Anything that lets another application on the head unit **bind the EVProfile bridge**
   without holding the signature permission.
 - Anything that gets a road-behaviour write past the **speed gate** — including a code path
   that reaches a vehicle property without consulting it.
 - Anything that lets a caller reach a vehicle property **not** exposed by the action
   catalogue, or pass a raw property id through the IPC surface.
-- Privilege escalation through the profile store: a crafted profile that makes MG4Control
+- Privilege escalation through the profile store: a crafted profile that makes EVProfile
   write something no user could have asked for from its own UI.
-- Anything that causes MG4Control to destabilise the head unit — an unhandled exception in
+- Anything that causes EVProfile to destabilise the head unit — an unhandled exception in
   a system-privileged service is a vehicle availability problem, not just a crash.
+- Any way for stable to gain network access, or for unstable OTA to accept an unapproved
+  host, redirect downgrade, oversized APK, or certificate mismatch.
 
 ## What is not in scope
 
@@ -44,9 +47,11 @@ moving. A proof of concept helps; a working exploit is not required.
   something a user could already do from the UI.
 - **`VEHICLE_POWER_OFF` is deliberately unreachable.** Cutting the vehicle stays a human
   gesture.
-- **Offline by design.** No remote control surface, no telemetry, no update channel that
-  can push behaviour. The APK is signed with the platform key; an unsigned or differently
-  signed build gets no privilege and no bridge.
+- **Stable is offline by construction.** It has neither updater classes nor network
+  permissions and is updated manually. Unstable keeps OTA in a separate source set,
+  validates every redirect, caps download size, verifies the APK against the running
+  certificate before copying it to Downloads, and still requires a manual installation.
+  Neither channel exposes remote vehicle control.
 
 See also [DISCLAIMER.md](DISCLAIMER.md), which covers the safety envelope rather than the
 threat model.

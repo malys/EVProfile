@@ -10,6 +10,12 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <!-- Bluetooth profile matching. API 28–30 uses the legacy normal permission;
+         API 31+ requires BLUETOOTH_CONNECT. Calls already fail closed on SecurityException. -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <!-- Vehicle control permissions (Android Automotive / SAIC) -->
     <uses-permission android:name="android.car.permission.CAR_ENERGY" />
     <uses-permission android:name="android.car.permission.CAR_POWERTRAIN" />
@@ -23,36 +29,36 @@
          avec la clé plateforme de la ROM l'obtient — c'est le cas de l'émetteur système
          d'origine, jamais d'une app tierce. -->
     <permission
-        android:name="com.mg4.control.permission.RECEIVE_HARDKEY"
+        android:name="com.evsuite.profile.permission.RECEIVE_HARDKEY"
         android:protectionLevel="signature" />
 
     <!-- External control API. In protectionLevel="signature", only an app signed with the
-         same platform key can bind ProfileControlService. MG4Control declares the permission
-         to protect that service; any such app may list and apply MG4Control profiles. -->
+         same platform key can bind ProfileControlService. EVProfile declares the permission
+         to protect that service; any such app may list and apply EVProfile profiles. -->
     <permission
-        android:name="com.mg4.control.permission.CONTROL_PROFILES"
+        android:name="com.evsuite.profile.permission.CONTROL_PROFILES"
         android:protectionLevel="signature" />
 
-    <!-- Réseau / auto-update : déclarés UNIQUEMENT dans le flavor online
-         (src/online/AndroidManifest.xml). Le flavor offline n'en a aucun, par construction. -->
+    <!-- Réseau / OTA : déclarés UNIQUEMENT dans le canal unstable
+         (src/unstable/AndroidManifest.xml). Stable n'en a aucun, par construction. -->
 
-    <!-- API 30+ : sans ça, MG4Tasker est invisible pour getLaunchIntentForPackage() et le
+    <!-- API 30+ : sans ça, EVTasker est invisible pour getLaunchIntentForPackage() et le
          bouton Automatisation resterait masqué sur une voiture où l'app est installée. -->
-    <!-- MG4Tasker, tous canaux confondus. Un testeur qui installe le canal unstable, ou la
+    <!-- EVTasker, tous canaux confondus. Un testeur qui installe le canal unstable, ou la
          variante offline, a la même app : ne déclarer que l'id stable rendait le bouton
          Automatisation invisible sur ces installations. -->
     <queries>
-        <package android:name="com.mg4.tasker" />
-        <package android:name="com.mg4.tasker.unstable" />
-        <package android:name="com.mg4.tasker.offline" />
-        <package android:name="com.mg4.tasker.offline.unstable" />
+        <package android:name="com.evsuite.tasker" />
+        <package android:name="com.evsuite.tasker.unstable" />
+        <package android:name="com.evsuite.tasker.offline" />
+        <package android:name="com.evsuite.tasker.offline.unstable" />
     </queries>
 
     <application
-        android:name=".MG4App"
+        android:name=".EVApp"
         android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
-        android:theme="@style/Theme.MG4Control"
+        android:theme="@style/Theme.EVProfile"
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:supportsRtl="true">
@@ -78,7 +84,7 @@
              SDK. "connectedDevice" correspond à ce que fait le service : suivre l'état du
              véhicule. -->
         <service
-            android:name=".service.MG4ControlService"
+            android:name=".service.EVProfileService"
             android:exported="false"
             android:directBootAware="true"
             android:foregroundServiceType="connectedDevice" />
@@ -86,16 +92,11 @@
         <!-- External control API (profiles). exported=true because the caller is another
              app, but access is closed by the signature permission: only an app signed with
              the ROM platform key can bind. The service exposes no raw property write —
-             only listing and applying MG4Control profiles. -->
+             only listing and applying EVProfile profiles. -->
         <service
             android:name=".api.ProfileControlService"
             android:exported="true"
-            android:permission="com.mg4.control.permission.CONTROL_PROFILES" />
-
-        <!-- FileProvider + InstallReceiver (auto-update) : déclarés UNIQUEMENT dans
-             le flavor online (src/online/AndroidManifest.xml). Déplacer le FileProvider
-             hors du manifest de base évite aussi un conflit d'authority qui empêcherait
-             d'installer les APK online et offline côte à côte. -->
+            android:permission="com.evsuite.profile.permission.CONTROL_PROFILES" />
 
         <receiver
             android:name=".receiver.BootReceiver"

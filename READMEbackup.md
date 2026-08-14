@@ -1,4 +1,4 @@
-![Cover](https://raw.githubusercontent.com/SliDeeN/MG4Control/968a965fa7d1d87d816fce28d4f87fe22a665c31/mg4control_github_banner.svg)
+![Cover](evprofile_github_banner.svg)
 
 > Application Android Automotive pour le contrôle avancé des paramètres de conduite du MG4 électrique.
 > Android Automotive app for advanced driving settings control on the MG4 electric vehicle.
@@ -24,14 +24,14 @@
 
 ## Présentation
 
-**MG4Control** est une application système conçue pour Android Automotive OS, destinée à fonctionner sur les écrans de bord des véhicules MG4 équipés du SoC **SAIC MT2712**. Elle offre un accès direct et unifié aux réglages de conduite qui ne sont pas accessibles — ou difficilement accessibles — via l'interface constructeur.
+**EVProfile** est une application système conçue pour Android Automotive OS, destinée à fonctionner sur les écrans de bord des véhicules MG4 équipés du SoC **SAIC MT2712**. Elle offre un accès direct et unifié aux réglages de conduite qui ne sont pas accessibles — ou difficilement accessibles — via l'interface constructeur.
 
 L'application communique avec le véhicule via le SDK propriétaire SAIC, en accédant aux services Android Automotive (`CarPropertyManager`, `CarHvacManager`) ainsi qu'aux services de bas niveau exposés par le firmware du véhicule.
 
 > **Important :** Cette application nécessite des privilèges système (`sharedUserId="android.uid.system"`) et doit être signée avec la clé de la ROM. Elle ne peut pas fonctionner sur un appareil standard débloqué.
 
 > [!WARNING]
-> **MG4Control est un projet communautaire indépendant. Il n'est en aucun cas affilié, approuvé ou soutenu par MG Motor, SAIC Motor ou l'une de leurs filiales.**
+> **EVProfile est un projet communautaire indépendant. Il n'est en aucun cas affilié, approuvé ou soutenu par MG Motor, SAIC Motor ou l'une de leurs filiales.**
 > L'utilisation de cette application se fait entièrement à vos risques. Des réglages incorrects peuvent affecter le comportement du véhicule. Procédez avec précaution.
 
 ---
@@ -117,7 +117,7 @@ L'application communique avec le véhicule via le SDK propriétaire SAIC, en acc
 ### v2.0.0
 - Réécriture complète depuis DriveHub Dort
 - Support SWI68 (VehicleSettingManager)
-- Architecture multi-couches MG4Hardware (Katman1/2/4)
+- Architecture multi-couches EVHardware (Katman1/2/4)
 
 ---
 
@@ -156,14 +156,14 @@ L'application communique avec le véhicule via le SDK propriétaire SAIC, en acc
 └──────────────────────────────────────────────────────┘
                          │
 ┌──────────────────────────────────────────────────────┐
-│            ABSTRACTION MATÉRIELLE (MG4Hardware)       │
+│            ABSTRACTION MATÉRIELLE (EVHardware)       │
 │  Katman1 (Car API) → Katman2 (Binder) → Katman4      │
 │                      (ADAS / SWI133 / SWI68)          │
 └──────────────────────────────────────────────────────┘
                          │
 ┌──────────────────────────────────────────────────────┐
 │              SERVICES SYSTÈME & BOOT                  │
-│      MG4ControlService  ─────  BootReceiver          │
+│      EVProfileService  ─────  BootReceiver          │
 └──────────────────────────────────────────────────────┘
 ```
 
@@ -176,8 +176,8 @@ Démarrage véhicule
 BootReceiver.onReceive()
        │
        ▼
-MG4ControlService.onCreate()
-  └─ MG4Hardware.init()
+EVProfileService.onCreate()
+  └─ EVHardware.init()
   └─ Découverte des services Katman1 / Katman4
   └─ Application du profil par défaut (si activé)
        │
@@ -195,10 +195,10 @@ MainActivity (IHM)
 ## Structure du projet
 
 ```
-MG4Control/
+EVProfile/
 ├── app/src/main/
-│   ├── java/com/mg4/control/
-│   │   ├── MG4App.kt                  # Application — mode nuit, locale
+│   ├── java/com/evsuite/profile/
+│   │   ├── EVApp.kt                  # Application — mode nuit, locale
 │   │   ├── MainActivity.kt            # Activité principale, top bar, navigation
 │   │   │
 │   │   ├── model/
@@ -211,7 +211,7 @@ MG4Control/
 │   │   │   └── ProfileApplier.kt      # Application des réglages au véhicule (async)
 │   │   │
 │   │   ├── hardware/
-│   │   │   └── MG4Hardware.kt         # Abstraction matérielle (4 couches)
+│   │   │   └── EVHardware.kt         # Abstraction matérielle (4 couches)
 │   │   │
 │   │   ├── ui/
 │   │   │   ├── DashboardFragment.kt   # Écran principal unifié
@@ -224,7 +224,7 @@ MG4Control/
 │   │   │   └── AdasFragment.kt        # Héritage (non utilisé en v2)
 │   │   │
 │   │   ├── service/
-│   │   │   └── MG4ControlService.kt   # Service de premier plan (boot + auto-apply)
+│   │   │   └── EVProfileService.kt   # Service de premier plan (boot + auto-apply)
 │   │   │
 │   │   ├── receiver/
 │   │   │   └── BootReceiver.kt        # Récepteur de démarrage système
@@ -266,7 +266,7 @@ MG4Control/
 
 ## Couches matérielles
 
-`MG4Hardware` est organisé en **4 couches d'accès**, du plus haut niveau au plus bas, avec repli automatique en cas d'échec.
+`EVHardware` est organisé en **4 couches d'accès**, du plus haut niveau au plus bas, avec repli automatique en cas d'échec.
 
 ### Katman1 — Android Automotive Car API
 Couche principale. Utilise les APIs officielles Android Automotive :
@@ -380,7 +380,7 @@ Disposition en **2 rangées** (ratio 2:1) optimisée pour 1280×480 :
 
 ## Compilation et installation
 
-Vous pouvez directement télécharger la dernière version de MG4Control via les releases : https://github.com/SliDeeN/MG4Control/releases
+Vous pouvez directement télécharger la dernière version de EVProfile via les releases : https://github.com/malys/EVProfile/releases
 Il ne vous faut qu'une clé USB et l'accès aux paramètres AAOS afin d'installer l'APK.
 
 
@@ -454,14 +454,14 @@ adb shell pm install -r --system /sdcard/app-debug.apk
 
 ## Overview
 
-**MG4Control** is a system-level application designed for Android Automotive OS, intended to run on the head unit of MG4 electric vehicles equipped with the **SAIC MT2712** SoC. It provides direct, unified access to driving settings that are unavailable — or poorly accessible — through the stock manufacturer interface.
+**EVProfile** is a system-level application designed for Android Automotive OS, intended to run on the head unit of MG4 electric vehicles equipped with the **SAIC MT2712** SoC. It provides direct, unified access to driving settings that are unavailable — or poorly accessible — through the stock manufacturer interface.
 
 The app communicates with the vehicle through the proprietary SAIC SDK, accessing Android Automotive services (`CarPropertyManager`, `CarHvacManager`) as well as low-level services exposed by the vehicle's firmware.
 
 > **Important:** This application requires system privileges (`sharedUserId="android.uid.system"`) and must be signed with the ROM's platform key. It cannot run on a standard unlocked device.
 
 > [!WARNING]
-> **MG4Control is an independent community project. It is in no way affiliated with, endorsed by, or supported by MG Motor, SAIC Motor, or any of their subsidiaries.**
+> **EVProfile is an independent community project. It is in no way affiliated with, endorsed by, or supported by MG Motor, SAIC Motor, or any of their subsidiaries.**
 > Use this application entirely at your own risk. Incorrect settings may affect vehicle behaviour. Proceed with caution.
 
 ---
@@ -535,7 +535,7 @@ The app communicates with the vehicle through the proprietary SAIC SDK, accessin
 ### v2.0.0
 - Full rewrite from DriveHub Dort
 - SWI68 support (VehicleSettingManager)
-- Multi-layer MG4Hardware architecture (Katman1/2/4)
+- Multi-layer EVHardware architecture (Katman1/2/4)
 
 ---
 
@@ -574,14 +574,14 @@ The app communicates with the vehicle through the proprietary SAIC SDK, accessin
 └──────────────────────────────────────────────────────┘
                          │
 ┌──────────────────────────────────────────────────────┐
-│           HARDWARE ABSTRACTION (MG4Hardware)          │
+│           HARDWARE ABSTRACTION (EVHardware)          │
 │  Katman1 (Car API) → Katman2 (Binder) → Katman4      │
 │                      (ADAS / SWI133 / SWI68)          │
 └──────────────────────────────────────────────────────┘
                          │
 ┌──────────────────────────────────────────────────────┐
 │               SYSTEM SERVICES & BOOT                  │
-│       MG4ControlService  ─────  BootReceiver         │
+│       EVProfileService  ─────  BootReceiver         │
 └──────────────────────────────────────────────────────┘
 ```
 
@@ -594,8 +594,8 @@ Vehicle boot
 BootReceiver.onReceive()
        │
        ▼
-MG4ControlService.onCreate()
-  └─ MG4Hardware.init()
+EVProfileService.onCreate()
+  └─ EVHardware.init()
   └─ Katman1 / Katman4 service discovery
   └─ Apply default profile (if enabled)
        │
@@ -611,10 +611,10 @@ MainActivity (UI)
 ## Project Structure
 
 ```
-MG4Control/
+EVProfile/
 ├── app/src/main/
-│   ├── java/com/mg4/control/
-│   │   ├── MG4App.kt                  # Application — night mode, locale
+│   ├── java/com/evsuite/profile/
+│   │   ├── EVApp.kt                  # Application — night mode, locale
 │   │   ├── MainActivity.kt            # Main activity, top bar, navigation
 │   │   │
 │   │   ├── model/
@@ -627,7 +627,7 @@ MG4Control/
 │   │   │   └── ProfileApplier.kt      # Applies settings to vehicle (async)
 │   │   │
 │   │   ├── hardware/
-│   │   │   └── MG4Hardware.kt         # Hardware abstraction (4 layers)
+│   │   │   └── EVHardware.kt         # Hardware abstraction (4 layers)
 │   │   │
 │   │   ├── ui/
 │   │   │   ├── DashboardFragment.kt   # Unified main screen
@@ -640,7 +640,7 @@ MG4Control/
 │   │   │   └── AdasFragment.kt        # Legacy (unused in v2)
 │   │   │
 │   │   ├── service/
-│   │   │   └── MG4ControlService.kt   # Foreground service (boot + auto-apply)
+│   │   │   └── EVProfileService.kt   # Foreground service (boot + auto-apply)
 │   │   │
 │   │   ├── receiver/
 │   │   │   └── BootReceiver.kt        # System boot receiver
@@ -677,7 +677,7 @@ MG4Control/
 
 ## Hardware Layers
 
-`MG4Hardware` is organized into **4 access layers**, from highest to lowest level, with automatic fallback on failure.
+`EVHardware` is organized into **4 access layers**, from highest to lowest level, with automatic fallback on failure.
 
 ### Katman1 — Android Automotive Car API
 Primary layer. Uses official Android Automotive APIs:
@@ -785,7 +785,7 @@ A second press on PROFILS or RÉGLAGES closes the view and returns to the dashbo
 
 ## Build & Installation
 
-You can download the latest version of MG4Control directly from the releases page: https://github.com/SliDeeN/MG4Control/releases
+You can download the latest version of EVProfile directly from the releases page: https://github.com/malys/EVProfile/releases
 All you need is a USB drive and access to the AAOS settings to install the APK.
 
 
@@ -843,6 +843,6 @@ Basé sur l'application **DriveHub Dort** développée par **Merth4n** & **hotbo
 
 Remerciements spéciaux à **confor1max** pour les tests approfondis du firmware SWI68 🙏
 
-[![GitHub](https://img.shields.io/badge/GitHub-SliDeeN%2FMG4Control-181717?logo=github)](https://github.com/SliDeeN/MG4Control)
+[![GitHub](https://img.shields.io/badge/GitHub-SliDeeN%2FEVProfile-181717?logo=github)](https://github.com/malys/EVProfile)
 
 </details>

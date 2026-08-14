@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.mg4.control"
+    namespace = "com.evsuite.profile"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.mg4.control"
+        applicationId = "com.evsuite.profile"
         minSdk = 28
         targetSdk = 34
         versionCode = 18
@@ -16,29 +16,34 @@ android {
 
     // Signature avec la clé plateforme de la ROM (requise par sharedUserId=android.uid.system).
     // Secrets lus depuis l'environnement (CI) ou gradle.properties local — JAMAIS commités.
-    val keystorePath = System.getenv("MG4_KEYSTORE") ?: (project.findProperty("mg4.keystore") as String?)
+    val keystorePath = System.getenv("EV_KEYSTORE") ?: (project.findProperty("evsuite.keystore") as String?)
     signingConfigs {
         if (keystorePath != null && file(keystorePath).exists()) {
             create("platform") {
                 storeFile = file(keystorePath)
-                storePassword = System.getenv("MG4_KEYSTORE_PASSWORD") ?: (project.findProperty("mg4.keystore.password") as String?)
-                keyAlias = System.getenv("MG4_KEY_ALIAS") ?: (project.findProperty("mg4.key.alias") as String?) ?: "platform"
-                keyPassword = System.getenv("MG4_KEY_PASSWORD") ?: (project.findProperty("mg4.key.password") as String?)
+                storePassword = System.getenv("EV_KEYSTORE_PASSWORD") ?: (project.findProperty("evsuite.keystore.password") as String?)
+                keyAlias = System.getenv("EV_KEY_ALIAS") ?: (project.findProperty("evsuite.key.alias") as String?) ?: "platform"
+                keyPassword = System.getenv("EV_KEY_PASSWORD") ?: (project.findProperty("evsuite.key.password") as String?)
             }
         }
     }
 
-    flavorDimensions += "dist"
+    // Stable is the tagged, offline/manual channel. Unstable is the rolling pre-release
+    // channel; its updater implementation and network manifest live only in src/unstable.
+    flavorDimensions += "channel"
     productFlavors {
-        create("online") {
-            dimension = "dist"
-            buildConfigField("boolean", "OFFLINE", "false")
-        }
-        create("offline") {
-            dimension = "dist"
-            applicationIdSuffix = ".offline"
-            versionNameSuffix = "-offline"
+        create("stable") {
+            dimension = "channel"
             buildConfigField("boolean", "OFFLINE", "true")
+            buildConfigField("boolean", "OTA_ENABLED", "false")
+        }
+        create("unstable") {
+            dimension = "channel"
+            applicationIdSuffix = ".unstable"
+            versionName = "${defaultConfig.versionName}.${project.findProperty("unstableBuild") ?: "0"}"
+            versionNameSuffix = "-unstable"
+            buildConfigField("boolean", "OFFLINE", "false")
+            buildConfigField("boolean", "OTA_ENABLED", "true")
         }
     }
 
@@ -67,7 +72,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
-        // ITaskerBridge : contrat IPC partagé avec MG4Tasker (même package AIDL des deux côtés).
+        // ITaskerBridge : contrat IPC partagé avec EVTasker (même package AIDL des deux côtés).
         aidl = true
     }
 
@@ -91,9 +96,15 @@ kotlin {
     }
 }
 
+tasks.register("printUnstableVersion") {
+    doLast {
+        println("${android.defaultConfig.versionName}.${project.findProperty("unstableBuild") ?: "0"}")
+    }
+}
+
 dependencies {
-    // Shared vehicle layer (git submodule ./MG4Hardware, subproject :mg4hardware).
-    implementation(project(":mg4hardware"))
+    // Shared vehicle layer (git submodule ./EVHardware, subproject :evhardware).
+    implementation(project(":evhardware"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -106,7 +117,7 @@ dependencies {
     implementation(libs.androidx.viewpager2)
 
     // QR code (génération dans le dialog Infos), dans les deux flavors. Le QR est le seul
-    // moyen de sortir une URL d'un écran de voiture vers un téléphone : le build offline en a
+    // moyen de sortir une URL d'un écran de voiture vers un téléphone : le build stable en a
     // besoin davantage que l'autre, puisqu'il ne peut rien télécharger lui-même. ZXing core
     // est du Java pur, sans réseau ni permission.
     implementation("com.google.zxing:core:3.5.3")

@@ -21,19 +21,19 @@ arising from, out of or in connection with the software or its use.
 - **The speed gate is not a substitute for judgement.** Road-behaviour writes are refused
   above standstill, and refused writes are reported rather than silently dropped. That
   prevents a change from landing mid-drive; it does not make an ill-considered change safe.
-- **Compatibility is inferred, not certified.** Firmware support is derived by reading OEM
-  code, not by testing every build on every car. Your vehicle is the authority on what it
-  accepts.
-- Reading and writing vehicle settings uses **undocumented OEM interfaces** discovered by
-  inspection. They can change or disappear with any firmware update.
+- **Compatibility is inferred, not certified.** Not every build has been tested on every
+  car. Your vehicle is the authority on what it accepts.
+- Reading and writing vehicle settings uses **undocumented runtime interfaces**. They can
+  change or disappear with any firmware update.
 - Release builds are **minified with R8**, and the IPC bridge is resolved by name at bind
   time. Verify a release build on the vehicle before relying on it.
 
 ## Not affiliated
 
 This project is **not affiliated with, endorsed by, or supported by** SAIC Motor, MG Motor,
-or Google. All trademarks belong to their respective owners. "MG4" is used only to identify
-the vehicle the software targets.
+or Google. MG, MG4 and related names and logos are trademarks of their respective owners.
+They are used solely to identify compatibility with certain vehicles; no official origin,
+certification or approval is claimed.
 
 ## Contributors
 

@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in contributing to MG4Control! This guide explains how to report issues, suggest features, and submit code contributions—with optional support from Claude AI to improve your submissions.
+Thank you for your interest in contributing to EVProfile! This guide explains how to report issues, suggest features, and submit code contributions—with optional support from Claude AI to improve your submissions.
 
 ## Table of Contents
 
@@ -49,7 +49,7 @@ Claude AI can help you:
 
 1. **Start a conversation** with Claude:
    ```
-   I need to report a bug in MG4Control. Help me write a clear issue report.
+   I need to report a bug in EVProfile. Help me write a clear issue report.
    
    [Paste your reproduction steps, error messages, and environment details]
    ```
@@ -94,7 +94,7 @@ Claude can help you:
 
 1. **Start a conversation** with Claude:
    ```
-   I want to suggest a new feature for MG4Control to [describe problem].
+   I want to suggest a new feature for EVProfile to [describe problem].
    
    [Provide your initial idea, use case, and any constraints]
    

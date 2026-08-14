@@ -2,7 +2,7 @@
 <!--
     Confirmation d'application d'un profil — fenêtre plein écran.
 
-    C'était une carte flottante centrée sur un voile sombre. MG4Suite demande une fenêtre
+    C'était une carte flottante centrée sur un voile sombre. EVSuite demande une fenêtre
     plein écran pour une confirmation importante, et celle-ci écrit dans le véhicule :
     le panneau remplit donc l'écran et les deux actions sont groupées en haut à droite,
     là où le regard revient. Le compte à rebours reste à gauche de la même rangée.
@@ -16,7 +16,7 @@
     android:id="@+id/confirm_backdrop"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/mg4_background"
+    android:background="@color/ev_background"
     android:clickable="true"
     android:focusable="true">
 
@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/mg4_background"
+        android:background="@color/ev_background"
         android:padding="@dimen/spacing_lg"
         android:clickable="true"
         android:focusable="true">
@@ -46,7 +46,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/confirm_btn_no"
-                style="@style/Widget.MG4.Button.Outlined"
+                style="@style/Widget.EV.Button.Outlined"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/touch_target"
                 android:layout_marginEnd="@dimen/spacing_sm"
@@ -57,11 +57,11 @@
                 app:backgroundTint="@color/dash_btn"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/dash_border"
-                app:cornerRadius="@dimen/mg4_corner" />
+                app:cornerRadius="@dimen/ev_corner" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/confirm_btn_yes"
-                style="@style/Widget.MG4.Button.Outlined"
+                style="@style/Widget.EV.Button.Outlined"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/touch_target"
                 android:minWidth="220dp"
@@ -71,7 +71,7 @@
                 app:backgroundTint="@color/dash_accent_dim"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/dash_accent"
-                app:cornerRadius="@dimen/mg4_corner" />
+                app:cornerRadius="@dimen/ev_corner" />
 
         </LinearLayout>
 

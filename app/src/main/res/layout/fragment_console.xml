@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/mg4_background">
+    android:background="@color/ev_background">
 
     <!-- Header -->
     <LinearLayout
@@ -13,14 +13,14 @@
         android:orientation="horizontal"
         android:padding="8dp"
         android:gravity="center_vertical"
-        android:background="@color/mg4_surface">
+        android:background="@color/ev_surface">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/console_title"
-            android:textColor="@color/mg4_text_primary"
+            android:textColor="@color/ev_text_primary"
             android:textSize="@dimen/text_label"
             android:fontFamily="monospace" />
 
@@ -40,8 +40,8 @@
         android:id="@+id/console_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/mg4_surface"
-        android:textColor="@color/mg4_text_primary"
+        android:background="@color/ev_surface"
+        android:textColor="@color/ev_text_primary"
         android:padding="8dp"
         android:fontFamily="monospace"
         android:textSize="@dimen/text_label"
@@ -50,7 +50,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/mg4_outline" />
+        android:background="@color/ev_outline" />
 
     <!-- Log output -->
     <ScrollView
@@ -65,7 +65,7 @@
             android:id="@+id/console_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/mg4_text_primary"
+            android:textColor="@color/ev_text_primary"
             android:textSize="@dimen/text_label"
             android:fontFamily="monospace"
             android:lineSpacingMultiplier="1.25"

@@ -1,4 +1,4 @@
-# Allowed permissions for MG4Control.
+# Allowed permissions for EVProfile.
 # Any uses-permission in a manifest NOT listed here FAILS the CI.
 # Why: the app runs on a moving vehicle — any new permission
 # (especially network or vehicle-write) must be reviewed and added here explicitly.
@@ -22,12 +22,11 @@ android.car.permission.CONTROL_CAR_CLIMATE
 # Exigée de l'émetteur du broadcast hardkey, en protectionLevel="signature" (T-902) :
 # seule une app signée avec la clé plateforme peut l'obtenir. Elle restreint un accès,
 # elle n'en accorde pas.
-com.mg4.control.permission.RECEIVE_HARDKEY
+com.evsuite.profile.permission.RECEIVE_HARDKEY
 # External control API: signature-level permission protecting ProfileControlService.
 # protectionLevel="signature" → réservée aux apps signées avec la clé plateforme.
-# Déclarée ET demandée par MG4Control : demandée pour pouvoir émettre le broadcast.
-com.mg4.control.permission.CONTROL_PROFILES
-# --- network / auto-update (online variant only) ---
+# Déclarée ET demandée par EVProfile : demandée pour pouvoir émettre le broadcast.
+com.evsuite.profile.permission.CONTROL_PROFILES
+# --- network / OTA (unstable channel only; the merged-manifest gate proves stable lacks it) ---
 android.permission.INTERNET
 android.permission.ACCESS_NETWORK_STATE
-android.permission.INSTALL_PACKAGES

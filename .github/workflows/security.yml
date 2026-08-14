@@ -20,8 +20,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - uses: gradle/actions/setup-gradle@v4
       - name: Check manifest permissions
-        run: bash .github/security/check-permissions.sh
+        run: |
+          bash .github/security/check-permissions.sh
+          chmod +x gradlew
+          ./gradlew processStableDebugMainManifest processUnstableDebugMainManifest --no-daemon
+          bash .github/security/check-channel-isolation.sh
 
   secrets:
     name: Secret scan (blocking)
@@ -73,7 +80,7 @@ jobs:
         if: always()
         run: |
           {
-            echo "# MG4Control security report"
+            echo "# EVProfile security report"
             echo "_$(date -u)_"
             echo
             echo "## mobsfscan"
@@ -106,7 +113,7 @@ jobs:
         if: ${{ env.NVD_API_KEY != '' }}
         uses: dependency-check/Dependency-Check_Action@main
         with:
-          project: MG4Control
+          project: EVProfile
           path: "."
           format: "SARIF"
           args: --nvdApiKey ${{ env.NVD_API_KEY }}

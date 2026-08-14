@@ -1,4 +1,4 @@
-# Environnement de développement MG4Control.
+# Environnement de développement EVProfile.
 #
 # Commité volontairement : il décrit comment construire le projet, pas la machine de
 # quelqu'un. Pour une surcharge locale, créer un mise.local.toml (ignoré par git).
@@ -50,9 +50,9 @@ BUILD_TOOLS = "34.0.0"
 # Densité cible du projet : 160 dpi.
 # Écran 12,8" 1920x1080. Firmware de référence : SWI68-29958-1300R69.
 
-EMU_CAR_AVD = "mg4control-car"
+EMU_CAR_AVD = "evprofile-car"
 EMU_CAR_IMAGE = "system-images;android-33;android-automotive;x86_64"
-EMU_SCREEN_AVD = "mg4control-screen"
+EMU_SCREEN_AVD = "evprofile-screen"
 EMU_SCREEN_IMAGE = "system-images;android-28;google_apis;x86_64"
 EMU_WIDTH = "1920"
 EMU_HEIGHT = "1080"
@@ -86,16 +86,16 @@ echo "SDK installé, local.properties écrit"
 """
 
 [tasks.build]
-description = "Compile le flavor online en debug"
-run = './gradlew -Dorg.gradle.java.home=$JAVA_HOME assembleOnlineDebug'
+description = "Compile le canal stable hors ligne en debug"
+run = './gradlew -Dorg.gradle.java.home=$JAVA_HOME assembleStableDebug'
 
 [tasks.test]
-description = "Tests unitaires JVM — les deux flavors"
-run = './gradlew -Dorg.gradle.java.home=$JAVA_HOME testOnlineDebugUnitTest testOfflineDebugUnitTest'
+description = "Tests unitaires JVM — les deux canaux"
+run = './gradlew -Dorg.gradle.java.home=$JAVA_HOME testStableDebugUnitTest testUnstableDebugUnitTest'
 
 [tasks.lint]
 description = "Analyse lint Android"
-run = './gradlew -Dorg.gradle.java.home=$JAVA_HOME lintOnlineDebug'
+run = './gradlew -Dorg.gradle.java.home=$JAVA_HOME lintStableDebug lintUnstableDebug'
 
 [tasks.permissions]
 description = "Contrôle de dérive des permissions (le même que la CI)"
@@ -106,8 +106,8 @@ description = "Ce que la CI exécute : permissions + tests"
 depends = ["permissions", "test"]
 
 [tasks.release]
-description = "APK release des deux flavors (R8 activé — passe véhicule requise avant diffusion)"
-run = './gradlew -Dorg.gradle.java.home=$JAVA_HOME assembleOnlineRelease assembleOfflineRelease'
+description = "APK release des deux canaux (R8 activé — passe véhicule requise avant diffusion)"
+run = './gradlew -Dorg.gradle.java.home=$JAVA_HOME assembleStableRelease assembleUnstableRelease'
 
 [tasks.clean]
 run = './gradlew -Dorg.gradle.java.home=$JAVA_HOME clean'
@@ -194,9 +194,9 @@ fi
 # Les builds debug retirent sharedUserId (overlay src/debug/AndroidManifest.xml), donc la
 # clé debug suffit pour installer sur un émulateur. La release garde sharedUserId + signature
 # plateforme pour le véhicule.
-APK=$(ls -t app/build/outputs/apk/online/debug/*.apk | head -1)
+APK=$(ls -t app/build/outputs/apk/stable/debug/*.apk | head -1)
 echo "Installation de $APK"
 $ADB install -r -g "$APK"
-$ADB shell am start -n "com.mg4.control/com.mg4.control.MainActivity"
+$ADB shell am start -n "com.evsuite.profile/com.evsuite.profile.MainActivity"
 echo "Lancé. Logs : mise run logs"
 '''

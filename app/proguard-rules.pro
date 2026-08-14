@@ -2,17 +2,17 @@
 -keep class android.car.** { *; }
 -keep class android.os.ServiceManager { *; }
 -keep class com.saicmotor.** { *; }
--keep class com.mg4.hardware.model.** { *; }
--keep class com.mg4.hardware.MG4Hardware { *; }
+-keep class com.evsuite.hardware.model.** { *; }
+-keep class com.evsuite.hardware.EVHardware { *; }
 
-# Reflected by Class.forName in MG4Hardware/FirmwareInfo — same treatment as
+# Reflected by Class.forName in EVHardware/FirmwareInfo — same treatment as
 # ServiceManager, which was already listed.
 -keep class android.os.SystemProperties { *; }
 
 # External control IPC contract. The AIDL Stub/Proxy is resolved by name on the client
 # side: renaming these classes would break the bind instead of failing at compile time.
--keep interface com.mg4.control.api.IProfileControl { *; }
--keep class com.mg4.control.api.IProfileControl$* { *; }
+-keep interface com.evsuite.profile.api.IProfileControl { *; }
+-keep class com.evsuite.profile.api.IProfileControl$* { *; }
 
 # Gson (profils + sauvegarde). Sans Signature, le type générique de
 # TypeToken<List<DrivingProfile>> est effacé et la désérialisation rend une liste de
@@ -24,7 +24,7 @@
 -keep class * extends com.google.gson.reflect.TypeToken
 
 # Les champs des classes sérialisées sont lus par réflexion : ne pas les renommer.
--keepclassmembers class com.mg4.hardware.model.** {
+-keepclassmembers class com.evsuite.hardware.model.** {
     <fields>;
     <init>(...);
 }

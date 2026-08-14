@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/mg4_background"
+    android:background="@color/ev_background"
     android:padding="@dimen/spacing_lg">
 
     <!-- Titre -->
@@ -41,7 +41,7 @@
             app:backgroundTint="@color/dash_btn"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_border"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_pick_en"
@@ -56,7 +56,7 @@
             app:backgroundTint="@color/dash_btn"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_border"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_pick_de"
@@ -70,7 +70,7 @@
             app:backgroundTint="@color/dash_btn"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_border"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
 
     </LinearLayout>
 
@@ -92,7 +92,7 @@
             app:backgroundTint="@color/dash_btn"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_border"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_pick_pt"
@@ -107,7 +107,7 @@
             app:backgroundTint="@color/dash_btn"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_border"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_pick_it"
@@ -121,7 +121,7 @@
             app:backgroundTint="@color/dash_btn"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_border"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
 
     </LinearLayout>
 

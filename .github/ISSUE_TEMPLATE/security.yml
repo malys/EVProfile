@@ -82,7 +82,7 @@ body:
     attributes:
       label: "Affected Projects & Versions"
       description: "Which projects and versions are affected?"
-      placeholder: "MG4Control < 1.2.0 (all builds), MG4Hardware < 0.5.0"
+      placeholder: "EVProfile < 1.2.0 (all builds), EVHardware < 0.5.0"
     validations:
       required: true
 

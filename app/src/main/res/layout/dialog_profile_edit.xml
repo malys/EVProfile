@@ -7,7 +7,7 @@
     tient les catégories (toujours visibles, jamais plus de cinq), le volet de droite
     n'affiche qu'une catégorie à la fois, et chaque contrôle fait 72 dp avec 8 dp de
     garde. Les actions Annuler / Enregistrer sont en haut à droite, comme le prescrit
-    MG4Suite pour une fenêtre plein écran.
+    EVSuite pour une fenêtre plein écran.
 
     Les identifiants sont inchangés : ProfileFragment continue de lier les mêmes vues,
     y compris les sections masquées selon le firmware (section_steering_dialog,
@@ -19,7 +19,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/mg4_background">
+    android:background="@color/ev_background">
 
     <!-- ── En-tête : titre + actions groupées à droite ──────────────── -->
     <LinearLayout
@@ -44,24 +44,24 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_dialog_cancel"
-            style="@style/Widget.MG4.Button.Outlined"
+            style="@style/Widget.EV.Button.Outlined"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/touch_target"
             android:layout_marginEnd="@dimen/spacing_sm"
             android:minWidth="160dp"
             android:text="@string/profile_cancel"
             android:textAllCaps="false"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_dialog_save"
-            style="@style/Widget.MG4.Button"
+            style="@style/Widget.EV.Button"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/touch_target"
             android:minWidth="160dp"
             android:text="@string/profile_save"
             android:textAllCaps="false"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
 
     </LinearLayout>
 
@@ -82,59 +82,59 @@
             android:layout_width="300dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@color/mg4_surface"
+            android:background="@color/ev_surface"
             android:padding="@dimen/spacing_md">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/rail_profile_general"
-            style="@style/Widget.MG4.Button"
+            style="@style/Widget.EV.Button"
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target"
             android:layout_marginBottom="@dimen/spacing_sm"
             android:gravity="center_vertical|start"
             android:text="@string/profile_cat_general"
             android:textAllCaps="false"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/rail_profile_drive"
-            style="@style/Widget.MG4.Button.Outlined"
+            style="@style/Widget.EV.Button.Outlined"
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target"
             android:layout_marginBottom="@dimen/spacing_sm"
             android:gravity="center_vertical|start"
             android:text="@string/profile_cat_drive"
             android:textAllCaps="false"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/rail_profile_comfort"
-            style="@style/Widget.MG4.Button.Outlined"
+            style="@style/Widget.EV.Button.Outlined"
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target"
             android:layout_marginBottom="@dimen/spacing_sm"
             android:gravity="center_vertical|start"
             android:text="@string/profile_cat_comfort"
             android:textAllCaps="false"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/rail_profile_adas"
-            style="@style/Widget.MG4.Button.Outlined"
+            style="@style/Widget.EV.Button.Outlined"
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target"
             android:layout_marginBottom="@dimen/spacing_sm"
             android:gravity="center_vertical|start"
             android:text="@string/profile_cat_adas"
             android:textAllCaps="false"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/rail_profile_safety"
-            style="@style/Widget.MG4.Button.Outlined"
+            style="@style/Widget.EV.Button.Outlined"
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target"
             android:layout_marginBottom="@dimen/spacing_sm"
             android:gravity="center_vertical|start"
             android:text="@string/profile_cat_safety"
             android:textAllCaps="false"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
 
         </LinearLayout>
 
@@ -261,7 +261,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_drive_eco_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -273,11 +273,11 @@
                             android:backgroundTint="@color/dash_btn"
                             app:strokeColor="@color/dash_border"
                             app:strokeWidth="1dp"
-                            app:cornerRadius="@dimen/mg4_corner" />
+                            app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_drive_normal_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -290,11 +290,11 @@
                             android:backgroundTint="@color/dash_btn"
                             app:strokeColor="@color/dash_border"
                             app:strokeWidth="1dp"
-                            app:cornerRadius="@dimen/mg4_corner" />
+                            app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_drive_sport_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -306,7 +306,7 @@
                             android:backgroundTint="@color/dash_btn"
                             app:strokeColor="@color/dash_border"
                             app:strokeWidth="1dp"
-                            app:cornerRadius="@dimen/mg4_corner" />
+                            app:cornerRadius="@dimen/ev_corner" />
 
                     </LinearLayout>
 
@@ -319,7 +319,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_drive_snow_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -331,11 +331,11 @@
                             android:backgroundTint="@color/dash_btn"
                             app:strokeColor="@color/dash_border"
                             app:strokeWidth="1dp"
-                            app:cornerRadius="@dimen/mg4_corner" />
+                            app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_drive_custom_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -347,14 +347,14 @@
                             android:backgroundTint="@color/dash_btn"
                             app:strokeColor="@color/dash_border"
                             app:strokeWidth="1dp"
-                            app:cornerRadius="@dimen/mg4_corner" />
+                            app:cornerRadius="@dimen/ev_corner" />
 
                     </LinearLayout>
 
                     <!-- Économie d'énergie — bouton toggle sous Custom -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_energy_saving_d"
-                        style="@style/Widget.MG4.Button.Outlined"
+                        style="@style/Widget.EV.Button.Outlined"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/touch_target"
                         android:layout_marginTop="@dimen/spacing_sm"
@@ -365,7 +365,7 @@
                         android:backgroundTint="@color/dash_btn"
                         app:strokeColor="@color/dash_border"
                         app:strokeWidth="1dp"
-                        app:cornerRadius="@dimen/mg4_corner"
+                        app:cornerRadius="@dimen/ev_corner"
                         android:visibility="gone" />
 
                 </LinearLayout>
@@ -411,7 +411,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_regen_off_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -423,11 +423,11 @@
                             android:backgroundTint="@color/dash_btn"
                             app:strokeColor="@color/dash_border"
                             app:strokeWidth="1dp"
-                            app:cornerRadius="@dimen/mg4_corner" />
+                            app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_regen_low_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -440,11 +440,11 @@
                             android:backgroundTint="@color/dash_btn"
                             app:strokeColor="@color/dash_border"
                             app:strokeWidth="1dp"
-                            app:cornerRadius="@dimen/mg4_corner" />
+                            app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_regen_medium_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -456,7 +456,7 @@
                             android:backgroundTint="@color/dash_btn"
                             app:strokeColor="@color/dash_border"
                             app:strokeWidth="1dp"
-                            app:cornerRadius="@dimen/mg4_corner" />
+                            app:cornerRadius="@dimen/ev_corner" />
 
                     </LinearLayout>
 
@@ -468,7 +468,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_regen_high_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -480,11 +480,11 @@
                             android:backgroundTint="@color/dash_btn"
                             app:strokeColor="@color/dash_border"
                             app:strokeWidth="1dp"
-                            app:cornerRadius="@dimen/mg4_corner" />
+                            app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_regen_adaptive_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -497,11 +497,11 @@
                             android:backgroundTint="@color/dash_btn"
                             app:strokeColor="@color/dash_border"
                             app:strokeWidth="1dp"
-                            app:cornerRadius="@dimen/mg4_corner" />
+                            app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_regen_one_pedal_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -513,7 +513,7 @@
                             android:backgroundTint="@color/dash_btn"
                             app:strokeColor="@color/dash_border"
                             app:strokeWidth="1dp"
-                            app:cornerRadius="@dimen/mg4_corner" />
+                            app:cornerRadius="@dimen/ev_corner" />
 
                     </LinearLayout>
 
@@ -574,7 +574,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_steer_off_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -586,11 +586,11 @@
                             android:backgroundTint="@color/dash_btn"
                             app:strokeColor="@color/dash_border"
                             app:strokeWidth="1dp"
-                            app:cornerRadius="@dimen/mg4_corner" />
+                            app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_steer_on_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -602,7 +602,7 @@
                             android:backgroundTint="@color/dash_btn"
                             app:strokeColor="@color/dash_border"
                             app:strokeWidth="1dp"
-                            app:cornerRadius="@dimen/mg4_corner" />
+                            app:cornerRadius="@dimen/ev_corner" />
 
                     </LinearLayout>
 
@@ -657,7 +657,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_sl_0_d"
-                                style="@style/Widget.MG4.Button.Outlined"
+                                style="@style/Widget.EV.Button.Outlined"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -669,11 +669,11 @@
                                 android:backgroundTint="@color/dash_btn"
                                 app:strokeColor="@color/dash_border"
                                 app:strokeWidth="1dp"
-                                app:cornerRadius="@dimen/mg4_corner" />
+                                app:cornerRadius="@dimen/ev_corner" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_sl_1_d"
-                                style="@style/Widget.MG4.Button.Outlined"
+                                style="@style/Widget.EV.Button.Outlined"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -685,7 +685,7 @@
                                 android:backgroundTint="@color/dash_btn"
                                 app:strokeColor="@color/dash_border"
                                 app:strokeWidth="1dp"
-                                app:cornerRadius="@dimen/mg4_corner" />
+                                app:cornerRadius="@dimen/ev_corner" />
 
                         </LinearLayout>
 
@@ -696,7 +696,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_sl_2_d"
-                                style="@style/Widget.MG4.Button.Outlined"
+                                style="@style/Widget.EV.Button.Outlined"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -708,11 +708,11 @@
                                 android:backgroundTint="@color/dash_btn"
                                 app:strokeColor="@color/dash_border"
                                 app:strokeWidth="1dp"
-                                app:cornerRadius="@dimen/mg4_corner" />
+                                app:cornerRadius="@dimen/ev_corner" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_sl_3_d"
-                                style="@style/Widget.MG4.Button.Outlined"
+                                style="@style/Widget.EV.Button.Outlined"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -724,7 +724,7 @@
                                 android:backgroundTint="@color/dash_btn"
                                 app:strokeColor="@color/dash_border"
                                 app:strokeWidth="1dp"
-                                app:cornerRadius="@dimen/mg4_corner" />
+                                app:cornerRadius="@dimen/ev_corner" />
 
                         </LinearLayout>
 
@@ -765,7 +765,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_sr_0_d"
-                                style="@style/Widget.MG4.Button.Outlined"
+                                style="@style/Widget.EV.Button.Outlined"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -777,11 +777,11 @@
                                 android:backgroundTint="@color/dash_btn"
                                 app:strokeColor="@color/dash_border"
                                 app:strokeWidth="1dp"
-                                app:cornerRadius="@dimen/mg4_corner" />
+                                app:cornerRadius="@dimen/ev_corner" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_sr_1_d"
-                                style="@style/Widget.MG4.Button.Outlined"
+                                style="@style/Widget.EV.Button.Outlined"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -793,7 +793,7 @@
                                 android:backgroundTint="@color/dash_btn"
                                 app:strokeColor="@color/dash_border"
                                 app:strokeWidth="1dp"
-                                app:cornerRadius="@dimen/mg4_corner" />
+                                app:cornerRadius="@dimen/ev_corner" />
 
                         </LinearLayout>
 
@@ -804,7 +804,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_sr_2_d"
-                                style="@style/Widget.MG4.Button.Outlined"
+                                style="@style/Widget.EV.Button.Outlined"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -816,11 +816,11 @@
                                 android:backgroundTint="@color/dash_btn"
                                 app:strokeColor="@color/dash_border"
                                 app:strokeWidth="1dp"
-                                app:cornerRadius="@dimen/mg4_corner" />
+                                app:cornerRadius="@dimen/ev_corner" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_sr_3_d"
-                                style="@style/Widget.MG4.Button.Outlined"
+                                style="@style/Widget.EV.Button.Outlined"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -832,7 +832,7 @@
                                 android:backgroundTint="@color/dash_btn"
                                 app:strokeColor="@color/dash_border"
                                 app:strokeWidth="1dp"
-                                app:cornerRadius="@dimen/mg4_corner" />
+                                app:cornerRadius="@dimen/ev_corner" />
 
                         </LinearLayout>
 
@@ -927,33 +927,33 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_off_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginEnd="@dimen/spacing_sm"
                             android:text="@string/adas_off"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_lim_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm" android:layout_marginEnd="@dimen/spacing_sm"
                             android:text="@string/adas_limiteur_short"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_auto_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm"
                             android:text="@string/adas_auto"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                     </LinearLayout>
 
@@ -965,23 +965,23 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_acc_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginEnd="@dimen/spacing_sm"
                             android:text="@string/adas_acc"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_ica_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm"
                             android:text="@string/adas_ica"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                         <!-- Spacer alignement sur 3 colonnes -->
                         <View android:layout_width="0dp" android:layout_height="0dp"
@@ -1078,33 +1078,33 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_swi68_off_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginEnd="@dimen/spacing_sm"
                             android:text="@string/adas_off"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_swi68_lim_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm" android:layout_marginEnd="@dimen/spacing_sm"
                             android:text="@string/adas_limiteur_short"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_swi68_auto_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm"
                             android:text="@string/adas_auto"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                     </LinearLayout>
 
@@ -1116,23 +1116,23 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_swi68_acc_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginEnd="@dimen/spacing_sm"
                             android:text="@string/adas_acc"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_adas_swi68_tja_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm" android:layout_marginEnd="@dimen/spacing_sm"
                             android:text="@string/adas_tja"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                         <View android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm" />
@@ -1264,23 +1264,23 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_aeb_alarm_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginEnd="@dimen/spacing_sm"
                             android:text="@string/adas_aeb_alarm"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_aeb_alarm_brake_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm"
                             android:text="@string/adas_aeb_alarm_brake"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                     </LinearLayout>
 
@@ -1294,33 +1294,33 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_aeb_sen_low_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginEnd="@dimen/spacing_sm"
                             android:text="@string/aeb_sensitivity_low"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_aeb_sen_standard_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm" android:layout_marginEnd="@dimen/spacing_sm"
                             android:text="@string/aeb_sensitivity_standard"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_aeb_sen_high_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm"
                             android:text="@string/aeb_sensitivity_high"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                     </LinearLayout>
 
@@ -1431,33 +1431,33 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_elk_alert_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginEnd="@dimen/spacing_sm"
                             android:text="@string/elk_mode_alert"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_elk_assist_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm" android:layout_marginEnd="@dimen/spacing_sm"
                             android:text="@string/elk_mode_assist"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_elk_emergency_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm"
                             android:text="@string/elk_mode_emergency"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                     </LinearLayout>
 
@@ -1469,33 +1469,33 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_elk_sen_low_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginEnd="@dimen/spacing_sm"
                             android:text="@string/elk_sensitivity_low"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_elk_sen_standard_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm" android:layout_marginEnd="@dimen/spacing_sm"
                             android:text="@string/elk_sensitivity_standard"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_elk_sen_high_d"
-                            style="@style/Widget.MG4.Button.Outlined"
+                            style="@style/Widget.EV.Button.Outlined"
                             android:layout_width="0dp" android:layout_height="match_parent"
                             android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm"
                             android:text="@string/elk_sensitivity_high"
                             android:textColor="@color/text_secondary" android:textSize="@dimen/text_label"
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
-                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/mg4_corner" />
+                            app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
                     </LinearLayout>
 

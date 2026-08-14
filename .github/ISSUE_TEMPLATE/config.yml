@@ -3,6 +3,6 @@ contact_links:
   - name: Security vulnerability
     url: ../../security/advisories/new
     about: Report privately, never in a public issue.
-  - name: MG4Hardware (the shared vehicle-access library)
-    url: https://github.com/malys/MG4Hardware
+  - name: EVHardware (the shared vehicle-access library)
+    url: https://github.com/malys/EVHardware
     about: Signal IDs, CarPropertyManager access and vendor-service plumbing belong there.

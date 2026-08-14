@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/mg4_background"
+    android:background="@color/ev_background"
     android:padding="@dimen/spacing_lg">
 
     <LinearLayout
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/fw_unknown_title"
-            android:textColor="@color/mg4_error"
+            android:textColor="@color/ev_error"
             android:textSize="@dimen/text_title"
             android:textStyle="bold" />
 
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:textColor="@color/mg4_error"
+            android:textColor="@color/ev_error"
             android:textSize="@dimen/text_body"
             android:textStyle="bold"
             android:background="@drawable/bg_section_rounded"
@@ -40,24 +40,24 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_fw_close_app"
-            style="@style/Widget.MG4.Button.Outlined"
+            style="@style/Widget.EV.Button.Outlined"
             android:layout_width="240dp"
             android:layout_height="match_parent"
             android:text="@string/fw_unknown_btn_close"
-            android:textColor="@color/mg4_error"
+            android:textColor="@color/ev_error"
             android:textAllCaps="false"
-            app:strokeColor="@color/mg4_error"
-            app:cornerRadius="@dimen/mg4_corner"
+            app:strokeColor="@color/ev_error"
+            app:cornerRadius="@dimen/ev_corner"
             android:layout_marginEnd="@dimen/spacing_sm" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_fw_continue"
-            style="@style/Widget.MG4.Button"
+            style="@style/Widget.EV.Button"
             android:layout_width="240dp"
             android:layout_height="match_parent"
             android:text="@string/fw_unknown_btn_continue"
             android:textAllCaps="false"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
 
     </LinearLayout>
 
@@ -75,7 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/fw_unknown_body"
-            android:textColor="@color/mg4_text_primary"
+            android:textColor="@color/ev_text_primary"
             android:textSize="@dimen/text_body"
             android:lineSpacingMultiplier="1.35" />
 
@@ -83,7 +83,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/fw_unknown_hint"
-            android:textColor="@color/mg4_text_secondary"
+            android:textColor="@color/ev_text_secondary"
             android:textSize="@dimen/text_secondary"
             android:lineSpacingMultiplier="1.35"
             android:background="@drawable/bg_section_rounded"

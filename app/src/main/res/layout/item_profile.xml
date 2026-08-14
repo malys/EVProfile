@@ -82,7 +82,7 @@
             app:backgroundTint="@color/dash_eco_dim"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_eco"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_edit"
@@ -98,7 +98,7 @@
             app:backgroundTint="@color/dash_btn"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_border"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_set_default"
@@ -114,7 +114,7 @@
             app:backgroundTint="@color/dash_btn"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_border"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_delete"
@@ -129,7 +129,7 @@
             app:backgroundTint="@color/dash_danger_dim"
             app:strokeWidth="1dp"
             app:strokeColor="@color/dash_danger"
-            app:cornerRadius="@dimen/mg4_corner" />
+            app:cornerRadius="@dimen/ev_corner" />
 
     </LinearLayout>
 

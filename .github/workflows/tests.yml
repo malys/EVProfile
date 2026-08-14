@@ -31,7 +31,9 @@ jobs:
       - name: Run unit tests
         run: |
           chmod +x gradlew
-          ./gradlew testOnlineDebugUnitTest testOfflineDebugUnitTest --no-daemon
+          ./gradlew testStableDebugUnitTest testUnstableDebugUnitTest \
+            processStableDebugMainManifest processUnstableDebugMainManifest --no-daemon
+          bash .github/security/check-channel-isolation.sh
 
       - name: Upload test reports
         if: always()

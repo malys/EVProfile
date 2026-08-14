@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MG4 Control</string>
+    <string name="app_name">EVProfile</string>
 
-    <!-- Three parts of the top-bar logotype. A brand is not translated. -->
-    <string name="brand_mg" translatable="false">MG</string>
-    <string name="brand_four" translatable="false">4</string>
-    <string name="brand_control" translatable="false">Control</string>
+    <!-- Two parts of the top-bar logotype. A brand is not translated. -->
+    <string name="brand_ev" translatable="false">EV</string>
+    <string name="brand_profile" translatable="false">Profile</string>
 
     <!-- Fermer (bouton retour dashboard) -->
     <string name="nav_close">Fermer</string>
@@ -22,7 +21,7 @@
     <string name="nav_settings">Réglages</string>
     <string name="nav_shortcuts">Raccourcis</string>
     <string name="nav_tasker">Automatisation</string>
-    <string name="nav_tasker_unavailable">Impossible d\'ouvrir MG4Tasker</string>
+    <string name="nav_tasker_unavailable">Impossible d\'ouvrir EVTasker</string>
 
     <!-- Raccourcis au volant -->
     <string name="shortcuts_enabled_label">Activer les raccourcis au volant</string>
@@ -50,18 +49,18 @@
     <string name="overlay_brightness_mid">Moyen</string>
     <string name="overlay_brightness_day">Jour</string>
 <string name="overlay_profile_title">Profils de conduite</string>
-    <string name="overlay_open_app">Ouvrir MG4Control</string>
+    <string name="overlay_open_app">Ouvrir EVProfile</string>
     <string name="overlay_countdown">Fermeture dans %1$ds</string>
     <string name="shortcuts_profile_prefix">Lancer le profil</string>
     <string name="shortcuts_pick_profile_title">Choisir un profil</string>
     <string name="shortcuts_profile_not_found">Profil introuvable</string>
     <string name="shortcuts_no_profiles">Aucun profil créé</string>
-    <string name="shortcuts_action_open_app">Ouvrir MG4Control</string>
+    <string name="shortcuts_action_open_app">Ouvrir EVProfile</string>
     <string name="shortcuts_action_open_custom_app">Lancer une application</string>
     <string name="shortcuts_pick_app_title">Choisir une application</string>
     <string name="shortcuts_open_custom_prefix">Lancer</string>
     <string name="shortcuts_warning_title">Raccourcis au volant</string>
-    <string name="shortcuts_warning_message">⚠ Si le launcher officiel est configuré sur un bouton, il sera prioritaire sur MG4Control.\n\nExemple : si la caméra 360° est assignée en appui simple sur le launcher, MG4Control ne pourra pas intercepter ce bouton et la caméra s\'activera à la place.\n\nIl est recommandé de désactiver les raccourcis du launcher officiel pour éviter les conflits.</string>
+    <string name="shortcuts_warning_message">⚠ Si le launcher officiel est configuré sur un bouton, il sera prioritaire sur EVProfile.\n\nExemple : si la caméra 360° est assignée en appui simple sur le launcher, EVProfile ne pourra pas intercepter ce bouton et la caméra s\'activera à la place.\n\nIl est recommandé de désactiver les raccourcis du launcher officiel pour éviter les conflits.</string>
     <string name="shortcuts_warning_ok">Compris</string>
 
     <!-- Config raccourcis -->
@@ -199,11 +198,11 @@
     <string name="info_app_label">Application</string>
     <string name="info_version_label">Version</string>
     <string name="info_firmware_label">Firmware</string>
-    <string name="info_github_link">github.com/malys/MG4Control</string>
-    <string name="info_gitlab_link">gitlab.com/SliDeeN/mg4control</string>
+    <string name="info_github_link">github.com/malys/EVProfile</string>
+    <string name="info_gitlab_link">gitlab.com/SliDeeN/evprofile</string>
     <string name="info_made_with_love">Contribution de malys</string>
     <string name="info_special_thanks">Merci à confor1max pour les tests SWI68 🙏</string>
-    <string name="info_based_on">Fork de SliDeeN/MG4Control · basé sur DriveHub Dort par Merth4n &amp; hotboy_ist</string>
+    <string name="info_based_on">Basé sur DriveHub Dort par Merth4n &amp; hotboy_ist</string>
 
     <!-- Dashboard — en-têtes de cartes -->
     <string name="card_drive">Paramètres de conduite</string>
@@ -232,25 +231,22 @@
     <string name="update_error_signature">Mise à jour refusée : la signature de l\'APK téléchargé ne correspond pas. Fichier supprimé.</string>
     <string name="write_refused_moving">Réglage de conduite refusé : %1$s km/h (limite %2$d km/h). Ralentissez pour modifier.</string>
     <string name="write_refused_unknown_speed">Réglage refusé : vitesse du véhicule illisible.</string>
-    <string name="settings_speed_gate_desc">Bloquer les réglages de conduite au-delà d\'une vitesse</string>
-    <string name="settings_speed_gate_max_label">Vitesse maximale (km/h)</string>
-    <string name="settings_speed_gate_max_hint">0–250</string>
     <string name="update_error_install">Erreur lors de l\'installation.</string>
     <string name="update_install_error">Erreur d\'installation : %s</string>
     <string name="update_manual_title">Installation manuelle</string>
-    <string name="update_manual_instructions">1. Scannez le QR code ou ouvrez le lien ci-contre\n2. Téléchargez le fichier MG4Control.apk\n3. Copiez-le sur une clé USB formatée en FAT32\n4. Insérez la clé dans votre MG4\n5. Ouvrez le Gestionnaire de fichiers\n6. Sélectionnez le fichier APK et installez-le</string>
+    <string name="update_manual_instructions">1. Scannez le QR code ou ouvrez le lien ci-contre\n2. Téléchargez le fichier EVProfile.apk\n3. Copiez-le sur une clé USB formatée en FAT32\n4. Insérez la clé dans votre MG4\n5. Ouvrez le Gestionnaire de fichiers\n6. Sélectionnez le fichier APK et installez-le</string>
     <string name="update_downloaded_title">APK téléchargé ✓</string>
-    <string name="update_downloaded_instructions">Le dossier Téléchargements vient de s\'ouvrir.\n\nAppuyez sur MG4Control-*.apk pour lancer l\'installation.\n\nSi le dossier ne s\'est pas ouvert, ouvrez le gestionnaire de fichiers et allez dans Téléchargements.</string>
-    <string name="update_gh_releases_link">github.com/SliDeeN/MG4Control/releases</string>
+    <string name="update_downloaded_instructions">Le dossier Téléchargements vient de s\'ouvrir.\n\nAppuyez sur EVProfile-*.apk pour lancer l\'installation.\n\nSi le dossier ne s\'est pas ouvert, ouvrez le gestionnaire de fichiers et allez dans Téléchargements.</string>
+    <string name="update_gh_releases_link">github.com/malys/EVProfile/releases</string>
     <string name="update_skip_btn">Ne plus me rappeler</string>
 
     <!-- Console (debug) -->
-    <string name="console_title">⬛  Console MG4</string>
+    <string name="console_title">⬛  Console EV</string>
     <string name="console_clear">Effacer</string>
 
     <!-- Firmware inconnu -->
     <string name="fw_unknown_title">⚠ Firmware non reconnu</string>
-    <string name="fw_unknown_body">Ce firmware n\'est pas encore pris en charge nativement par MG4 Control.\n\nVous pouvez continuer en sélectionnant manuellement un mode de compatibilité, mais certaines fonctions peuvent ne pas fonctionner correctement.</string>
+    <string name="fw_unknown_body">Ce firmware n\'est pas encore pris en charge nativement par EVProfile.\n\nVous pouvez continuer en sélectionnant manuellement un mode de compatibilité, mais certaines fonctions peuvent ne pas fonctionner correctement.</string>
     <string name="fw_unknown_hint">Après avoir fermé cette fenêtre, appuyez sur SWI133 ou SWI68 dans la barre du haut pour choisir votre mode de compatibilité.</string>
     <string name="fw_unknown_btn_close">Fermer l\'app</string>
     <string name="fw_unknown_btn_continue">Continuer</string>

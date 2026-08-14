@@ -1,0 +1,85 @@
+name: Unstable
+
+# Rolling pre-release channel. The installed unstable app checks this release for a newer,
+# same-certificate APK; installation remains an explicit user action.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build and publish unstable APK
+    runs-on: ubuntu-latest
+    env:
+      EV_KEYSTORE_BASE64: ${{ secrets.EV_KEYSTORE_BASE64 }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: recursive, fetch-depth: 1 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Require platform keystore
+        run: |
+          if [ -z "$EV_KEYSTORE_BASE64" ]; then
+            echo "::error::EV_KEYSTORE_BASE64 is required; refusing to publish an unsigned vehicle APK."
+            exit 1
+          fi
+
+      - name: Decode platform keystore
+        run: |
+          printf '%s' "$EV_KEYSTORE_BASE64" | tr -d '[:space:]' | base64 -d > "$RUNNER_TEMP/platform.keystore"
+          if [ "$(head -c1 "$RUNNER_TEMP/platform.keystore" | od -An -tx1 | tr -d ' ')" != "30" ]; then
+            echo "::error::EV_KEYSTORE_BASE64 is invalid."
+            exit 1
+          fi
+          echo "EV_KEYSTORE=$RUNNER_TEMP/platform.keystore" >> "$GITHUB_ENV"
+
+      - name: Verify channels
+        run: |
+          chmod +x gradlew
+          bash .github/security/check-permissions.sh
+          ./gradlew testUnstableDebugUnitTest lintUnstableDebug \
+            processStableDebugMainManifest processUnstableDebugMainManifest --no-daemon
+          bash .github/security/check-channel-isolation.sh
+
+      - name: Resolve unstable version
+        id: version
+        run: |
+          value=$(./gradlew -q printUnstableVersion -PunstableBuild=${{ github.run_number }} --no-daemon | tail -1)
+          echo "value=$value" >> "$GITHUB_OUTPUT"
+
+      - name: Build unstable release APK
+        env:
+          EV_KEYSTORE_PASSWORD: ${{ secrets.EV_KEYSTORE_PASSWORD }}
+          EV_KEY_ALIAS: ${{ secrets.EV_KEY_ALIAS }}
+          EV_KEY_PASSWORD: ${{ secrets.EV_KEY_PASSWORD }}
+        run: ./gradlew assembleUnstableRelease -PunstableBuild=${{ github.run_number }} --no-daemon
+
+      - name: Collect unstable APK
+        run: |
+          mkdir -p dist
+          find app/build/outputs/apk -name "app-unstable-release.apk" \
+            -exec cp {} "dist/EVProfile-unstable-${{ steps.version.outputs.value }}.apk" \;
+          ls -la dist/
+
+      - name: Reset rolling unstable release
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: gh release delete unstable --cleanup-tag --yes || true
+
+      - name: Publish rolling pre-release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: unstable
+          target_commitish: ${{ github.sha }}
+          name: Unstable
+          prerelease: true
+          files: dist/*.apk
+          body: |
+            Automated, unvalidated-on-vehicle pre-release `${{ steps.version.outputs.value }}`.
+            The unstable app may download a newer APK only over approved HTTPS hosts and
+            only accepts an APK signed with the same certificate. Installation is manual.

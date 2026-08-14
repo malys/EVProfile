@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Styles propres à MG4 Control. Les styles partagés de la suite sont dans
-     styles_mg4.xml, généré par tools/sync-tokens.mjs — ne rien ajouter là-bas. -->
+<!-- Styles propres à EVProfile. Les styles partagés de la suite sont dans
+     styles_ev.xml, généré par tools/sync-tokens.mjs — ne rien ajouter là-bas. -->
 <resources>
 
     <!-- Un onglet de la barre de pages (activity_main.xml).
@@ -16,7 +16,7 @@
          Toutes les couleurs viennent de sélecteurs sur android:state_selected
          (res/color/nav_tab_*.xml) : l'onglet actif se peint tout seul, le code n'a plus
          qu'à poser isSelected. -->
-    <style name="Widget.MG4.NavTab" parent="Widget.Material3.Button.OutlinedButton">
+    <style name="Widget.EV.NavTab" parent="Widget.Material3.Button.OutlinedButton">
         <item name="android:minWidth">0dp</item>
         <item name="android:minHeight">0dp</item>
         <item name="android:insetTop">0dp</item>
@@ -41,7 +41,7 @@
         <item name="backgroundTint">@color/nav_tab_background</item>
         <item name="strokeColor">@color/nav_tab_stroke</item>
         <item name="strokeWidth">1dp</item>
-        <item name="cornerRadius">@dimen/mg4_corner</item>
+        <item name="cornerRadius">@dimen/ev_corner</item>
         <item name="elevation">0dp</item>
     </style>
 

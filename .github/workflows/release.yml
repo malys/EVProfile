@@ -1,11 +1,10 @@
 name: Release
 
-# Build both variants (online + offline) and publish them in the same Release.
-# Users choose which APK to install from the GitHub Releases page.
+# Stable channel: tagged, offline, and installed manually. workflow_dispatch validates and
+# uploads an artifact but deliberately does not publish a GitHub Release.
 on:
   push:
-    tags:
-      - "v*"
+    tags: ["v*"]
   workflow_dispatch:
 
 permissions:
@@ -13,15 +12,15 @@ permissions:
 
 jobs:
   build:
+    name: Build stable offline APK
     runs-on: ubuntu-latest
     env:
-      MG4_KEYSTORE_BASE64: ${{ secrets.MG4_KEYSTORE_BASE64 }}
+      EV_KEYSTORE_BASE64: ${{ secrets.EV_KEYSTORE_BASE64 }}
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0
-          ref: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'main' }}
 
       - name: Verify release commit belongs to main
         if: startsWith(github.ref, 'refs/tags/')
@@ -33,67 +32,55 @@ jobs:
           }
 
       - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
+        with: { distribution: temurin, java-version: "17" }
+      - uses: gradle/actions/setup-gradle@v4
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Decode platform keystore
-        if: ${{ env.MG4_KEYSTORE_BASE64 != '' }}
+      - name: Require platform keystore
         run: |
-          # Tolerate newlines/spaces in the secret; printf avoids a stray trailing newline.
-          printf '%s' "$MG4_KEYSTORE_BASE64" | tr -d '[:space:]' | base64 -d > "$RUNNER_TEMP/platform.keystore"
-          # Validation: a PKCS12/JKS keystore starts with 0x30 (DER SEQUENCE). Otherwise the secret is corrupt.
-          if [ "$(head -c1 "$RUNNER_TEMP/platform.keystore" | od -An -tx1 | tr -d ' ')" != "30" ]; then
-            echo "::error::MG4_KEYSTORE_BASE64 is invalid. Recreate the secret with: base64 -w0 platform.keystore"
+          if [ -z "$EV_KEYSTORE_BASE64" ]; then
+            echo "::error::EV_KEYSTORE_BASE64 is required; refusing to publish an unsigned vehicle APK."
             exit 1
           fi
-          echo "MG4_KEYSTORE=$RUNNER_TEMP/platform.keystore" >> "$GITHUB_ENV"
 
-      - name: Build online + offline release APKs
+      - name: Decode platform keystore
+        run: |
+          printf '%s' "$EV_KEYSTORE_BASE64" | tr -d '[:space:]' | base64 -d > "$RUNNER_TEMP/platform.keystore"
+          if [ "$(head -c1 "$RUNNER_TEMP/platform.keystore" | od -An -tx1 | tr -d ' ')" != "30" ]; then
+            echo "::error::EV_KEYSTORE_BASE64 is invalid."
+            exit 1
+          fi
+          echo "EV_KEYSTORE=$RUNNER_TEMP/platform.keystore" >> "$GITHUB_ENV"
+
+      - name: Verify and build stable
         env:
-          MG4_KEYSTORE_PASSWORD: ${{ secrets.MG4_KEYSTORE_PASSWORD }}
-          MG4_KEY_ALIAS: ${{ secrets.MG4_KEY_ALIAS }}
-          MG4_KEY_PASSWORD: ${{ secrets.MG4_KEY_PASSWORD }}
+          EV_KEYSTORE_PASSWORD: ${{ secrets.EV_KEYSTORE_PASSWORD }}
+          EV_KEY_ALIAS: ${{ secrets.EV_KEY_ALIAS }}
+          EV_KEY_PASSWORD: ${{ secrets.EV_KEY_PASSWORD }}
         run: |
           chmod +x gradlew
-          ./gradlew assembleOnlineRelease assembleOfflineRelease --no-daemon
+          bash .github/security/check-permissions.sh
+          ./gradlew testStableDebugUnitTest lintStableDebug processStableDebugMainManifest assembleStableRelease --no-daemon
+          ./gradlew processUnstableDebugMainManifest --no-daemon
+          bash .github/security/check-channel-isolation.sh
 
-      - name: Collect APKs
+      - name: Collect stable APK
         run: |
           mkdir -p dist
-          # AGP 9 emits app-<flavor>-release.apk; rename to the published convention.
-          for f in $(find app/build/outputs/apk -name "app-*-release.apk"); do
-            flavor=$(basename "$f" | sed -E 's/app-(.*)-release.apk/\1/')
-            ver=$(grep -oE 'versionName = "[^"]+"' app/build.gradle.kts | head -1 | sed -E 's/.*"([^"]+)"/\1/')
-            cp "$f" "dist/MG4Control-${flavor}-${ver}.apk"
-          done
+          ver=$(grep -oE 'versionName = "[^"]+"' app/build.gradle.kts | head -1 | sed -E 's/.*"([^"]+)"/\1/')
+          find app/build/outputs/apk -name "app-stable-release.apk" -exec cp {} "dist/EVProfile-stable-${ver}.apk" \;
           ls -la dist/
 
-      - name: Upload APKs as workflow artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: mg4control-apks
-          path: dist/*.apk
+      - uses: actions/upload-artifact@v4
+        with: { name: evprofile-stable-apk, path: "dist/*.apk" }
 
-      - name: Publish to GitHub Release
+      - name: Publish stable GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          # Tag push -> stable release on the tag. Manual run -> prerelease "ci-<run>".
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('ci-{0}', github.run_number) }}
-          name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('CI build {0}', github.run_number) }}
-          prerelease: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          prerelease: false
           files: dist/*.apk
           body: |
-            ## MG4Control ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('ci-{0}', github.run_number) }}
-
-            Two variants are provided — **pick one**:
-
-            | Variant | File | Network | Auto-update | Target |
-            |---|---|---|---|---|
-            | **Online** | `MG4Control-online-*.apk` | yes | yes | standard use |
-            | **Offline** 🔒 | `MG4Control-offline-*.apk` | none (network perms removed) | no | hardened on-vehicle deployment |
-
-            > The offline APK has a distinct applicationId (`com.mg4.control.offline`) and can coexist with the online one.
+            Stable/offline EVProfile release. This APK contains no updater implementation
+            and declares no network permission. Installation and updates are manual.

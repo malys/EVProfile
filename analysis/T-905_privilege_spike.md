@@ -1,4 +1,4 @@
-# T-905 — Can MG4Control drop `sharedUserId=android.uid.system`?
+# T-905 — Can EVProfile drop `sharedUserId=android.uid.system`?
 
 **Status: spike concluded. Recommendation: yes for `sharedUserId`, no for platform
 signing — but the migration is install-breaking and needs one on-vehicle
@@ -25,14 +25,14 @@ permission:
 - No permission is declared by the client for that bind. Service-side export and caller
   authentication remain runtime assumptions and require on-vehicle verification.
 
-This is the "Katman3" path that `MG4Hardware.kt:27` names and deliberately
+This is the "Katman3" path that `EVHardware.kt:27` names and deliberately
 skips ("not needed for our use case").
 
 Caveat: whether `VehicleService` is `exported` must be settled by an on-vehicle
 measurement. That is
 the blocking measurement below.
 
-## What MG4Control uses instead, and what each path costs
+## What EVProfile uses instead, and what each path costs
 
 | Capability | Mechanism | Privilege actually required |
 |---|---|---|
@@ -69,7 +69,7 @@ What it would lose:
 
 Note that "become a privileged app instead" is **not** an option: privileged
 status means living in `/system/priv-app` with a ROM permission allowlist
-entry. MG4Control is distributed as an APK that users install themselves, so
+entry. EVProfile is distributed as an APK that users install themselves, so
 that route is closed. Platform signing is the only mechanism available, and it
 is already in place.
 
@@ -78,7 +78,7 @@ is already in place.
 The decision turns on one number nobody has yet: **how often is Katman2 the
 path that actually succeeds?**
 
-`setDriveMode` (`MG4Hardware.kt:1574`) tries `setIntPropertyCPM` first and only
+`setDriveMode` (`EVHardware.kt:1574`) tries `setIntPropertyCPM` first and only
 falls back to `binderTransact` when it fails. If CPM succeeds on every
 supported firmware, Katman2 is dead weight and `sharedUserId` can go. If some
 firmware generation only works through the raw binder, system UID is load-
@@ -89,7 +89,7 @@ SWI165), at 0 km/h:
 
 1. Apply a profile that exercises drive mode, regen, one-pedal, seat heat, AEB,
    ELK, TSR and ACC/TJA.
-2. Capture `MG4_HW` logs and record, per write, whether the CPM/VSM/VPM path
+2. Capture `EV_HW` logs and record, per write, whether the CPM/VSM/VPM path
    returned true or the binder fallback was reached.
 
 Any generation where a write only succeeds via `binderTransact` blocks the

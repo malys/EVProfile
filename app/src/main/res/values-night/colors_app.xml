@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- MG4 Control, DARK theme: only the values that genuinely differ between the two
+<!-- EVProfile, DARK theme: only the values that genuinely differ between the two
      themes are redeclared here. The aliases and product hues in values/colors_app.xml
      hold in both themes and are not repeated - Android falls back to values/ for
      anything missing here. -->
 <resources>
-    <!-- Brand red. This lighter variant provides 7.8:1 contrast on mg4_surface. -->
-    <color name="mg4_brand_red">#FFFF8A80</color>
+    <!-- Brand red. This lighter variant provides 7.8:1 contrast on ev_surface. -->
+    <color name="ev_brand_red">#FFFF8A80</color>
 
     <!-- Tinted chip backgrounds. In dark these are very low tints, not darkened versions
          of the light ones: a pastel on black turns grey. Each background/text pair
