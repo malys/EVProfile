@@ -4,10 +4,16 @@ All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.0.0] - 2026-08-15
 
 ### Changed
 
+- **The application ID changes from `com.mg4.control` to `com.evsuite.profile`.** Android
+  therefore treats this release as a different app: it does not update an existing install,
+  it is added next to it, and it starts with no profiles, no permissions and no settings.
+  Back up your profiles from the old app, install this one, check that it works on the
+  vehicle, and only then uninstall the old app. The same applies to anyone coming from the
+  former `.offline` package.
 - Replaced the historical online/offline flavors with two suite-standard channels:
   `stable` is offline and manually updated, while `unstable` is a co-installable rolling
   pre-release with certificate-verified OTA download. Updater code and network permissions
