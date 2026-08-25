@@ -2,6 +2,7 @@ package com.evsuite.profile.service
 
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -12,9 +13,13 @@ import android.content.Context
 import android.content.Intent
 import com.evsuite.profile.MainActivity
 import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.content.pm.ServiceInfo
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import android.view.ContextThemeWrapper
 import android.view.WindowManager
@@ -96,7 +101,7 @@ class EVProfileService : Service() {
     override fun onCreate() {
         super.onCreate()
         AppLogger.i(TAG, "onCreate")
-        startForeground(NOTIF_ID, buildNotification())
+        startInForeground()
         // Feed the shared gate EVProfile's localized refusal strings (mg4-hardware itself
         // has no app resources; the module falls back to English when no provider is set).
         // Le contexte applicatif, volontairement : `getString` se résoudrait sur le Service,
@@ -134,9 +139,37 @@ class EVProfileService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         AppLogger.i(TAG, "onStartCommand")
+        // Re-asserted here: MainActivity starts the service again once Bluetooth access is
+        // granted, and that grant is what decides which foreground type the service may hold.
+        startInForeground()
         scheduleDefaultProfileOnce()
         return START_STICKY
     }
+
+    /**
+     * Entre en foreground avec le type de service que l'app détient réellement.
+     *
+     * Depuis l'API 34 chaque type déclaré est validé contre les permissions détenues à cet
+     * instant, et `connectedDevice` exige BLUETOOTH_CONNECT — une permission runtime que
+     * l'application déclarait sans jamais la demander. Sur une voiture où elle n'est pas
+     * accordée, l'appel à deux arguments (« tous les types du manifeste ») lève une
+     * SecurityException et le service meurt dans son propre onCreate, emportant l'application
+     * de profils avec lui. Sans la permission, le service tourne sans type : les profils
+     * s'appliquent, seule la détection du téléphone appairé reste muette.
+     */
+    private fun startInForeground() {
+        val type = if (hasBluetoothConnect()) {
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
+        } else {
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_NONE
+        }
+        ServiceCompat.startForeground(this, NOTIF_ID, buildNotification(), type)
+    }
+
+    private fun hasBluetoothConnect(): Boolean =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) ==
+                PackageManager.PERMISSION_GRANTED
 
     override fun onBind(intent: Intent?): IBinder? = null
 

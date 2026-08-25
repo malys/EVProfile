@@ -4,6 +4,22 @@ All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.1] - 2026-08-25
+
+### Fixed
+
+- **Le service survit sur une voiture qui n'a pas accordé le Bluetooth.** Le service déclare
+  le type de premier plan `connectedDevice`, et depuis Android 14 ce type exige
+  BLUETOOTH_CONNECT au moment précis où le service passe en premier plan — une permission
+  déclarée par l'application mais jamais demandée. Le type n'est désormais revendiqué que
+  tant que la permission qui le porte est détenue, et il est repris dès qu'elle est accordée,
+  sans attendre le prochain démarrage.
+- **La liste des appareils appairés n'est plus vide sans raison.** BLUETOOTH_CONNECT est
+  maintenant demandée à l'ouverture de l'application ; un refus ne coûte que la détection du
+  téléphone, comme avant.
+- **La notification du service est visible.** POST_NOTIFICATIONS n'était pas déclarée : depuis
+  Android 13, le seul signe visible que EVProfile tourne était supprimé en silence.
+
 ## [3.0.0] - 2026-08-15
 
 ### Changed

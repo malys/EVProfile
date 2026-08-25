@@ -10,6 +10,8 @@ android.permission.FOREGROUND_SERVICE
 # N'accorde aucun accès supplémentaire : elle qualifie le service de premier plan.
 android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE
 android.permission.WAKE_LOCK
+# Posts the foreground-service notification, the only visible sign EVProfile is running.
+android.permission.POST_NOTIFICATIONS
 android.permission.RECEIVE_BOOT_COMPLETED
 android.permission.WRITE_SETTINGS
 android.permission.BLUETOOTH

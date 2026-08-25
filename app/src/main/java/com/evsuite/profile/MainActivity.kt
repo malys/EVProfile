@@ -2,14 +2,19 @@ package com.evsuite.profile
 
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -51,6 +56,38 @@ class MainActivity : AppCompatActivity() {
         super.attachBaseContext(LocaleHelper.applyLocale(newBase))
     }
 
+    /**
+     * Les deux permissions runtime que l'app déclarait sans jamais les demander.
+     *
+     * Sur Android, une permission déclarée et jamais demandée n'est pas détenue : la
+     * notification du service était supprimée en silence, la liste des appareils appairés
+     * revenait vide, et le type de service `connectedDevice` — qui exige BLUETOOTH_CONNECT
+     * depuis l'API 34 — n'était pas couvert. Un refus ne coûte que la fonction concernée,
+     * donc rien n'attend la réponse.
+     */
+    private val startupPermissions =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
+            // Un accès Bluetooth accordé change le type de service que EVProfileService peut
+            // détenir : le relancer est ce qui l'applique sans attendre le prochain démarrage.
+            if (granted[Manifest.permission.BLUETOOTH_CONNECT] == true) {
+                startForegroundService(Intent(this, EVProfileService::class.java))
+            }
+        }
+
+    private fun requestStartupPermissions() {
+        val wanted = mutableListOf<String>()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            wanted += Manifest.permission.POST_NOTIFICATIONS
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            wanted += Manifest.permission.BLUETOOTH_CONNECT
+        }
+        val missing = wanted.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+        if (missing.isNotEmpty()) startupPermissions.launch(missing.toTypedArray())
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -69,6 +106,7 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
+        requestStartupPermissions()
         startForegroundService(Intent(this, EVProfileService::class.java))
         EVHardware.initAudio(applicationContext)  // connecte le helper audio vendor (A9 uniquement, no-op ailleurs)
 

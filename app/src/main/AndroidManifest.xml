@@ -8,6 +8,9 @@
     <!-- [T-910] Exigée à partir d'API 34 pour foregroundServiceType="connectedDevice". -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Requise depuis l'API 33 pour afficher la notification du service de premier plan,
+         seul signe visible que EVProfile tourne. Sans elle, elle est supprimée en silence. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <!-- Bluetooth profile matching. API 28–30 uses the legacy normal permission;
