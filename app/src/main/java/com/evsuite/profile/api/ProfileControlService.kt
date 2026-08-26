@@ -78,7 +78,11 @@ class ProfileControlService : Service() {
             val verdict = verdictOf(VehicleWriteGate.decide(EVHardware.getVehicleSpeedKmh()))
             ProfileApplier.apply(profile, autoStart = true)
             AppLogger.i(TAG, "applyProfile(${profile.name}) verdict=$verdict")
-            return result(true, verdict, profile.name)
+            // `ok` follows the verdict rather than the fact that the profile was handed over.
+            // Reporting ok with REFUSED_MOVING is what put "applied" next to "refused" on the
+            // same line of EVTasker's history: the gated settings of that profile did not
+            // land, and a caller reading the flag alone had no way to know.
+            return result(verdict == VERDICT_ALLOWED, verdict, profile.name)
         }
 
         /**

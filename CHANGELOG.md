@@ -4,6 +4,16 @@ All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.2] - 2026-08-26
+
+### Fixed
+
+- **`applyProfile` ne rapporte plus une réussite quand le portail l'a refusée.** Le service
+  renvoyait `ok = true` avec le verdict `REFUSED_MOVING` ou `REFUSED_UNKNOWN_SPEED` : dans
+  l'historique d'EVTasker, la même ligne disait « appliqué » et « refusé ». Les réglages
+  soumis au portail ne partaient pas, et un appelant qui ne lisait que l'indicateur n'avait
+  aucun moyen de le savoir. `ok` suit désormais le verdict.
+
 ## [3.0.1] - 2026-08-25
 
 ### Fixed
