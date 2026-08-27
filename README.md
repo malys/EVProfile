@@ -31,6 +31,7 @@ back up its profiles, install stable, restore them, then uninstall the legacy pa
 
 ## Contents
 
+- [Release channels](#release-channels)
 - [Overview](#overview)
 - [Features](#features)
 - [Requirements](#requirements)
