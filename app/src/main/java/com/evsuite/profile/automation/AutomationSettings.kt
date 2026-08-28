@@ -2,7 +2,7 @@ package com.evsuite.profile.automation
 
 import android.content.Context
 
-/** Clés + defaults de l'automatisation température, partagés entre l'UI et le service. */
+/** Keys + defaults for temperature automation, shared between the UI and the service. */
 object AutomationSettings {
 
     const val PREFS            = "ev_settings"
@@ -16,7 +16,7 @@ object AutomationSettings {
     const val MIN_TEMP = 0
     const val MAX_TEMP = 60
 
-    /** Sens du déclenchement : sous le seuil (froid) ou au-dessus (chaud). */
+    /** Trigger direction: below threshold (cold) or above (hot). */
     enum class Direction { BELOW, ABOVE }
 
     data class Config(
@@ -38,13 +38,13 @@ object AutomationSettings {
         )
     }
 
-    /** Direction persistée, repli BELOW si absente/invalide. */
+    /** Persisted direction, fallback BELOW if absent/invalid. */
     fun readDirection(context: Context): Direction {
         val raw = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .getString(KEY_DIRECTION, Direction.BELOW.name) ?: Direction.BELOW.name
         return runCatching { Direction.valueOf(raw) }.getOrDefault(Direction.BELOW)
     }
 
-    /** Clampe une saisie de seuil dans [MIN_TEMP, MAX_TEMP] ; null/vide => défaut. */
+    /** Clamps a threshold entry in [MIN_TEMP, MAX_TEMP]; null/empty => default. */
     fun clampTemp(raw: Int?): Int = (raw ?: DEFAULT_THRESHOLD).coerceIn(MIN_TEMP, MAX_TEMP)
 }

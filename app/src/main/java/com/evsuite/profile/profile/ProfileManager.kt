@@ -18,14 +18,14 @@ class ProfileManager(private val context: Context) {
         const val MAX_PROFILES = 5
 
         /**
-         * Verrou de processus, PAS d'instance : l'UI et le service construisent chacun leur
-         * ProfileManager sur le même fichier de préférences. Chaque mutation est un
-         * lire-modifier-écrire sur un blob JSON — sans ce verrou, deux sauvegardes
-         * simultanées en perdent une silencieusement.
+         * Process lock, NOT instance: UI and service each build their own
+         * ProfileManager on the same preferences file. Each mutation is a
+         * read-modify-write to a JSON blob — without this lock, two backups
+         * simultaneous lose one silently.
          */
         private val MUTATION_LOCK = Any()
 
-        /** Scope unique pour les sauvegardes en arrière-plan (un seul par processus). */
+        /** Single scope for background backups (only one per process). */
         private val backupScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     }
 
@@ -42,8 +42,8 @@ class ProfileManager(private val context: Context) {
         return try {
             val type = object : TypeToken<List<DrivingProfile>>() {}.type
             val list: List<DrivingProfile> = gson.fromJson(json, type) ?: emptyList()
-            // Migration : profils créés avant l'ajout AEB ont aebMode=0 (valeur JVM par défaut).
-            // On les initialise à AEB activé + mode Alerte+Freinage par défaut.
+            // Migration: profiles created before adding AEB have aebMode=0 (default JVM value).
+            // We initialize them to AEB activated + Alert+Brake mode by default.
             list.map { p ->
                 if (p.aebMode == 0) p.copy(aebEnabled = true, aebMode = 2) else p
             }
@@ -103,18 +103,18 @@ class ProfileManager(private val context: Context) {
         getAll().firstOrNull { it.btDeviceMac.equals(mac, ignoreCase = true) }
 
     // -------------------------------------------------------------------------
-    // Sauvegarde / restauration (fichier mémoire voiture — survit à la désinstallation)
+    // Backup/restore (car memory file — survives uninstallation)
     // -------------------------------------------------------------------------
 
     fun hasBackup(): Boolean = backupManager.backupExists()
 
-    /** Lit la sauvegarde sans rien modifier (pour proposer la restauration). */
+    /** Reads the backup without modifying anything (to propose restoration). */
     fun readBackup() = backupManager.readBackup()
 
     /**
-     * Restaure les profils depuis une sauvegarde : remplace les profils locaux par ceux
-     * de la sauvegarde (plafonné à [MAX_PROFILES]) et applique le profil par défaut.
-     * Retourne le nombre de profils restaurés.
+     * Restores profiles from a backup: replaces local profiles with those
+     * of the backup (capped at [MAX_PROFILES]) and applies the default profile.
+     * Returns the number of profiles restored.
      */
     fun restoreFrom(backup: com.evsuite.hardware.model.ProfileBackup): Int {
         val restored = backup.profiles.take(MAX_PROFILES)
@@ -131,7 +131,7 @@ class ProfileManager(private val context: Context) {
         return restored.size
     }
 
-    /** Réécrit le fichier de sauvegarde en arrière-plan (état courant des profils). */
+    /** Rewrites the backup file in the background (current state of profiles). */
     private fun triggerBackup() {
         val snapshot = getAll()
         val defaultId = getDefaultId()
@@ -145,8 +145,8 @@ class ProfileManager(private val context: Context) {
     // -------------------------------------------------------------------------
 
     private fun persist(list: List<DrivingProfile>) {
-        // commit() et non apply() : la mutation suivante relit immédiatement le blob,
-        // une écriture asynchrone rouvrirait la fenêtre de perte de mise à jour.
+        // commit() and not apply(): the following mutation immediately rereads the blob,
+        // an asynchronous write would reopen the update loss window.
         prefs.edit().putString(KEY_PROFILES, gson.toJson(list)).commit()
     }
 }

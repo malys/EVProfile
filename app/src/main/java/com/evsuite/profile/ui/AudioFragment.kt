@@ -25,7 +25,7 @@ class AudioFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // ── Volume à l'ouverture d'une porte (SWI132/133) ───────────────────
+        // ── Volume when opening a door (SWI132/133) ───────────────────
         setupDoorVolume(view)
     }
 
@@ -54,12 +54,12 @@ class AudioFragment : Fragment() {
         }
         setSubEnabled(enabled)
 
-        // Si déjà activé, (re)démarre le watcher à l'ouverture de l'onglet (idempotent).
+        // If already activated, (re)starts the watcher when the tab is opened (idempotent).
         if (enabled) {
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) { EVHardware.startDoorVolumeWatcher() }
         }
 
-        // Borne le slider sur le max réel de la voiture (sinon valeur XML par défaut).
+        // Limit the slider to the actual maximum of the car (otherwise default XML value).
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             val max = EVHardware.getMediaVolumeMax()
             withContext(Dispatchers.Main) {

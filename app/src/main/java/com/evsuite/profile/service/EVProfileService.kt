@@ -56,20 +56,20 @@ class EVProfileService : Service() {
 
 
 
-        // Intent action broadcast par le système SAIC pour les touches physiques
+        // Intent action broadcast by the SAIC system for physical keys
         private const val HARDKEY_ACTION   = "com.saic.keyevent.hardkey.report"
 
         /**
-         * [T-902] Permission exigée de l'ÉMETTEUR du broadcast hardkey. Déclarée en
-         * protectionLevel="signature" dans le Manifest : seule une app signée avec la clé
-         * plateforme de la ROM l'obtient, ce qui exclut toute app tierce qui tenterait de
-         * forger l'action pour piloter les raccourcis (et donc l'état du véhicule).
+         * [T-902] Permission required from the broadcast hardkey TRANSMITTER. Declared in
+         * protectionLevel="signature" in the Manifest: only an app signed with the key
+         * ROM platform gets it, which excludes any third-party apps that attempt to
+         * forge the action to control the shortcuts (and therefore the state of the vehicle).
          */
         const val HARDKEY_PERMISSION = "com.evsuite.profile.permission.RECEIVE_HARDKEY"
 
         /**
-         * Flag one-shot : le profil n'est appliqué qu'une seule fois par session de processus.
-         * Évite le double-apply quand MainActivity et BootReceiver démarrent le service.
+         * One-shot flag: The profile is only applied once per process session.
+         * Avoid double-apply when MainActivity and BootReceiver start the service.
          */
         @Volatile private var profileScheduled = false
 
@@ -83,19 +83,19 @@ class EVProfileService : Service() {
     // It is never registered, so EVProfile no longer observes Bluetooth connections.
     private var btAclReceiver: BroadcastReceiver? = null
 
-    // ── Receiver sync thème launcher ─────────────────────────────────────────
+    // ── Receiver sync launcher theme ──────────────────── ─────────────────────
     private var skinChangeReceiver: BroadcastReceiver? = null
 
     // ── Listener de cycle d'allumage (Katman5) ──────────────────────────────
     private var vehicleConditionListener: ((Int) -> Unit)? = null
 
-    // Identité du bouton et distinction court/long : décodées par la librairie, qui connaît
-    // les alias de keycode par firmware et n'émet le long qu'une fois par appui.
+    // Button identity and short/long distinction: decoded by the library, which knows
+    // keycode aliases per firmware and emits a long press only once per physical press.
     private val buttonDecoder = PhysicalButtonEventDecoder()
 
-    // États des toggles en mémoire — réinitialisés à chaque démarrage du service (= redémarrage voiture)
-    // Évite le bug du 1er appui : si on utilise SharedPrefs, l'état persisté peut ne pas correspondre
-    // à l'état réel de la voiture après un redémarrage, causant un toggle dans le mauvais sens.
+    // Toggle states in memory — reset each time the service is started (= car restart)
+    // Avoid the first press bug: if you use SharedPrefs, the persisted state may not correspond
+    // to the actual state of the car after a restart, causing it to toggle in the wrong direction.
     private val toggleStates = mutableMapOf<String, Boolean>()
 
     override fun onCreate() {
@@ -104,9 +104,9 @@ class EVProfileService : Service() {
         startInForeground()
         // Feed the shared gate EVProfile's localized refusal strings (mg4-hardware itself
         // has no app resources; the module falls back to English when no provider is set).
-        // Le contexte applicatif, volontairement : `getString` se résoudrait sur le Service,
-        // et messageProvider est un champ de singleton dans la bibliothèque partagée — il
-        // retiendrait ce Service, et tout ce qu'il référence, pour la durée du processus.
+        // The application context, voluntarily: `getString` would resolve on the Service,
+        // and messageProvider is a singleton field in the shared library — it
+        // would retain this Service, and everything it references, for the duration of the process.
         val strings = applicationContext
         VehicleWriteGate.messageProvider = { decision ->
             when (decision) {
@@ -147,15 +147,15 @@ class EVProfileService : Service() {
     }
 
     /**
-     * Entre en foreground avec le type de service que l'app détient réellement.
+     * Enter foreground with the type of service that the app actually has.
      *
-     * Depuis l'API 34 chaque type déclaré est validé contre les permissions détenues à cet
-     * instant, et `connectedDevice` exige BLUETOOTH_CONNECT — une permission runtime que
-     * l'application déclarait sans jamais la demander. Sur une voiture où elle n'est pas
-     * accordée, l'appel à deux arguments (« tous les types du manifeste ») lève une
-     * SecurityException et le service meurt dans son propre onCreate, emportant l'application
-     * de profils avec lui. Sans la permission, le service tourne sans type : les profils
-     * s'appliquent, seule la détection du téléphone appairé reste muette.
+     * Since API 34 each declared type is validated against the permissions held at that
+     * instant, and `connectedDevice` requires BLUETOOTH_CONNECT — a runtime permission that
+     * the application declared without ever asking for it. On a car where it is not
+     * granted, the appeal to two arguments ("all types of the manifest") raises a
+     * SecurityException and the service dies in its own onCreate, taking away the application
+     * profiles with him. Without permission, the service runs without type: profiles
+     * apply, only the detection of the paired phone remains silent.
      */
     private fun startInForeground() {
         val type = if (hasBluetoothConnect()) {
@@ -173,7 +173,7 @@ class EVProfileService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    // ── Enregistrement dynamique du receiver ─────────────────────────────────
+    // ── Dynamic receiver registration ────────────────────────────────────────
 
     private fun registerHardkeyReceiver() {
         hardkeyReceiver = object : BroadcastReceiver() {
@@ -181,14 +181,14 @@ class EVProfileService : Service() {
                 handleHardkeyIntent(intent)
             }
         }
-        // L'émetteur doit détenir HARDKEY_PERMISSION (signature) : un broadcast forgé par
-        // une app tierce n'atteint jamais le receiver. EXPORTED reste nécessaire, l'émetteur
-        // légitime étant une app système externe.
+        // The issuer must hold HARDKEY_PERMISSION (signature): a broadcast forged by
+        // a third-party app never reaches the receiver. EXPORTED remains necessary, the transmitter
+        // legitimate being an external system app.
         ContextCompat.registerReceiver(
             this, hardkeyReceiver, IntentFilter(HARDKEY_ACTION),
             HARDKEY_PERMISSION, null, ContextCompat.RECEIVER_EXPORTED
         )
-        AppLogger.i(TAG, "HardkeyReceiver enregistré → $HARDKEY_ACTION (permission $HARDKEY_PERMISSION)")
+        AppLogger.i(TAG, "HardkeyReceiver registered → $HARDKEY_ACTION (permission $HARDKEY_PERMISSION)")
     }
 
     // ── Traitement d'un event hardkey ────────────────────────────────────────
@@ -196,10 +196,10 @@ class EVProfileService : Service() {
     private fun handleHardkeyIntent(intent: Intent) {
         val prefs = getSharedPreferences(PREFS_SHORTCUTS, MODE_PRIVATE)
 
-        // Raccourcis désactivés globalement → on laisse le launcher gérer
+        // Shortcuts disabled globally → we let the launcher manage
         if (!prefs.getBoolean("shortcut_enabled", false)) return
 
-        // Lecture du keycode (plusieurs noms d'extra selon le firmware)
+        // Reading the keycode (several extra names depending on the firmware)
         val keycode = intent.getIntExtra("android.intent.extra.hardkey.keycode", -1)
             .takeIf { it >= 0 }
             ?: intent.getIntExtra("keycode", -1).takeIf { it >= 0 }
@@ -215,8 +215,8 @@ class EVProfileService : Service() {
 
         val event = buttonDecoder.accept(keycode, isDown, isLong) ?: return
 
-        // EVProfile ne câble que les deux touches étoile ; le reste du volant appartient
-        // au véhicule.
+        // EVProfile only wires the two star keys; the rest of the steering wheel belongs
+        // to the vehicle.
         val slot = when (event.button) {
             PhysicalButtonEventDecoder.Button.STAR_LEFT  -> "btn1"
             PhysicalButtonEventDecoder.Button.STAR_RIGHT -> "btn2"
@@ -231,12 +231,12 @@ class EVProfileService : Service() {
         if (action != ShortcutAction.NONE) executeToggle(action, pressKey)
     }
 
-    // ── Exécution du toggle ──────────────────────────────────────────────────
+    // ── Running the toggle ───────────────────────── ─────────────────────────
 
     private fun executeToggle(action: ShortcutAction, pressKey: String = "") {
         val prefs = getSharedPreferences(PREFS_SHORTCUTS, MODE_PRIVATE)
 
-        // PROFILE_PICKER : overlay flottant au-dessus du launcher — aucun toggle d'état
+        // PROFILE_PICKER: overlay floating above the launcher — no status toggle
         if (action == ShortcutAction.PROFILE_PICKER) {
             Handler(Looper.getMainLooper()).post {
                 ProfilePickerOverlay.show(this@EVProfileService)
@@ -244,16 +244,16 @@ class EVProfileService : Service() {
             return
         }
 
-        // APPLY_PROFILE : action directe — pas de toggle d'état, chaque pression applique le profil
+        // APPLY_PROFILE: direct action — no status toggle, each press applies the profile
         if (action == ShortcutAction.APPLY_PROFILE) {
             val profileId = prefs.getString("shortcut_${pressKey}_profile_id", null) ?: return
             CoroutineScope(Dispatchers.IO).launch {
                 val profile = ProfileManager(applicationContext).getById(profileId)
                 if (profile == null) {
                     prefs.edit().putInt("shortcut_$pressKey", ShortcutAction.NONE.id).apply()
-                    AppLogger.i(TAG, "SHORTCUT APPLY_PROFILE — profil $profileId introuvable, reset NONE")
+                    AppLogger.i(TAG, "SHORTCUT APPLY_PROFILE — profile $profileId not found, reset to NONE")
                 } else {
-                    AppLogger.i(TAG, "SHORTCUT APPLY_PROFILE — application de '${profile.name}'")
+                    AppLogger.i(TAG, "SHORTCUT APPLY_PROFILE — applying '${profile.name}'")
                     ProfileApplier.apply(profile)
                 }
             }
@@ -266,8 +266,8 @@ class EVProfileService : Service() {
             return
         }
 
-        // Pour tous les autres toggles : état en mémoire (réinitialisé au démarrage du service)
-        // Évite le bug du 1er appui causé par un état SharedPrefs désynchronisé après redémarrage.
+        // For all other toggles: state in memory (reset when the service starts)
+        // Avoids the 1st press bug caused by an out of sync SharedPrefs state after restart.
         val newState = !(toggleStates[action.name] ?: false)
         toggleStates[action.name] = newState
 
@@ -296,13 +296,13 @@ class EVProfileService : Service() {
                 ShortcutAction.OVERSPEED_ALARM  -> EVHardware.setOverspeedAlarm(newState)
                 ShortcutAction.SPEED_LIMIT_TONE -> EVHardware.setSpeedLimitTone(newState)
                 ShortcutAction.ADAS_CYCLE -> {
-                    // Tous les firmwares connus stockent des indices 0-4 (Off/Lim.Manuel/Lim.Auto/ACC/ICA|TJA)
+                    // All known firmware stores indices 0-4 (Off/Lim.Manuel/Lim.Auto/ACC/ICA|TJA)
                     val modeA = prefs.getInt("shortcut_adas_mode_a", 3)
                     val modeB = prefs.getInt("shortcut_adas_mode_b", 0)
                     val mode  = if (newState) modeA else modeB
                     if (FirmwareInfo.isVsmBased()) {
                         // VSM (SWI68/69/131/132/165) : index → mode ACC/TJA (setAccTjaMode)
-                        // + limiteur de vitesse (setSpeedLimiterMode), réglages exclusifs.
+                        // + speed limiter (setSpeedLimiterMode), exclusive settings.
                         when (mode) {
                             1 -> { EVHardware.setSpeedLimiterMode(EVHardware.SasMode.MANUEL);      EVHardware.setAccTjaMode(Swi68Mode.OFF) }
                             2 -> { EVHardware.setSpeedLimiterMode(EVHardware.SasMode.INTELLIGENT); EVHardware.setAccTjaMode(Swi68Mode.OFF) }
@@ -311,7 +311,7 @@ class EVProfileService : Service() {
                             else -> { EVHardware.setAccTjaMode(Swi68Mode.OFF); EVHardware.setSpeedLimiterMode(EVHardware.SasMode.OFF) }
                         }
                     } else {
-                        // SWI133 : VPM direct (l'index est aussi la valeur mixedIntelligentDrive)
+                        // SWI133: Direct VPM (the index is also the mixedIntelligentDrive value)
                         EVHardware.setMixedIntelligentDrive(mode)
                     }
                 }
@@ -339,9 +339,9 @@ class EVProfileService : Service() {
     }
 
     /**
-     * Raccourci « Éteindre la voiture » : vérifie d'abord la position P (lecture gear), puis affiche
-     * le MÊME dialogue de confirmation que les Réglages, en fenêtre overlay (déclenché depuis le
-     * service). Si pas en P → Toast. `vehiclePowerOff()` re-vérifie le P au moment de l'envoi.
+     * “Turn off car” shortcut: first checks the P (read gear) position, then displays
+     * the SAME confirmation dialog as the Settings, in the overlay window (triggered from the
+     * service). If not in P → Toast. `vehiclePowerOff()` re-checks the P at send time.
      */
     private fun showVehiclePowerOffConfirm() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -356,7 +356,7 @@ class EVProfileService : Service() {
                         .setPositiveButton(R.string.vehicle_power_dialog_confirm) { _, _ ->
                             CoroutineScope(Dispatchers.IO).launch {
                                 val ok = EVHardware.vehiclePowerOff()
-                                AppLogger.i(TAG, "SHORTCUT VEHICLE_POWER_OFF confirmé → $ok")
+                                AppLogger.i(TAG, "SHORTCUT VEHICLE_POWER_OFF confirmed → $ok")
                             }
                         }
                         .create()
@@ -369,44 +369,44 @@ class EVProfileService : Service() {
         }
     }
 
-    /** Planifie l'application du profil par défaut au démarrage du processus (one-shot). */
+    /** Schedules the default profile to be applied at process start (one-shot). */
     private fun scheduleDefaultProfileOnce() {
         if (profileScheduled) {
-            AppLogger.i(TAG, "Profil déjà planifié — skip")
+            AppLogger.i(TAG, "Profile already scheduled — skipping")
             return
         }
         profileScheduled = true
 
         val prefs = getSharedPreferences("ev_settings", MODE_PRIVATE)
         if (!prefs.getBoolean("auto_apply_profile", true)) {
-            AppLogger.i(TAG, "auto_apply_profile désactivé — skip")
+            AppLogger.i(TAG, "auto_apply_profile disabled — skipping")
             return
         }
 
-        applyConfiguredDefaultProfile("Démarrage service")
+        applyConfiguredDefaultProfile("Service startup")
     }
 
-    /** Résolution BT (+ fallback HFP) → défaut au démarrage service (corps historique, inchangé). */
+    /** BT resolution (+ HFP fallback) → fault at service startup (historical body, unchanged). */
     private fun resolveBtOrDefaultOnSchedule() {
         val pm = ProfileManager(applicationContext)
 
-        // [BT-PROFILES] Cherche tous les profils BT parmi les appareils déjà connus en mémoire
+        // [BT-PROFILES] Searches for all BT profiles among devices already known in memory
         val btProfiles = BluetoothProfileManager.getConnectedMacs()
             .mapNotNull { mac -> pm.getProfileForBtDevice(mac) }
             .distinctBy { it.id }
 
         when {
             btProfiles.size >= 2 -> {
-                // Conflit BT : plusieurs appareils ont un profil associé → popup de sélection
-                AppLogger.i(TAG, "[BT] ${btProfiles.size} profils BT en conflit — popup de sélection")
+                // BT conflict: several devices have an associated profile → selection popup
+                AppLogger.i(TAG, "[BT] ${btProfiles.size} conflicting Bluetooth profiles — showing picker")
                 EVHardware.whenKatman1Ready {
                     ProfilePickerOverlay.show(
                         context      = applicationContext,
                         profiles     = btProfiles,
                         onAutoDismiss = {
-                            // Timeout sans sélection → applique le 1er profil (comportement historique)
+                            // Timeout without selection → applies the 1st profile (historical behavior)
                             CoroutineScope(Dispatchers.IO).launch {
-                                AppLogger.i(TAG, "[BT] Timeout → fallback profil '${btProfiles[0].name}'")
+                                AppLogger.i(TAG, "[BT] Timeout → fallback profile '${btProfiles[0].name}'")
                                 ProfileApplier.apply(btProfiles[0], autoStart = true) { ok ->
                                     AppLogger.i(TAG, "[BT] Fallback '${btProfiles[0].name}' — ok=$ok")
                                 }
@@ -417,24 +417,24 @@ class EVProfileService : Service() {
                 return
             }
             btProfiles.size == 1 -> {
-                AppLogger.i(TAG, "[BT] Profil BT '${btProfiles[0].name}' trouvé au démarrage — en attente Katman1")
+                AppLogger.i(TAG, "[BT] Profile '${btProfiles[0].name}' found at startup — waiting for Katman1")
                 EVHardware.whenKatman1Ready {
                     ProfileApplier.apply(btProfiles[0], autoStart = true) { ok ->
-                        AppLogger.i(TAG, "[BT] Profil '${btProfiles[0].name}' appliqué — ok=$ok")
+                        AppLogger.i(TAG, "[BT] Profile '${btProfiles[0].name}' applied — ok=$ok")
                     }
                 }
                 return
             }
         }
 
-        // [BT-PROFILES] Fallback : requête HFP async (cas téléphone connecté avant démarrage service)
+        // [BT-PROFILES] Fallback: async HFP request (case phone connected before service start)
         BluetoothProfileManager.checkConnectedHfpDevices(applicationContext) { devices ->
             val hfpProfiles = devices.mapNotNull { dev -> pm.getProfileForBtDevice(dev.address) }
                 .distinctBy { it.id }
 
             when {
                 hfpProfiles.size >= 2 -> {
-                    AppLogger.i(TAG, "[BT-HFP] ${hfpProfiles.size} profils en conflit — popup")
+                    AppLogger.i(TAG, "[BT-HFP] ${hfpProfiles.size} conflicting profiles — showing picker")
                     EVHardware.whenKatman1Ready {
                         ProfilePickerOverlay.show(
                             context       = applicationContext,
@@ -443,7 +443,7 @@ class EVProfileService : Service() {
                                 CoroutineScope(Dispatchers.IO).launch {
                                     AppLogger.i(TAG, "[BT-HFP] Timeout → fallback '${hfpProfiles[0].name}'")
                                     ProfileApplier.apply(hfpProfiles[0], autoStart = true) { ok ->
-                                        AppLogger.i(TAG, "[BT-HFP] Fallback appliqué — ok=$ok")
+                                        AppLogger.i(TAG, "[BT-HFP] Fallback applied — ok=$ok")
                                     }
                                 }
                             }
@@ -451,25 +451,25 @@ class EVProfileService : Service() {
                     }
                 }
                 hfpProfiles.size == 1 -> {
-                    AppLogger.i(TAG, "[BT-HFP] Profil '${hfpProfiles[0].name}' trouvé via HFP — en attente Katman1")
+                    AppLogger.i(TAG, "[BT-HFP] Profile '${hfpProfiles[0].name}' found through HFP — waiting for Katman1")
                     EVHardware.whenKatman1Ready {
                         ProfileApplier.apply(hfpProfiles[0], autoStart = true) { ok ->
-                            AppLogger.i(TAG, "[BT-HFP] Profil '${hfpProfiles[0].name}' appliqué — ok=$ok")
+                            AppLogger.i(TAG, "[BT-HFP] Profile '${hfpProfiles[0].name}' applied — ok=$ok")
                         }
                     }
                 }
                 else -> {
-                    // Aucun match BT → profil par défaut
+                    // No BT match → default profile
                     val defaultProfile = pm.getDefaultProfile()
                     if (defaultProfile == null) {
-                        AppLogger.i(TAG, "Aucun profil par défaut défini — skip")
+                        AppLogger.i(TAG, "No default profile configured — skipping")
                         return@checkConnectedHfpDevices
                     }
-                    AppLogger.i(TAG, "Profil par défaut '${defaultProfile.name}' — en attente Katman1")
+                    AppLogger.i(TAG, "Default profile '${defaultProfile.name}' — waiting for Katman1")
                     EVHardware.whenKatman1Ready {
-                        AppLogger.i(TAG, "Hardware prêt → application du profil '${defaultProfile.name}'")
+                        AppLogger.i(TAG, "Hardware ready → applying profile '${defaultProfile.name}'")
                         ProfileApplier.apply(defaultProfile, autoStart = true) { ok ->
-                            AppLogger.i(TAG, "Profil '${defaultProfile.name}' appliqué — ok=$ok")
+                            AppLogger.i(TAG, "Profile '${defaultProfile.name}' applied — ok=$ok")
                         }
                     }
                 }
@@ -480,22 +480,22 @@ class EVProfileService : Service() {
     // ── Listener IGNITION_STATE (Katman5) ────────────────────────────────────
 
     /**
-     * Enregistre le listener Katman5 sur les changements d'état d'allumage.
-     * À chaque RUN (0x2), applique le profil par défaut.
+     * Registers the Katman5 listener on power state changes.
+     * At each RUN (0x2), applies the default profile.
      */
     private fun registerIgnitionListener() {
         val vcListener: (Int) -> Unit = { state ->
             when (state) {
                 EVHardware.CarIgnitionItem.RUN -> {
-                    AppLogger.i(TAG, "Katman5 IGNITION_RUN → application du profil")
+                    AppLogger.i(TAG, "Katman5 IGNITION_RUN → applying profile")
                     Handler(Looper.getMainLooper()).postDelayed({
                         applyDefaultProfileOnIgnition()
                     }, 500L)
                 }
                 EVHardware.CarIgnitionItem.OFF -> {
-                    // Extinction → on oublie le choix manuel : le prochain cycle repart sur le défaut/BT
+                    // Extinguishing → we forget the manual choice: the next cycle starts again on the fault/BT
                     if (ProfileApplier.lastManualProfileId != null) {
-                        AppLogger.i(TAG, "Katman5 IGNITION_OFF → reset du choix manuel")
+                        AppLogger.i(TAG, "Katman5 IGNITION_OFF → resetting manual selection")
                         ProfileApplier.lastManualProfileId = null
                     }
                 }
@@ -503,12 +503,12 @@ class EVProfileService : Service() {
         }
         vehicleConditionListener = vcListener
         EVHardware.registerVehicleConditionListener(vcListener)
-        AppLogger.i(TAG, "Listener Katman5 enregistré")
+        AppLogger.i(TAG, "Katman5 listener registered")
     }
 
     /**
-     * [BT-PROFILES] Enregistre les receivers ACL Bluetooth pour maintenir
-     * la liste des appareils connectés dans BluetoothProfileManager.
+     * [BT-PROFILES] Registers ACL Bluetooth receivers to maintain
+     * the list of connected devices in BluetoothProfileManager.
      */
     private fun registerBtAclReceiver() {
         btAclReceiver = object : BroadcastReceiver() {
@@ -519,11 +519,11 @@ class EVProfileService : Service() {
                 when (intent.action) {
                     BluetoothDevice.ACTION_ACL_CONNECTED -> {
                         BluetoothProfileManager.onDeviceConnected(mac)
-                        AppLogger.i(TAG, "[BT] Appareil connecté : $mac")
+                        AppLogger.i(TAG, "[BT] Device connected: $mac")
                     }
                     BluetoothDevice.ACTION_ACL_DISCONNECTED -> {
                         BluetoothProfileManager.onDeviceDisconnected(mac)
-                        AppLogger.i(TAG, "[BT] Appareil déconnecté : $mac")
+                        AppLogger.i(TAG, "[BT] Device disconnected: $mac")
                     }
                 }
             }
@@ -532,27 +532,27 @@ class EVProfileService : Service() {
             addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
             addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
         }
-        // Broadcasts système protégés (seul le système peut les émettre) : pas de permission
-        // supplémentaire à exiger, mais l'export est rendu explicite.
+        // Protected system broadcasts (only the system can broadcast them): no permission
+        // additional to require, but the export is made explicit.
         ContextCompat.registerReceiver(
             this, btAclReceiver, filter, ContextCompat.RECEIVER_EXPORTED
         )
-        AppLogger.i(TAG, "[BT] BtAclReceiver enregistré")
+        AppLogger.i(TAG, "[BT] BtAclReceiver registered")
     }
 
     /**
-     * Automatisation température — précédence : après choix manuel, avant BT/défaut.
-     * Non applicable (désactivée / temp illisible / < seuil / profil absent) => [onFallback].
-     * Applicable => application directe (case cochée) ou popup de confirmation
+     * Temperature automation — precedence: after manual choice, before BT/default.
+     * Not applicable (disabled / unreadable temp / < threshold / profile absent) => [onFallback].
+     * Applicable => direct application (box checked) or confirmation popup
      * (NON/timeout => [onFallback]).
      */
     private fun tryTemperatureAutomation(onFallback: () -> Unit) {
         val ctx = applicationContext
         val cfg = AutomationSettings.read(ctx)
-        // Sortie silencieuse = impossible de diagnostiquer à distance : on trace TOUJOURS
-        // la config, y compris quand la feature est simplement désactivée.
+        // Silent output = impossible to diagnose remotely: we ALWAYS trace
+        // the config, including when the feature is simply disabled.
         if (!cfg.enabled) {
-            AppLogger.i(TAG, "Auto temp: DÉSACTIVÉE dans Réglages → fallback BT/défaut")
+            AppLogger.i(TAG, "Temperature automation disabled in Settings → Bluetooth/default fallback")
             onFallback(); return
         }
         val profile = cfg.profileId.takeIf { it.isNotEmpty() }?.let { ProfileManager(ctx).getById(it) }
@@ -561,14 +561,14 @@ class EVProfileService : Service() {
             val temp = EVHardware.getOutsideTempCelsius()
             val outcome = AutomationDecision.evaluate(cfg.enabled, temp, cfg.threshold, cfg.direction, profile != null)
             AppLogger.i(TAG, "Auto temp: config → dir=${cfg.direction} seuil=${cfg.threshold}°C " +
-                "profil='${profile?.name ?: "AUCUN"}' auto=${cfg.autoExecute} | temp lue=${temp ?: "illisible"} → $outcome")
+                "profile='${profile?.name ?: "NONE"}' auto=${cfg.autoExecute} | temperature=${temp ?: "unreadable"} → $outcome")
             if (outcome != AutomationDecision.Outcome.APPLY || profile == null || temp == null) {
-                AppLogger.i(TAG, "Auto temp: non applicable → fallback BT/défaut")
+                AppLogger.i(TAG, "Temperature automation not applicable → Bluetooth/default fallback")
                 onFallback(); return@whenKatman1Ready
             }
             if (cfg.autoExecute) {
-                AppLogger.i(TAG, "Auto temp → application directe '${profile.name}' (temp=$temp dir=${cfg.direction} seuil=${cfg.threshold})")
-                ProfileApplier.apply(profile, autoStart = true) { ok -> AppLogger.i(TAG, "Auto temp appliqué — ok=$ok") }
+                AppLogger.i(TAG, "Temperature automation → applying '${profile.name}' directly (temp=$temp direction=${cfg.direction} threshold=${cfg.threshold})")
+                ProfileApplier.apply(profile, autoStart = true) { ok -> AppLogger.i(TAG, "Temperature automation applied — ok=$ok") }
             } else {
                 AppLogger.i(TAG, "Auto temp → popup confirmation '${profile.name}'")
                 ProfileConfirmOverlay.show(
@@ -589,34 +589,34 @@ class EVProfileService : Service() {
     }
 
     /**
-     * Applique le profil approprié suite à un événement IGNITION_STATE=RUN.
-     * Priorité : choix manuel récent (popup/app) → profil par défaut.
+     * Applies the appropriate profile following an IGNITION_STATE=RUN event.
+     * Priority: recent manual choice (popup/app) → default profile.
      */
     private fun applyDefaultProfileOnIgnition() {
         val prefs = getSharedPreferences("ev_settings", MODE_PRIVATE)
         if (!prefs.getBoolean("auto_apply_profile", true)) {
-            AppLogger.i(TAG, "IGNITION → auto_apply_profile désactivé, skip")
+            AppLogger.i(TAG, "IGNITION → auto_apply_profile disabled, skipping")
             return
         }
 
         val pm = ProfileManager(applicationContext)
 
-        // Choix manuel récent (popup volant / app) → prioritaire sur BT et défaut.
-        // L'utilisateur a explicitement sélectionné un profil depuis le démarrage : on le respecte.
+        // Recent manual choice (steering wheel popup / app) → priority on BT and default.
+        // The user has explicitly selected a profile since startup: we respect it.
         val manualId = ProfileApplier.lastManualProfileId
         if (manualId != null) {
             val manualProfile = pm.getById(manualId)
             if (manualProfile != null) {
-                AppLogger.i(TAG, "IGNITION → choix manuel respecté : '${manualProfile.name}'")
+                AppLogger.i(TAG, "IGNITION → preserving manual selection: '${manualProfile.name}'")
                 EVHardware.whenKatman1Ready {
                     ProfileApplier.apply(manualProfile, autoStart = true) { ok ->
-                        AppLogger.i(TAG, "IGNITION → profil manuel '${manualProfile.name}' ré-appliqué — ok=$ok")
+                        AppLogger.i(TAG, "IGNITION → manual profile '${manualProfile.name}' reapplied — ok=$ok")
                     }
                 }
                 return
             } else {
-                // Profil supprimé entre-temps → on oublie le choix et on retombe sur le défaut/BT
-                AppLogger.i(TAG, "IGNITION → choix manuel introuvable (id=$manualId), fallback défaut/BT")
+                // Profile deleted in the meantime → we forget the choice and we fall back on the default/BT
+                AppLogger.i(TAG, "IGNITION → manual selection not found (id=$manualId), using default/Bluetooth fallback")
                 ProfileApplier.lastManualProfileId = null
             }
         }
@@ -625,33 +625,33 @@ class EVProfileService : Service() {
     }
 
     /**
-     * Seul automatisme conservé dans EVProfile : le profil explicitement défini par défaut.
-     * Les déclencheurs température et Bluetooth appartiennent désormais à EVTasker.
+     * The only automation retained in EVProfile: the profile explicitly defined by default.
+     * The temperature and Bluetooth triggers now belong to EVTasker.
      */
     private fun applyConfiguredDefaultProfile(source: String) {
         val profile = ProfileManager(applicationContext).getDefaultProfile() ?: run {
-            AppLogger.i(TAG, "$source → aucun profil par défaut, skip")
+            AppLogger.i(TAG, "$source → no default profile, skipping")
             return
         }
-        AppLogger.i(TAG, "$source → application du profil par défaut '${profile.name}'")
+        AppLogger.i(TAG, "$source → applying default profile '${profile.name}'")
         EVHardware.whenKatman1Ready {
             ProfileApplier.apply(profile, autoStart = true) { ok ->
-                AppLogger.i(TAG, "$source → profil par défaut '${profile.name}' appliqué — ok=$ok")
+                AppLogger.i(TAG, "$source → default profile '${profile.name}' applied — ok=$ok")
             }
         }
     }
 
-    /** Résolution BT → défaut au passage RUN (corps historique, inchangé). */
+    /** BT resolution → fault on RUN transition (historical body, unchanged). */
     private fun resolveBtOrDefaultOnIgnition() {
         val pm = ProfileManager(applicationContext)
-        // [BT-PROFILES] Cherche tous les profils BT parmi les appareils connectés
+        // [BT-PROFILES] Searches all BT profiles among connected devices
         val btProfiles = BluetoothProfileManager.getConnectedMacs()
             .mapNotNull { mac -> pm.getProfileForBtDevice(mac) }
             .distinctBy { it.id }
 
         when {
             btProfiles.size >= 2 -> {
-                AppLogger.i(TAG, "IGNITION [BT] → ${btProfiles.size} profils en conflit — popup")
+                AppLogger.i(TAG, "IGNITION [BT] → ${btProfiles.size} conflicting profiles — showing picker")
                 EVHardware.whenKatman1Ready {
                     ProfilePickerOverlay.show(
                         context       = applicationContext,
@@ -660,7 +660,7 @@ class EVProfileService : Service() {
                             CoroutineScope(Dispatchers.IO).launch {
                                 AppLogger.i(TAG, "IGNITION [BT] Timeout → fallback '${btProfiles[0].name}'")
                                 ProfileApplier.apply(btProfiles[0], autoStart = true) { ok ->
-                                    AppLogger.i(TAG, "IGNITION [BT] Fallback appliqué — ok=$ok")
+                                    AppLogger.i(TAG, "IGNITION [BT] Fallback applied — ok=$ok")
                                 }
                             }
                         }
@@ -668,41 +668,41 @@ class EVProfileService : Service() {
                 }
             }
             btProfiles.size == 1 -> {
-                AppLogger.i(TAG, "IGNITION [BT] → application du profil '${btProfiles[0].name}'")
+                AppLogger.i(TAG, "IGNITION [BT] → applying profile '${btProfiles[0].name}'")
                 EVHardware.whenKatman1Ready {
                     ProfileApplier.apply(btProfiles[0], autoStart = true) { ok ->
-                        AppLogger.i(TAG, "IGNITION [BT] → profil '${btProfiles[0].name}' appliqué — ok=$ok")
+                        AppLogger.i(TAG, "IGNITION [BT] → profile '${btProfiles[0].name}' applied — ok=$ok")
                     }
                 }
             }
             else -> {
-                // Aucun match BT → profil par défaut
+                // No BT match → default profile
                 val defaultProfile = pm.getDefaultProfile() ?: run {
-                    AppLogger.i(TAG, "IGNITION → aucun profil par défaut, skip")
+                    AppLogger.i(TAG, "IGNITION → no default profile, skipping")
                     return
                 }
-                AppLogger.i(TAG, "IGNITION → application du profil par défaut '${defaultProfile.name}'")
+                AppLogger.i(TAG, "IGNITION → applying default profile '${defaultProfile.name}'")
                 EVHardware.whenKatman1Ready {
                     ProfileApplier.apply(defaultProfile, autoStart = true) { ok ->
-                        AppLogger.i(TAG, "IGNITION → profil '${defaultProfile.name}' appliqué — ok=$ok")
+                        AppLogger.i(TAG, "IGNITION → profile '${defaultProfile.name}' applied — ok=$ok")
                     }
                 }
             }
         }
     }
 
-    // ── Receiver sync thème launcher (SWI69 / SWI131 / SWI132) ─────────────
+    // ── Receiver sync theme launcher (SWI69 / SWI131 / SWI132) ─────────────
 
     /**
-     * Écoute le broadcast "com.saicmotor.changeSkin" émis par le launcher MG
-     * lorsque l'utilisateur change de thème (sombre ↔ clair).
-     * Ne fait rien si le firmware n'expose pas SKIN_THEME_CONFIG ou si
-     * l'utilisateur a choisi un thème manuel (mode ≠ "auto").
+     * Listen to the broadcast "com.saicmotor.changeSkin" emitted by the MG launcher
+     * when user changes theme (dark ↔ light).
+     * Does nothing if the firmware does not expose SKIN_THEME_CONFIG or if
+     * the user has chosen a manual theme (mode ≠ “auto”).
      */
     private fun registerSkinChangeReceiver() {
         if (!ThemeHelper.hasSkinThemeConfig(this)) {
-            // SWI133/68 : MODE_NIGHT_FOLLOW_SYSTEM gère la sync automatiquement
-            AppLogger.i(TAG, "[THEME] SKIN_THEME_CONFIG absent — FOLLOW_SYSTEM actif, broadcast non requis")
+            // SWI133/68: MODE_NIGHT_FOLLOW_SYSTEM manages sync automatically
+            AppLogger.i(TAG, "[THEME] SKIN_THEME_CONFIG absent — FOLLOW_SYSTEM active, broadcast not required")
             return
         }
         skinChangeReceiver = object : BroadcastReceiver() {
@@ -715,16 +715,16 @@ class EVProfileService : Service() {
                     androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(nightMode)
                     ThemeHelper.notifyThemeChanged()
                 }
-                AppLogger.i(TAG, "[THEME] changeSkin reçu → nightMode=$nightMode")
+                AppLogger.i(TAG, "[THEME] changeSkin received → nightMode=$nightMode")
             }
         }
-        // Émis par le launcher SAIC (app externe) : export explicite. N'écrit rien dans le
-        // véhicule — un broadcast forgé ne peut que changer le thème de l'app.
+        // Issued by the SAIC launcher (external app): explicit export. Do not write anything in the
+        // vehicle — a forged broadcast can only change the theme of the app.
         ContextCompat.registerReceiver(
             this, skinChangeReceiver, IntentFilter(ThemeHelper.ACTION_SKIN_CHANGE),
             ContextCompat.RECEIVER_EXPORTED
         )
-        AppLogger.i(TAG, "[THEME] SkinChangeReceiver enregistré")
+        AppLogger.i(TAG, "[THEME] SkinChangeReceiver registered")
     }
 
     private fun buildNotification(): Notification {
@@ -736,7 +736,7 @@ class EVProfileService : Service() {
         }
         return Notification.Builder(this, CHANNEL_ID)
             .setContentTitle("EVProfile")
-            .setContentText("Service actif")
+            .setContentText("Service active")
             .setSmallIcon(R.mipmap.ic_launcher)
             .build()
     }

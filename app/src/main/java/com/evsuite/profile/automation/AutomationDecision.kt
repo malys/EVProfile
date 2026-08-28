@@ -1,12 +1,12 @@
 package com.evsuite.profile.automation
 
-/** Décision pure de l'automatisation température (testable sans Android). */
+/** Pure decision of temperature automation (testable without Android). */
 object AutomationDecision {
 
     enum class Outcome { NOT_APPLICABLE, APPLY }
 
     /**
-     * APPLY ssi : [enabled] ET [temp] lisible (non null/NaN) ET [profileExists] ET la condition
+     * APPLY only if [enabled], [temp] is readable (not null/NaN), [profileExists], and the condition
      * selon [direction] (borne incluse) :
      *   BELOW → [temp] <= [threshold] ; ABOVE → [temp] >= [threshold].
      * Sinon NOT_APPLICABLE.

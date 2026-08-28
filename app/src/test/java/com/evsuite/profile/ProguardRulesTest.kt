@@ -5,30 +5,30 @@ import org.junit.Test
 import java.io.File
 
 /**
- * [T-909] R8 est activé en release et le code est très réflexif. Ces règles ne peuvent pas
- * être vérifiées par un test unitaire classique (les tests tournent sur des classes non
- * minifiées), mais leur disparition casse la release de façon SILENCIEUSE — d'où ce
- * garde-fou sur le fichier lui-même.
+ * [T-909] R8 is activated in release and the code is very reflective. These rules cannot
+ * be verified by a classic unit test (the tests run on classes not
+ * minified), but their disappearance breaks the release in a SILENT way — hence this
+ * guardrail on the file itself.
  */
 class ProguardRulesTest {
 
     private val rules: String by lazy {
         val file = File("proguard-rules.pro")
-        assertTrue("proguard-rules.pro introuvable depuis ${File(".").absolutePath}",
+        assertTrue("proguard-rules.pro not found from ${File(".").absolutePath}",
             file.exists())
         file.readText()
     }
 
     @Test
-    fun `l attribut Signature est conserve pour Gson`() {
-        // Sans Signature, TypeToken<List<DrivingProfile>> perd son type générique et Gson
-        // rend des LinkedTreeMap : les profils disparaissent au premier lancement.
-        assertTrue("l'attribut Signature doit rester conservé",
+    fun `Signature attribute is preserved for Gson`() {
+        // Without Signature, TypeToken<List<DrivingProfile>> loses its generic type and Gson
+        // renders LinkedTreeMap: the profiles disappear on first launch.
+        assertTrue("the Signature attribute must remain preserved",
             Regex("""-keepattributes[^\n]*\bSignature\b""").containsMatchIn(rules))
     }
 
     @Test
-    fun `les cibles de reflexion restent conservees`() {
+    fun `reflection targets remain preserved`() {
         listOf(
             "android.car.**",
             "android.os.ServiceManager",
@@ -37,14 +37,14 @@ class ProguardRulesTest {
             "com.evsuite.hardware.model.**",
             "com.evsuite.hardware.EVHardware"
         ).forEach { target ->
-            assertTrue("règle -keep manquante pour $target",
+            assertTrue("missing -keep rule for $target",
                 rules.contains("-keep class $target"))
         }
     }
 
     @Test
-    fun `les numeros de ligne sont conserves pour les rapports de crash`() {
-        assertTrue("sans LineNumberTable, CrashLogger produit des traces inexploitables",
+    fun `line numbers are preserved for crash reports`() {
+        assertTrue("without LineNumberTable, CrashLogger produces unusable traces",
             Regex("""-keepattributes[^\n]*\bLineNumberTable\b""").containsMatchIn(rules))
     }
 }

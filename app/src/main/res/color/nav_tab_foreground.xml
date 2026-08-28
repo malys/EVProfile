@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Texte et icône d'un onglet. Sur l'onglet actif le fond est @color/dash_accent, donc
-     l'avant-plan est ev_on_accent — blanc en thème clair, presque noir en thème sombre.
-     Les deux paires dépassent 7:1, le plancher de la suite. -->
+<!-- Text and icon of a tab. On the active tab the background is @color/dash_accent, so
+     the foreground is ev_on_accent — white in light theme, almost black in dark theme.
+     Both pairs exceed 7:1, the straight floor. -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true" android:color="@color/ev_on_accent" />
     <item android:color="@color/ev_text_primary" />

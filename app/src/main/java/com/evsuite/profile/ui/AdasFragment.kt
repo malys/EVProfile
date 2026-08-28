@@ -56,7 +56,7 @@ class AdasFragment : Fragment() {
         inflater.inflate(R.layout.fragment_adas, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // ── Références views ────────────────────────────────────────────────
+        // ── References views ──────────────────────── ────────────────────────
         switchOverspeed   = view.findViewById(R.id.switch_overspeed)
         switchSpeedTone   = view.findViewById(R.id.switch_speed_tone)
         btnAdasOff        = view.findViewById(R.id.btn_adas_off)
@@ -74,23 +74,23 @@ class AdasFragment : Fragment() {
         btnAebAlarm       = view.findViewById(R.id.btn_aeb_alarm)
         btnAebAlarmBrake  = view.findViewById(R.id.btn_aeb_alarm_brake)
 
-        // ── Afficher la bonne section selon le firmware ──────────────────────
+        // ── Show correct section according to firmware ──────────────────────
         val gen        = FirmwareInfo.getGeneration()
         val isKnown    = gen != FirmwareInfo.Gen.UNKNOWN
         val isVsmBased = FirmwareInfo.isVsmBased()
         val isSWI132   = gen == FirmwareInfo.Gen.SWI132
         // SWI133 : 5 boutons ADAS (Off/Limiteur/Auto/ACC/ICA)
-        // SWI132 : 4 boutons ADAS (Off/Lim/ACC/ICA) — même section que SWI133, bouton Auto masqué
+        // SWI132: 4 ADAS buttons (Off/Lim/ACC/ICA) — same section as SWI133, Auto button hidden
         // SWI68/SWI69/SWI131/SWI165 : 3 boutons ADAS (Off/ACC/TJA)
         view.findViewById<View>(R.id.section_swi133).visibility =
             if (!isVsmBased || isSWI132) View.VISIBLE else View.GONE
         view.findViewById<View>(R.id.section_swi68).visibility =
             if (isVsmBased && !isSWI132) View.VISIBLE else View.GONE
-        // Ligne du bas (AEB + alertes) — disponible si firmware connu
+        // Bottom line (AEB + alerts) — available if firmware known
         view.findViewById<View>(R.id.section_bottom_row).visibility =
             if (isKnown) View.VISIBLE else View.GONE
-        // Alertes : colonne droite — SWI133 et SWI132 ont 2 alertes séparées (survitesse + ton)
-        //                          — SWI68/SWI69/SWI131/SWI165 ont une seule alerte sonore VSM
+        // Alerts: right column — SWI133 and SWI132 have 2 separate alerts (overspeed + tone)
+        //                          — SWI68/SWI69/SWI131/SWI165 have one VSM audible alert.
         view.findViewById<View>(R.id.alerts_swi133).visibility =
             if (gen == FirmwareInfo.Gen.SWI133 || isSWI132) View.VISIBLE else View.GONE
         view.findViewById<View>(R.id.alerts_swi68).visibility =
@@ -118,8 +118,8 @@ class AdasFragment : Fragment() {
 
         // ── Listeners SWI132 — alertes + ADAS 5 modes ─────────────────────────
         // Off / Lim.Manuel / Lim.Auto(Intelligent) / ACC / ICA.
-        // Le mode ACC/TJA (setAccTjaMode) et le limiteur de vitesse (setSasMode) sont deux
-        // réglages indépendants : le sélecteur unique impose l'exclusivité.
+        // ACC/TJA mode (setAccTjaMode) and speed limiter (setSasMode) are two
+        // independent settings: the single selector imposes exclusivity.
         if (isSWI132) {
             switchOverspeed?.setOnCheckedChangeListener { _, checked ->
                 if (switchOverspeed?.isPressed == true)
@@ -129,7 +129,7 @@ class AdasFragment : Fragment() {
                 if (switchSpeedTone?.isPressed == true)
                     CoroutineScope(Dispatchers.IO).launch { EVHardware.setSpeedLimitTone(checked) }
             }
-            // Le bouton Auto est disponible sur SWI132 : il sélectionne le limiteur Intelligent.
+            // The Auto button is available on SWI132: it selects the Intelligent limiter.
             btnAdasAuto?.visibility = View.VISIBLE
             swi133Buttons.forEachIndexed { btnIndex, btn ->
                 btn.setOnClickListener {
@@ -165,9 +165,9 @@ class AdasFragment : Fragment() {
             }
         }
 
-        // ── Listeners SWI68 / SWI69 / SWI131 / SWI165 — sélecteur 5 modes (index 0-4) ─
-        // Off / Lim.Manuel / Lim.Auto / ACC / TJA. Mode ACC/TJA + limiteur indépendants,
-        // exclusivité via le sélecteur unique (même logique que SWI132).
+        // ── Listeners SWI68 / SWI69 / SWI131 / SWI165 — 5 mode selector (index 0-4) ─
+        // Off / Manual Lim / Auto Lim / ACC / TJA. ACC/TJA mode + independent limiter,
+        // exclusivity via the single selector (same logic as SWI132).
         if (isVsmBased && !isSWI132) {
             switchSoundWarning?.setOnCheckedChangeListener { _, checked ->
                 if (switchSoundWarning?.isPressed == true)
@@ -192,9 +192,9 @@ class AdasFragment : Fragment() {
     }
 
     /**
-     * SWI132 : applique l'index du sélecteur ADAS (0-4) en distinguant le mode ACC/TJA
-     * (setAccTjaMode) du limiteur de vitesse (setSasMode). Le sélecteur unique impose
-     * l'exclusivité : choisir un mode désactive l'autre sous-système.
+     * SWI132: applies the ADAS selector index (0-4) distinguishing between ACC/TJA mode
+     * (setAccTjaMode) of the speed limiter (setSasMode). The single selector imposes
+     * exclusivity: choosing one mode deactivates the other subsystem.
      *   0=Off, 1=Lim.Manuel(SAS 2), 2=Lim.Auto/Intelligent(SAS 3), 3=ACC, 4=ICA
      */
     private fun applyVsmAdasMode(index: Int) {
@@ -207,7 +207,7 @@ class AdasFragment : Fragment() {
         }
     }
 
-    /** SWI132 : état lu (mode ACC/TJA + limiteur SAS) → index de bouton (0-4). */
+    /** SWI132: read status (ACC/TJA mode + SAS limiter) → button index (0-4). */
     private fun vsmStateToIndex(accTja: Int, sas: Int): Int = when {
         sas == EVHardware.SasMode.MANUEL      -> 1
         sas == EVHardware.SasMode.INTELLIGENT -> 2
@@ -227,8 +227,8 @@ class AdasFragment : Fragment() {
     }
 
     /**
-     * SWI132 : rafraîchit l'état ADAS (mode Off/Lim/ACC/ICA via CarVehicleSettingClient),
-     * les alertes sonores (via binder getter TX 0x129/0x12b) et l'AEB.
+     * SWI132: refreshes the ADAS status (Off/Lim/ACC/ICA mode via CarVehicleSettingClient),
+     * audible alerts (through binder getter transactions 0x129/0x12b), and AEB.
      */
     private suspend fun refreshSwi132() {
         val mode      = EVHardware.getAccTjaMode()
@@ -243,7 +243,7 @@ class AdasFragment : Fragment() {
                 view?.postDelayed({ if (isAdded) refreshState() }, 2_000)
                 return@withContext
             }
-            // SWI132 : mode ACC/TJA + limiteur SAS → index bouton (0-4)
+            // SWI132: ACC/TJA mode + SAS limiter → button index (0-4)
             applySwi133ModeUI(vsmStateToIndex(mode, sas))
             switchOverspeed?.isChecked = overspeed
             switchSpeedTone?.isChecked = speedTone

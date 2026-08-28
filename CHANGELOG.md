@@ -8,27 +8,26 @@ All notable changes to this project are documented here. Format follows
 
 ### Fixed
 
-- **`applyProfile` ne rapporte plus une réussite quand le portail l'a refusée.** Le service
-  renvoyait `ok = true` avec le verdict `REFUSED_MOVING` ou `REFUSED_UNKNOWN_SPEED` : dans
-  l'historique d'EVTasker, la même ligne disait « appliqué » et « refusé ». Les réglages
-  soumis au portail ne partaient pas, et un appelant qui ne lisait que l'indicateur n'avait
-  aucun moyen de le savoir. `ok` suit désormais le verdict.
+- **`applyProfile` no longer reports success when the gateway refused the request.** The
+  service returned `ok = true` with a `REFUSED_MOVING` or `REFUSED_UNKNOWN_SPEED` verdict,
+  so the same EVTasker history entry said both "applied" and "refused." The settings sent
+  through the gateway were not written, and callers that only read the success flag could
+  not detect the refusal. `ok` now follows the verdict.
 
 ## [3.0.1] - 2026-08-25
 
 ### Fixed
 
-- **Le service survit sur une voiture qui n'a pas accordé le Bluetooth.** Le service déclare
-  le type de premier plan `connectedDevice`, et depuis Android 14 ce type exige
-  BLUETOOTH_CONNECT au moment précis où le service passe en premier plan — une permission
-  déclarée par l'application mais jamais demandée. Le type n'est désormais revendiqué que
-  tant que la permission qui le porte est détenue, et il est repris dès qu'elle est accordée,
-  sans attendre le prochain démarrage.
-- **La liste des appareils appairés n'est plus vide sans raison.** BLUETOOTH_CONNECT est
-  maintenant demandée à l'ouverture de l'application ; un refus ne coûte que la détection du
-  téléphone, comme avant.
-- **La notification du service est visible.** POST_NOTIFICATIONS n'était pas déclarée : depuis
-  Android 13, le seul signe visible que EVProfile tourne était supprimé en silence.
+- **The service remains running when the vehicle has not granted Bluetooth access.** The
+  service declares the `connectedDevice` foreground-service type, which requires
+  `BLUETOOTH_CONNECT` at the exact moment the service enters the foreground on Android 14
+  and later. The app declared that permission but never requested it. The service now claims
+  the type only while the supporting permission is held and reasserts it as soon as the
+  permission is granted, without waiting for the next startup.
+- **The paired-device list is no longer empty without explanation.** `BLUETOOTH_CONNECT` is
+  now requested when the app opens; denying it only disables phone detection, as before.
+- **The service notification is visible.** `POST_NOTIFICATIONS` was missing, so Android 13
+  and later silently removed the only visible indication that EVProfile was running.
 
 ## [3.0.0] - 2026-08-15
 
@@ -54,39 +53,37 @@ All notable changes to this project are documented here. Format follows
 
 ### Added
 
-- **Un bouton Automatisation dans la barre du haut, quand EVTasker est installé.** EVProfile
-  règle la voiture à la main, EVTasker automatise ce réglage : les deux se cherchaient par le
-  lanceur. Le bouton n'apparaît que si l'app est là — un bouton qui n'ouvre rien vaut moins
-  que pas de bouton — et la visibilité est réévaluée à chaque reprise, pour qu'une
-  installation faite pendant que EVProfile tourne n'exige pas un redémarrage. Le clic
-  revérifie l'intent : entre l'affichage et le doigt, l'app peut avoir été désinstallée.
-- **Le sélecteur de profils est exposé aux autres apps de la suite** (`showProfilePicker()`
-  sur `IProfileControl`, toujours fermé par la permission signature). EVTasker peut
-  demander à EVProfile de poser sa liste de profils devant le conducteur au lieu de choisir
-  à sa place. Refusé en roulant, comme l'application d'un profil, et signalé comme tel au
-  lieu d'un overlay qui n'apparaît simplement pas : une app qui n'apprend que « rien ne
-  s'est passé » ne peut pas distinguer une voiture en mouvement d'une liste de profils vide.
-- **Partager un diagnostic.** Le dialog Diagnostic peut envoyer le rapport complet vers une
-  instance PrivateBin (paste.chapril.org) : chiffré, protégé par mot de passe, expirant au
-  bout d'une heure, et le serveur ne détient jamais la clé. L'envoi est confirmé à chaque
-  fois — le rapport quitte la voiture, ce n'est pas une décision à prendre à la place de
-  l'utilisateur. Le lien et le mot de passe sont écrits dans le journal, seul endroit où on
-  peut les relire une fois le toast disparu ; les lignes de partage sont retirées des
-  rapports envoyés ensuite, pour qu'un second envoi ne livre pas le premier. Absent du build
-  stable, qui ne déclare pas la permission INTERNET.
-- **Trois appuis sur la version, dans la fenêtre À propos, ouvrent le Diagnostic.** Geste
-  caché : le rapport contient le firmware et les journaux, il n'a rien à faire sous le doigt
-  d'un passager qui explore l'écran.
+- **An Automation button appears in the top bar when EVTasker is installed.** EVProfile
+  configures the vehicle manually while EVTasker automates those settings; previously the
+  launcher was the only way to move between them. The button appears only when the app is
+  present, and its visibility is reevaluated on every resume so installing EVTasker while
+  EVProfile is running does not require a restart. The click validates the intent again in
+  case the app was removed after the button appeared.
+- **The profile picker is exposed to other EVSuite apps** through `showProfilePicker()` on
+  `IProfileControl`, still protected by the signature permission. EVTasker can ask EVProfile
+  to show the driver the profile list instead of choosing on their behalf. Like applying a
+  profile, this is refused while moving and the refusal is reported explicitly; callers can
+  distinguish a moving vehicle from an empty profile list.
+- **Diagnostic sharing.** The Diagnostic dialog can send the complete report to a PrivateBin
+  instance (paste.chapril.org). It is encrypted, password-protected, expires after one hour,
+  and the server never receives the key. Every upload requires confirmation because the
+  report leaves the vehicle. The link and password are written to the log so they remain
+  available after the toast disappears. Sharing entries are removed from later reports so a
+  second upload does not disclose the first. This capability is absent from stable builds,
+  which do not declare the `INTERNET` permission.
+- **Three taps on the version in About open Diagnostics.** This is intentionally hidden: the
+  report contains firmware information and logs and should not be exposed as a normal action
+  to passengers exploring the screen.
 
 ### Changed
 
-- **La lecture des touches ★ du volant vient de EVHardware** (`PhysicalButtonEventDecoder`),
-  qui connaît les alias de keycode par firmware. Deux conséquences visibles : un appui long
-  maintenu ne déclenche plus l'action en boucle mais une seule fois, et un relâchement sans
-  appui préalable ne déclenche plus rien.
-- **La version firmware affichée dans À propos est lue par la librairie.** `FirmwareHelper`
-  lisait une seconde fois les mêmes propriétés système que la détection de génération ; il
-  est supprimé.
+- **Steering-wheel ★ button events now come from EVHardware** through
+  `PhysicalButtonEventDecoder`, which knows each firmware generation's key-code aliases. A
+  held long press now triggers the action once instead of repeatedly, and a release without
+  a preceding press no longer triggers anything.
+- **The firmware version shown in About is read by the library.** `FirmwareHelper`
+  duplicated the system-property reads already used for generation detection and has been
+  removed.
 - **Crash reporting now comes from EVHardware** (`com.evsuite.hardware.diag.CrashLogger`)
   instead of being carried here. The report gains the full stack trace as the platform
   prints it, an atomic write so a second failure mid-write cannot destroy the previous

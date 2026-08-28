@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Réglages — navigation liste/détail.
+    Settings — list/detail navigation.
 
-    L'écran était une seule colonne de cartes dans un ScrollView : il fallait faire
-    défiler avant même de savoir ce qu'il contenait. Le rail de gauche tient les quatre
-    catégories, toujours visibles, et le volet de droite n'en montre qu'une.
+    The screen was a single column of cards in a ScrollView: it was necessary to do
+    scrolling before even knowing what it contained. The left rail holds the four
+    categories, always visible, and the right pane only shows one.
 
-    Les identifiants sont inchangés : SettingsFragment lie les mêmes vues.
+    The identifiers are unchanged: SettingsFragment links the same views.
 -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -71,9 +71,9 @@
             android:textAllCaps="false"
             app:cornerRadius="@dimen/ev_corner" />
 
-        <!-- ── AUTOMATISATION — seule entrée du rail qui n'ouvre pas une catégorie : elle
-             lance EVTasker. Caché par le code quand l'app n'est pas installée : un bouton
-             qui n'ouvre rien vaut moins que pas de bouton. ── -->
+        <!-- ── AUTOMATION — only entry in the rail that does not open a category: it
+             launches EVTasker. Hidden by code when the app is not installed: a button
+             which opens nothing is less than no button. ── -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_open_tasker"
             style="@style/Widget.EV.Button.Outlined"
@@ -162,25 +162,10 @@
                     android:padding="12dp">
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_lang_fr"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/touch_target"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="@dimen/spacing_sm"
-                        android:text="@string/settings_language_fr"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="@dimen/text_label"
-                        app:backgroundTint="@color/dash_btn"
-                        app:strokeWidth="1dp"
-                        app:strokeColor="@color/dash_border"
-                        app:cornerRadius="@dimen/ev_corner" />
-
-                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_lang_en"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/touch_target"
                         android:layout_weight="1"
-                        android:layout_marginStart="@dimen/spacing_sm"
                         android:layout_marginEnd="@dimen/spacing_sm"
                         android:text="@string/settings_language_en"
                         android:textColor="@color/text_secondary"
@@ -285,7 +270,7 @@
                     android:orientation="vertical"
                     android:layout_marginEnd="@dimen/spacing_sm">
 
-            <!-- ── Section ÉCRAN PAR DÉFAUT ─────────────────────────────────── -->
+            <!-- ── DEFAULT SCREEN section ─────────────────────────────────── -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -485,10 +470,10 @@
                     android:orientation="vertical">
 
             <!-- ── Section FIRMWARE ────────────────────────────────────────
-                 Remontée depuis la barre du haut : elle occupait la largeur de chaque
-                 écran pour une information qu'on consulte une fois. Les six pastilles
-                 étaient hautes de quelques dp ; ce sont maintenant des boutons de 72 dp,
-                 cliquables quand la génération est inconnue ou forcée. -->
+                 Raised from the top bar: it occupied the width of each
+                 screen for information that is consulted once. The six pellets
+                 were a few dp high; these are now 72 dp buttons,
+                 clickable when the generation is unknown or forced. -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -602,7 +587,7 @@
 
             </LinearLayout>
 
-            <!-- ── Section RÉGLAGES SUPPLÉMENTAIRES ───────────────────────── -->
+            <!-- ── ADDITIONAL SETTINGS section ───────────────────────── -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -681,7 +666,7 @@
 
                 </LinearLayout>
 
-                <!-- ── Alimentation véhicule (SWI133) — éteint la voiture, garde l'écran ── -->
+                <!-- ── Vehicle power (SWI133) — turns off the car, keeps the screen on ── -->
                 <View
                     android:id="@+id/row_vehicle_power_divider"
                     android:layout_width="match_parent"
@@ -747,7 +732,7 @@
                     android:orientation="vertical"
                     android:layout_marginEnd="@dimen/spacing_sm">
 
-            <!-- ── Boutons MAJ (2 colonnes : Vérifier | Nettoyer) ──────────── -->
+            <!-- ── SHIFT buttons (2 columns: Check | Clean) ──────────── -->
             <LinearLayout
                 android:id="@+id/row_update_buttons"
                 android:layout_width="match_parent"
@@ -794,7 +779,7 @@
 
             </LinearLayout>
 
-            <!-- ── Bouton DIAGNOSTIC (caché — 5 clics sur "Vérifier les mises à jour") ── -->
+            <!-- ── DIAGNOSTIC button (hidden — 5 clicks on “Check for updates”) ── -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_diagnostic"
                 android:layout_width="match_parent"
@@ -859,7 +844,7 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="4dp" />
 
-            <!-- Basé sur DriveHub Dort -->
+            <!-- Based on DriveHub Dort -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -986,7 +971,7 @@
 
             </LinearLayout>
 
-            <!-- Séparateur -->
+            <!-- Separator -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -1002,7 +987,7 @@
                 android:textSize="@dimen/text_label"
                 android:gravity="center" />
 
-            <!-- Remerciements spéciaux -->
+            <!-- Special Thanks -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

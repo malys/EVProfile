@@ -7,11 +7,11 @@ import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
 
 /**
- * Génération de QR code via ZXing.
+ * QR code generation via ZXing.
  *
- * Présent dans les deux flavors : le QR est le seul chemin entre une URL affichée sur
- * l'écran de la voiture et le téléphone du conducteur. L'ancien flavor offline l'écartait, et
- * « À propos » y montrait deux cadres blancs.
+ * Present in both flavors: the QR is the only path between a URL displayed on
+ * the car screen and the driver's phone. The old offline flavor ruled it out, and
+ * “About” showed two white frames.
  */
 object QrCode {
     fun generate(content: String, sizePx: Int): Bitmap? = try {

@@ -27,16 +27,16 @@ class ConsoleFragment : Fragment() {
         activity?.runOnUiThread { if (isAdded) renderLog() }
     }
 
-    /** Total AppLogger déjà rendu — sert à n'ajouter que les nouvelles lignes. */
+    /** Total AppLogger already rendered — used to add only new lines. */
     private var renderedTotal = 0L
 
-    // Auto-refresh périodique (status + logs) sans casser la position de scroll.
+    // Periodic auto-refresh (status + logs) without breaking the scroll position.
     private val handler = Handler(Looper.getMainLooper())
     private val refresh = object : Runnable {
         override fun run() {
             if (isAdded) {
                 renderStatus()
-                // totalCount et non size : la taille se fige dès que le buffer est plein.
+                // totalCount and not size: the size freezes as soon as the buffer is full.
                 if (AppLogger.totalCount != renderedTotal) renderLog()
             }
             handler.postDelayed(this, 800L)
@@ -89,15 +89,15 @@ class ConsoleFragment : Fragment() {
 
         appendStatus("Katman1 — CarPropertyManager", EVHardware.isCarPropertyManagerReady())
         appendStatus("Katman1 — CarHvacManager",     EVHardware.isCarHvacManagerReady())
-        appendStatus("Katman4 — VPM créé",           EVHardware.isKatman4VpmCreated())
-        appendStatus("Katman4 — Service connecté",   EVHardware.isKatman4Ready())
+        appendStatus("Katman4 — VPM created",         EVHardware.isKatman4VpmCreated())
+        appendStatus("Katman4 — Service connected",   EVHardware.isKatman4Ready())
 
         textStatus.text = sb
     }
 
     // ---- Log list ----
 
-    /** True si l'utilisateur est (quasi) tout en bas → on suit les nouveaux logs ; sinon on le laisse. */
+    /** True if the user is (almost) at the bottom → we follow the new logs; otherwise we leave it. */
     private fun isAtBottom(): Boolean {
         val child = scrollView.getChildAt(0) ?: return true
         val marginPx = (24 * resources.displayMetrics.density).toInt()
@@ -105,12 +105,12 @@ class ConsoleFragment : Fragment() {
     }
 
     private fun renderLog() {
-        // Mémorise la position AVANT de toucher au texte : on ne re-scrolle en bas
-        // que si l'utilisateur suivait déjà le bas (sinon on préserve sa lecture).
+        // Memorizes the position BEFORE touching the text: you do not re-scroll at the bottom
+        // only if the user was already following the bottom (otherwise we preserve their reading).
         val followBottom = isAtBottom()
 
-        // Rendu incrémental : on n'ajoute que ce qui est arrivé depuis le dernier rendu.
-        // null = des entrées ont été évincées (ou le buffer a été vidé) → rendu complet.
+        // Incremental rendering: we only add what has happened since the last rendering.
+        // null = entries have been evicted (or the buffer has been emptied) → made full.
         val newEntries = AppLogger.entriesSince(renderedTotal)
         val sb: SpannableStringBuilder
         if (newEntries == null) {
@@ -126,7 +126,7 @@ class ConsoleFragment : Fragment() {
         if (followBottom) scrollView.post { scrollView.fullScroll(View.FOCUS_DOWN) }
     }
 
-    /** Ajoute une entrée colorée en fin de [sb]. */
+    /** Adds a colored entry at the end of [sb]. */
     private fun appendEntry(sb: SpannableStringBuilder, entry: AppLogger.Entry) {
         val prefix = "[${entry.time}] "
         val tag    = "${entry.tag}: "
@@ -144,6 +144,6 @@ class ConsoleFragment : Fragment() {
         sb.setSpan(ForegroundColorSpan(color), start + prefix.length + tag.length, sb.length, 0)
     }
 
-    /** Résout une couleur du thème courant (clair ou sombre) au moment du rendu. */
+    /** Resolves a color from the current theme (light or dark) at render time. */
     private fun colorOf(res: Int): Int = ContextCompat.getColor(requireContext(), res)
 }

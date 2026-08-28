@@ -95,7 +95,7 @@ class DriveRegenFragment : Fragment() {
             )
             btn.isSelected = m == mode
         }
-        // SNOW : regen forcée faible par le véhicule → griser les boutons regen
+        // SNOW: low forced regen by the vehicle → gray out the regen buttons
         setRegenEnabled(mode != DriveMode.SNOW)
     }
 
@@ -110,7 +110,7 @@ class DriveRegenFragment : Fragment() {
         }
     }
 
-    /** Active ou grise les boutons de régénération. */
+    /** Turns the regeneration buttons on or off. */
     private fun setRegenEnabled(enabled: Boolean) {
         regenButtons.values.forEach { btn ->
             btn.isEnabled = enabled

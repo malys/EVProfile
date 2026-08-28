@@ -1,5 +1,5 @@
-# ── Normalisation des fins de ligne ─────────────────────────────────────────
-# Tous les fichiers texte sont normalisés en LF dans le dépôt
+# ── Line-ending normalization ────────────────────────────────────────────────
+# All text files are normalized to LF in the repository
 * text=auto eol=lf
 
 # Fichiers texte explicites
@@ -17,7 +17,7 @@
 *.properties text eol=lf
 *.html      text eol=lf
 
-# ── Fichiers binaires (pas de conversion, pas de diff texte) ─────────────────
+# ── Binary files (no conversion, no text diff) ─────────────────
 *.png       binary
 *.jpg       binary
 *.jpeg      binary
@@ -33,6 +33,6 @@
 *.so        binary
 *.zip       binary
 
-# ── Scripts Gradle Wrapper — exécutables sur Unix ────────────────────────────
+# ── Gradle Wrapper Scripts — executable on Unix ────────────────────────────
 gradlew     text eol=lf
 gradlew.bat text eol=crlf

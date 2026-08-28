@@ -6,8 +6,8 @@
 
 android.permission.SYSTEM_ALERT_WINDOW
 android.permission.FOREGROUND_SERVICE
-# Exigée par foregroundServiceType="connectedDevice" à partir d'API 34 (T-910).
-# N'accorde aucun accès supplémentaire : elle qualifie le service de premier plan.
+# Required by foregroundServiceType="connectedDevice" from API 34 onward (T-910).
+# Grants no additional access; it classifies the foreground service.
 android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE
 android.permission.WAKE_LOCK
 # Posts the foreground-service notification, the only visible sign EVProfile is running.
@@ -20,14 +20,14 @@ android.car.permission.CAR_ENERGY
 android.car.permission.CAR_POWERTRAIN
 android.car.permission.CAR_VENDOR_EXTENSION
 android.car.permission.CONTROL_CAR_CLIMATE
-# --- permission DÉCLARÉE par l'app (pas demandée) ---
-# Exigée de l'émetteur du broadcast hardkey, en protectionLevel="signature" (T-902) :
-# seule une app signée avec la clé plateforme peut l'obtenir. Elle restreint un accès,
-# elle n'en accorde pas.
+# --- permission DECLARED by the app (not requested) ---
+# Required from the hard-key broadcast sender with protectionLevel="signature" (T-902):
+# only an app signed with the platform key can obtain it. It restricts access and does
+# not grant any.
 com.evsuite.profile.permission.RECEIVE_HARDKEY
 # External control API: signature-level permission protecting ProfileControlService.
-# protectionLevel="signature" → réservée aux apps signées avec la clé plateforme.
-# Déclarée ET demandée par EVProfile : demandée pour pouvoir émettre le broadcast.
+# protectionLevel="signature": reserved for apps signed with the platform key.
+# Declared and requested by EVProfile so it can send the broadcast.
 com.evsuite.profile.permission.CONTROL_PROFILES
 # --- network / OTA (unstable channel only; the merged-manifest gate proves stable lacks it) ---
 android.permission.INTERNET

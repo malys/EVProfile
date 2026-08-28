@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Confirmation d'application d'un profil — fenêtre plein écran.
+    Confirmation of applying a profile — full screen window.
 
-    C'était une carte flottante centrée sur un voile sombre. EVSuite demande une fenêtre
-    plein écran pour une confirmation importante, et celle-ci écrit dans le véhicule :
-    le panneau remplit donc l'écran et les deux actions sont groupées en haut à droite,
-    là où le regard revient. Le compte à rebours reste à gauche de la même rangée.
+    It was a floating map centered on a dark veil. EVSuite asks for a window
+    full screen for important confirmation, and this is written in the vehicle:
+    the panel therefore fills the screen and the two actions are grouped at the top right,
+    where the gaze returns. The countdown remains to the left of the same row.
 
-    L'identifiant confirm_backdrop reste sur la racine : ProfileConfirmOverlay y accroche
-    l'annulation. Le panneau, cliquable, couvre toute la surface et consomme les appuis,
+    The confirm_backdrop identifier remains on the root: ProfileConfirmOverlay hangs on it
+    cancellation. The clickable panel covers the entire surface and consumes the supports,
     de sorte qu'un appui n'annule plus par accident.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -29,7 +29,7 @@
         android:clickable="true"
         android:focusable="true">
 
-        <!-- Actions groupées en haut à droite ; compte à rebours à gauche -->
+        <!-- Grouped actions at top right; countdown left -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
 
         </LinearLayout>
 
-        <!-- Message : seul contenu de la fenêtre, lisible d'un regard -->
+        <!-- Message: only content of the window, readable at a glance -->
         <TextView
             android:id="@+id/confirm_message"
             android:layout_width="match_parent"

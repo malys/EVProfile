@@ -15,8 +15,6 @@ Android Automotive app for advanced driving-settings control on the MG4 electric
 > project is not affiliated with or approved by SAIC Motor or MG Motor. MG and MG4 are
 > third-party marks used only to identify compatibility.
 
-> 🇫🇷 Une version française de ce document est disponible : **[README.fr.md](README.fr.md)**.
-
 ## Release channels
 
 - **Stable** (`com.evsuite.profile`): offline APK, no updater code and no network
@@ -86,7 +84,7 @@ The app communicates with the vehicle through the proprietary SAIC SDK, accessin
 - Automatic default profile application **on vehicle startup**
 
 ### Settings
-- Language selection (French / English)
+- Language selection (English / German / Spanish / Portuguese / Italian)
 - Enable/disable automatic profile application
 - **Unstable only — OTA**: GitHub pre-release check + verified APK download
 - **Unstable only — APK cleanup**: removes old `EVProfile*.apk` files from Downloads
@@ -243,10 +241,10 @@ The app uses a **NavController** with **3 destinations**:
 ```
 DashboardFragment (start)
     ├──► ProfileFragment  (PROFILS button — toggle)
-    └──► SettingsFragment (RÉGLAGES button — toggle)
+    └──► SettingsFragment (SETTINGS button — toggle)
 ```
 
-A second press on PROFILS or RÉGLAGES closes the view and returns to the dashboard.
+A second press on PROFILES or SETTINGS closes the view and returns to the dashboard.
 
 ### Dashboard (main screen)
 **2-row layout** (2:1 weight ratio) optimized for 1280×480:
@@ -363,7 +361,7 @@ EVProfile/
 │   │   ├── util/
 │   │   │   ├── FirmwareInfo.kt        # Firmware generation detection (SWI133 / SWI68)
 │   │   │   ├── FirmwareHelper.kt      # Full firmware version string reader (async)
-│   │   │   └── LocaleHelper.kt        # Language management (FR / EN)
+│   │   │   └── LocaleHelper.kt        # Language management
 │   │   │
 │   │   └── debug/
 │   │       └── AppLogger.kt           # In-memory log ring buffer (400 entries)
@@ -378,8 +376,8 @@ EVProfile/
 │   │   │   ├── dialog_profile_edit.xml# Profile create / edit dialog
 │   │   │   └── dialog_app_info.xml    # About dialog
 │   │   ├── navigation/nav_graph.xml   # Dashboard → Profiles / Settings
-│   │   ├── values/strings.xml         # French strings
-│   │   ├── values-en/strings.xml      # English strings
+│   │   ├── values/strings.xml         # Default English strings
+│   │   ├── values-{de,es,it,pt}/      # Supported translations
 │   │   └── values/colors.xml          # dash_* color palette (dark theme)
 │   │
 │   └── AndroidManifest.xml

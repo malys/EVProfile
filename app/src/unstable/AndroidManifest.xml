@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Overlay du canal unstable.
-  Seul ce flavor déclare les capacités réseau et l'auto-update.
-  Le manifeste de base (donc le canal stable) n'a AUCUN de ces droits.
+  Unstable channel overlay.
+  Only this flavor declares network capabilities and auto-update.
+  The base manifest (hence the stable channel) has NONE of these rights.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 

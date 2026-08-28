@@ -7,7 +7,7 @@ import org.junit.Test
 
 class AutomationDecisionTest {
 
-    @Test fun `desactive - non applicable`() {
+    @Test fun `disabled is not applicable`() {
         assertEquals(Outcome.NOT_APPLICABLE, AutomationDecision.evaluate(false, 30f, 25, Direction.BELOW, true))
     }
 
@@ -16,12 +16,12 @@ class AutomationDecisionTest {
         assertEquals(Outcome.NOT_APPLICABLE, AutomationDecision.evaluate(true, Float.NaN, 25, Direction.ABOVE, true))
     }
 
-    @Test fun `profil absent - non applicable`() {
+    @Test fun `missing profile is not applicable`() {
         assertEquals(Outcome.NOT_APPLICABLE, AutomationDecision.evaluate(true, 30f, 25, Direction.BELOW, false))
     }
 
-    // ── Direction BELOW : déclenche quand il fait ≤ seuil ─────────────────────
-    @Test fun `below - sous le seuil applique`() {
+    // ── BELOW direction: triggers when it is ≤ threshold ─────────────────────
+    @Test fun `below applies under threshold`() {
         assertEquals(Outcome.APPLY, AutomationDecision.evaluate(true, 24.9f, 25, Direction.BELOW, true))
     }
 
@@ -29,12 +29,12 @@ class AutomationDecisionTest {
         assertEquals(Outcome.APPLY, AutomationDecision.evaluate(true, 25f, 25, Direction.BELOW, true))
     }
 
-    @Test fun `below - au dessus du seuil non applicable`() {
+    @Test fun `below is not applicable above threshold`() {
         assertEquals(Outcome.NOT_APPLICABLE, AutomationDecision.evaluate(true, 31.5f, 25, Direction.BELOW, true))
     }
 
-    // ── Direction ABOVE : déclenche quand il fait ≥ seuil ─────────────────────
-    @Test fun `above - au dessus du seuil applique`() {
+    // ── ABOVE direction: triggers when it is ≥ threshold ─────────────────────
+    @Test fun `above applies over threshold`() {
         assertEquals(Outcome.APPLY, AutomationDecision.evaluate(true, 26.5f, 25, Direction.ABOVE, true))
     }
 
@@ -42,7 +42,7 @@ class AutomationDecisionTest {
         assertEquals(Outcome.APPLY, AutomationDecision.evaluate(true, 25f, 25, Direction.ABOVE, true))
     }
 
-    @Test fun `above - sous le seuil non applicable`() {
+    @Test fun `above is not applicable under threshold`() {
         assertEquals(Outcome.NOT_APPLICABLE, AutomationDecision.evaluate(true, 24.9f, 25, Direction.ABOVE, true))
     }
 

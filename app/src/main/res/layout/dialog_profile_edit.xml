@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Éditeur de profil — fenêtre plein écran, navigation liste/détail.
+    Profile Editor — full screen window, list/detail navigation.
 
-    L'ancienne version empilait une trentaine de réglages en trois colonnes de boutons
-    de 38-40 dp : illisible et impossible à viser en conduite. Ici le rail de gauche
-    tient les catégories (toujours visibles, jamais plus de cinq), le volet de droite
-    n'affiche qu'une catégorie à la fois, et chaque contrôle fait 72 dp avec 8 dp de
-    garde. Les actions Annuler / Enregistrer sont en haut à droite, comme le prescrit
-    EVSuite pour une fenêtre plein écran.
+    The old version stacked around thirty settings in three columns of buttons
+    38-40 dp: illegible and difficult to target. Here the left rail
+    holds the categories (always visible, never more than five), the right pane
+    only displays one category at a time, and each control is 72 dp with 8 dp of
+    guard. Undo/Save actions are at the top right, as prescribed
+    EVSuite for a full screen window.
 
-    Les identifiants sont inchangés : ProfileFragment continue de lier les mêmes vues,
-    y compris les sections masquées selon le firmware (section_steering_dialog,
+    The identifiers are unchanged: ProfileFragment continues to link the same views,
+    including hidden sections depending on the firmware (section_steering_dialog,
     adas_section_swi68, ...).
 -->
 <LinearLayout
@@ -21,7 +21,7 @@
     android:orientation="vertical"
     android:background="@color/ev_background">
 
-    <!-- ── En-tête : titre + actions groupées à droite ──────────────── -->
+    <!-- ── Header: title + grouped actions on the right ──────────────── -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
         android:layout_height="1dp"
         android:background="@color/dash_border" />
 
-    <!-- ── Corps : rail de catégories + volet de détail ─────────────── -->
+    <!-- ── Body: category rail + detail pane ─────────────── -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -165,7 +165,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
-                <!-- ── Nom du profil ──────────────────────────────── -->
+                <!-- ── Profile name ───────────────────────────────── -->
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
@@ -181,7 +181,7 @@
                         android:inputType="textCapSentences" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- ── Toggle : Profil par défaut ─────────────────── -->
+                <!-- ── Toggle: Default profile ─────────────────── -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -252,7 +252,7 @@
                         android:background="@color/dash_border"
                         android:layout_marginBottom="@dimen/spacing_sm" />
 
-                    <!-- Rangée 1 : ECO  NORMAL  SPORT -->
+                    <!-- Row 1: ECO NORMAL SPORT -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/touch_target"
@@ -310,7 +310,7 @@
 
                     </LinearLayout>
 
-                    <!-- Rangée 2 : SNOW  CUSTOM -->
+                    <!-- Row 2: SNOW CUSTOM -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/touch_target"
@@ -351,7 +351,7 @@
 
                     </LinearLayout>
 
-                    <!-- Économie d'énergie — bouton toggle sous Custom -->
+                    <!-- Energy saving — toggle button under Custom -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_energy_saving_d"
                         style="@style/Widget.EV.Button.Outlined"
@@ -376,7 +376,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
-                <!-- ── Section Régénération ────────────────────────── -->
+                <!-- ── Regeneration Section ────────────────────────── -->
                 <LinearLayout
                     android:id="@+id/section_regen_dialog"
                     android:layout_width="match_parent"
@@ -402,7 +402,7 @@
                         android:background="@color/dash_border"
                         android:layout_marginBottom="@dimen/spacing_sm" />
 
-                    <!-- Rangée 1 : OFF  FAIBLE  MOYEN -->
+                    <!-- Row 1: OFF LOW MEDIUM -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/touch_target"
@@ -460,7 +460,7 @@
 
                     </LinearLayout>
 
-                    <!-- Rangée 2 : FORT  ADAPT.  1 PÉD. -->
+                    <!-- Row 2: STRONG ADAPT.  1 PED. -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/touch_target"
@@ -540,7 +540,7 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:layout_marginEnd="@dimen/spacing_sm">
-                <!-- ── Section Volant chauffant (masquée en SWI69) ── -->
+                <!-- ── Heated steering wheel section (hidden in SWI69) ── -->
                 <LinearLayout
                     android:id="@+id/section_steering_dialog"
                     android:layout_width="match_parent"
@@ -614,7 +614,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
-                <!-- ── Sièges gauche et droit (masqués en SWI69) ─── -->
+                <!-- ── Left and right seats (hidden in SWI69) ─── -->
                 <LinearLayout
                     android:id="@+id/section_seats_dialog"
                     android:layout_width="match_parent"
@@ -622,7 +622,7 @@
                     android:orientation="horizontal"
                     android:layout_marginBottom="8dp">
 
-                    <!-- Siège gauche -->
+                    <!-- Left seat -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -730,7 +730,7 @@
 
                     </LinearLayout>
 
-                    <!-- Siège droit -->
+                    <!-- Right seat -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -918,7 +918,7 @@
                             android:layout_width="wrap_content" android:layout_height="wrap_content" />
                     </LinearLayout>
 
-                    <!-- Mode ADAS rangée 1 : OFF / LIM. / AUTO -->
+                    <!-- ADAS mode row 1: OFF / LIM. / AUTO -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/touch_target"
@@ -957,7 +957,7 @@
 
                     </LinearLayout>
 
-                    <!-- Mode ADAS rangée 2 : ACC / ICA -->
+                    <!-- ADAS mode row 2: ACC / ICA -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/touch_target"
@@ -983,7 +983,7 @@
                             android:textAllCaps="true" android:backgroundTint="@color/dash_btn"
                             app:strokeColor="@color/dash_border" app:strokeWidth="1dp" app:cornerRadius="@dimen/ev_corner" />
 
-                        <!-- Spacer alignement sur 3 colonnes -->
+                        <!-- Spacer aligned with three columns -->
                         <View android:layout_width="0dp" android:layout_height="0dp"
                             android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm" />
 
@@ -991,7 +991,7 @@
 
                 </LinearLayout>
 
-                <!-- ═══ ADAS SWI68 (Alerte + Désactiver / ACC / TJA) ═══ -->
+                <!-- ═══ ADAS SWI68 (Alert + Disable / ACC / TJA) ═══ -->
                 <LinearLayout
                     android:id="@+id/adas_section_swi68"
                     android:layout_width="match_parent"
@@ -1035,7 +1035,7 @@
                             android:layout_width="wrap_content" android:layout_height="wrap_content" />
                     </LinearLayout>
 
-                    <!-- Alertes SWI132 : deux toggles séparés (mêmes que SWI133) -->
+                    <!-- SWI132 alerts: two separate toggles (same as SWI133) -->
                     <LinearLayout
                         android:id="@+id/row_overspeed_d"
                         android:layout_width="match_parent"
@@ -1069,7 +1069,7 @@
                             android:layout_width="wrap_content" android:layout_height="wrap_content" />
                     </LinearLayout>
 
-                    <!-- Rangée 1 : Off / Lim. Manuel / Lim. Auto -->
+                    <!-- Row 1: Off / Lim. Manual / Lim. Auto -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/touch_target"
@@ -1108,7 +1108,7 @@
 
                     </LinearLayout>
 
-                    <!-- Rangée 2 : ACC / TJA -->
+                    <!-- Row 2: ACC / TJA -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/touch_target"
@@ -1212,7 +1212,7 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:layout_marginEnd="@dimen/spacing_sm">
-                <!-- ═══ AEB — Anti-collision avant (commun SWI133 + SWI68) ═══ -->
+                <!-- ═══ AEB — Forward collision protection (SWI133 + SWI68) ═══ -->
                 <LinearLayout
                     android:id="@+id/adas_section_aeb"
                     android:layout_width="match_parent"
@@ -1284,7 +1284,7 @@
 
                     </LinearLayout>
 
-                    <!-- Sensibilité AEB — SWI133 uniquement -->
+                    <!-- AEB sensitivity — SWI133 only -->
                     <LinearLayout
                         android:id="@+id/aeb_sen_section_d"
                         android:layout_width="match_parent"
@@ -1332,7 +1332,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
-                <!-- ═══ ELK — Assistant de sortie de voie (SWI133 uniquement) ═══ -->
+                <!-- ═══ ELK — Emergency lane keeping (SWI133 only) ═══ -->
                 <LinearLayout
                     android:id="@+id/elk_section_dialog"
                     android:layout_width="match_parent"
@@ -1376,7 +1376,7 @@
                             android:layout_width="wrap_content" android:layout_height="wrap_content" />
                     </LinearLayout>
 
-                        <!-- SWI132 : Alerte sonore (visibility=gone par défaut) -->
+                        <!-- SWI132: Audible alert (visibility=gone by default) -->
                         <LinearLayout
                             android:id="@+id/elk_sound_row_d"
                             android:layout_width="match_parent"
@@ -1399,7 +1399,7 @@
                                 android:layout_height="wrap_content" />
                         </LinearLayout>
 
-                        <!-- SWI132 : Vibration (visibility=gone par défaut) -->
+                        <!-- SWI132: Vibration (visibility=gone by default) -->
                         <LinearLayout
                             android:id="@+id/elk_vibration_row_d"
                             android:layout_width="match_parent"
@@ -1461,7 +1461,7 @@
 
                     </LinearLayout>
 
-                    <!-- Sensibilité : Faible / Standard / Élevé -->
+                    <!-- Sensitivity: Low / Standard / High -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/touch_target"

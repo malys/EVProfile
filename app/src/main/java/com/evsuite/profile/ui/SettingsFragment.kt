@@ -56,12 +56,12 @@ class SettingsFragment : Fragment() {
     ): View = inflater.inflate(R.layout.fragment_settings, container, false)
 
     /**
-     * Génération de firmware. L'indicateur vivait dans la barre du haut, où il occupait
-     * la largeur de chaque écran pour une information qu'on lit une fois — et où ses
-     * pastilles de quelques dp étaient invisibles à 70 cm. Il est ici, dans Véhicule,
-     * en boutons de 72 dp. Ils ne deviennent cliquables que si la génération est inconnue
-     * ou déjà forcée : forcer une génération change ce que l'application écrit dans la
-     * voiture, ce n'est pas un réglage à effleurer par erreur.
+     * Firmware generation. The indicator lived in the top bar, where he occupied
+     * the width of each screen for information that is read once — and where its
+     * pellets of a few dp were invisible at 70 cm. It's here, in Vehicle,
+     * in buttons of 72 dp. They only become clickable if the generation is unknown
+     * or already forced: forcing a generation changes what the application writes in the
+     * car, this is not a setting to be touched by mistake.
      */
     private fun setupFirmwareSection(view: View) {
         val ctx = requireContext()
@@ -94,7 +94,7 @@ class SettingsFragment : Fragment() {
             button.strokeColor = ColorStateList.valueOf(
                 ctx.getColor(if (active) R.color.dash_accent else R.color.dash_border))
             button.isSelected = active
-            // Une génération qu'on ne peut pas choisir reste lisible, mais n'invite pas.
+            // A generation that cannot be chosen remains readable, but does not invite.
             button.isEnabled = selectable
             button.alpha = if (selectable || active) 1f else 0.5f
             if (selectable) {
@@ -107,8 +107,8 @@ class SettingsFragment : Fragment() {
     }
 
     /**
-     * Rail de catégories : le volet de droite n'affiche qu'une catégorie à la fois, au lieu
-     * de la colonne unique de cartes qu'il fallait dérouler pour savoir ce qu'elle contenait.
+     * Category rail: The right pane only displays one category at a time, instead of
+     * of the single column of cards that had to be unrolled to find out what it contained.
      */
     private fun setupSettingsRail(view: View) {
         val detail = view.findViewById<ViewFlipper>(R.id.settings_detail)
@@ -154,9 +154,8 @@ class SettingsFragment : Fragment() {
         val textActive    = requireContext().getColor(R.color.dash_accent)
         val textInactive  = requireContext().getColor(R.color.text_secondary)
 
-        // ── Langue ───────────────────────────────────────────────────────────
-        val langButtons = listOf(
-            "fr" to view.findViewById<MaterialButton>(R.id.btn_lang_fr),
+        // ── Language ─────────────────────────────────────────────────────────
+        val langButtons: List<Pair<String, MaterialButton>> = listOf(
             "en" to view.findViewById(R.id.btn_lang_en),
             "de" to view.findViewById(R.id.btn_lang_de),
             "es" to view.findViewById(R.id.btn_lang_es),
@@ -184,7 +183,7 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        // ── Écran par défaut ─────────────────────────────────────────────────
+        // ── Default screen ──────────────────────── ─────────────────────────
         val btnDefDashboard  = view.findViewById<MaterialButton>(R.id.btn_default_dashboard)
         val btnDefProfiles   = view.findViewById<MaterialButton>(R.id.btn_default_profiles)
         val btnDefShortcuts  = view.findViewById<MaterialButton>(R.id.btn_default_shortcuts)
@@ -213,7 +212,7 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        // ── Thème : Auto / Sombre / Clair ───────────────────────────────────
+        // ── Theme: Auto / Dark / Light ───────────────────────────────────
         val btnThemeAuto  = view.findViewById<MaterialButton>(R.id.btn_theme_auto)
         val btnThemeDark  = view.findViewById<MaterialButton>(R.id.btn_theme_dark)
         val btnThemeLight = view.findViewById<MaterialButton>(R.id.btn_theme_light)
@@ -254,12 +253,12 @@ class SettingsFragment : Fragment() {
             prefs.edit().putBoolean("auto_apply_profile", checked).apply()
         }
 
-        // ── Vérification auto des mises à jour ───────────────────────────────
-        // Stable : pas de réseau → le hook masque toute l'UI de mise à jour.
+        // ── Auto check for updates ───────────────────────────────
+        // Stable: no network → hook hides all update UI.
         // Channel-specific setup is delegated below. Stable hides this section and has no
         // updater classes; unstable owns both the preference and its OTA handlers.
 
-        // ── Alimentation véhicule (SWI133) — éteint la voiture, garde l'écran ──
+        // ── Vehicle power (SWI133) — turns off the car, keeps the screen on ──
         val rowVehiclePower = view.findViewById<View>(R.id.row_vehicle_power)
         val dividerVehiclePower = view.findViewById<View>(R.id.row_vehicle_power_divider)
         val btnVehiclePower = view.findViewById<MaterialButton>(R.id.btn_vehicle_power_off)
@@ -268,7 +267,7 @@ class SettingsFragment : Fragment() {
             dividerVehiclePower.visibility = View.GONE
         } else {
             btnVehiclePower.setOnClickListener {
-                // Sécurité : on ne propose l'extinction que si le levier est confirmé en P.
+                // Safety: extinction is only proposed if the lever is confirmed in P.
                 CoroutineScope(Dispatchers.IO).launch {
                     val inPark = EVHardware.isVehicleInPark()
                     withContext(Dispatchers.Main) {
@@ -293,12 +292,12 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        // ── Bouton Vérifier mise à jour ──────────────────────────────────────
+        // ── Check for update button ──────────────────────────────────────
         val btnUpdate     = view.findViewById<MaterialButton>(R.id.btn_check_update)
         val btnDiagnostic = view.findViewById<MaterialButton>(R.id.btn_diagnostic)
         val originalUpdateText = getString(R.string.btn_check_update)
 
-        // Bouton Diagnostic débloqué via 5 clics sur le logo (cf. MainActivity)
+        // Diagnostic button unlocked via 5 clicks on the logo (see MainActivity)
         btnDiagnostic.visibility = if (MainActivity.diagnosticUnlocked) View.VISIBLE else View.GONE
 
         UpdateChannel.configureSettings(
@@ -309,7 +308,7 @@ class SettingsFragment : Fragment() {
         )
 
         // ── Bouton Nettoyer APK ──────────────────────────────────────────────
-        // ── Bouton Diagnostic (caché par défaut — débloqué par 5 clics sur MAJ) ──
+        // ── Diagnostic button (hidden by default — unlocked by 5 clicks on SHIFT) ──
         btnDiagnostic.setOnClickListener {
             showDiagnosticDialog()
         }
@@ -324,12 +323,12 @@ class SettingsFragment : Fragment() {
     }
 
     /**
-     * EVTasker automatise ce que EVProfile règle à la main : le bouton l'ouvre, il ne le
-     * remplace pas et ne propose pas de l'installer.
+     * EVTasker automates what EVProfile adjusts by hand: the button opens it, it does not
+     * does not replace or offer to install it.
      *
-     * Le clic revérifie l'intent plutôt que de faire confiance à l'affichage : entre le
-     * moment où le bouton apparaît et celui où le doigt arrive, l'app peut avoir été
-     * désinstallée, et un startActivity() sur un paquet absent ferait tomber EVProfile.
+     * The click rechecks the intent rather than trusting the display: between the
+     * moment the button appears and the finger arrives, the app may have been
+     * uninstalled, and a startActivity() on an absent package would drop EVProfile.
      */
     private fun setupTaskerButton(view: View) {
         refreshTaskerButton(view)
@@ -348,8 +347,8 @@ class SettingsFragment : Fragment() {
     }
 
     /**
-     * Réévaluée à chaque reprise : installer EVTasker pendant que EVProfile tourne ne doit
-     * pas demander un redémarrage pour que le bouton apparaisse.
+     * Reevaluated each time: installing EVTasker while EVProfile is running should not
+     * not require a reboot for the button to appear.
      */
     private fun refreshTaskerButton(view: View) {
         view.findViewById<MaterialButton>(R.id.btn_open_tasker).visibility =
@@ -360,7 +359,7 @@ class SettingsFragment : Fragment() {
     private fun taskerLaunchIntent(): Intent? =
         TASKER_PACKAGES.firstNotNullOfOrNull { requireContext().packageManager.getLaunchIntentForPackage(it) }
 
-    // ── Feedback "application à jour" sur le bouton ──────────────────────────
+    // ── Up-to-date button feedback ───────────────────────────────────────────
 
     private fun showUpToDate(btn: MaterialButton, originalText: String) {
         val ctx = requireContext()
@@ -369,14 +368,14 @@ class SettingsFragment : Fragment() {
         val accentDim = ctx.getColor(R.color.dash_accent_dim)
         val accent    = ctx.getColor(R.color.dash_accent)
 
-        // Passe le bouton en vert "à jour"
+        // Turn the button green to indicate that the app is up to date.
         btn.text = getString(R.string.update_up_to_date)
         btn.backgroundTintList = android.content.res.ColorStateList.valueOf(ecoDim)
         btn.strokeColor        = android.content.res.ColorStateList.valueOf(eco)
         btn.setTextColor(eco)
         btn.isEnabled = false
 
-        // Revient à l'état normal après 3 secondes
+        // Returns to normal state after 3 seconds
         btn.postDelayed({
             if (isAdded) {
                 btn.text = originalText
@@ -388,7 +387,7 @@ class SettingsFragment : Fragment() {
         }, 3_000)
     }
 
-    // ── Feedback "erreur réseau" sur le bouton ────────────────────────────────
+    // ── Network-error button feedback ────────────────────────────────────────
 
     private fun showUpdateError(btn: MaterialButton, originalText: String) {
         val ctx = requireContext()
@@ -419,15 +418,15 @@ class SettingsFragment : Fragment() {
     private fun showDiagnosticDialog() {
         val ctx = requireContext()
 
-        // Sonde diagnostic : logge volume + état des portes AVANT de rendre les logs,
-        // pour que le rapport les contienne (indépendant du toggle / de l'onglet Audio).
+        // Diagnostic probe: volume log + door status BEFORE rendering the logs,
+        // so that the report contains them (independent of the toggle / Audio tab).
         EVHardware.runDoorVolumeDiag()
 
         val appVersion = try {
             ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName ?: "?"
         } catch (e: Exception) { "?" }
 
-        // ── Layout : crash banner (optionnel) + rapport matériel ──────────────
+        // ── Layout: crash banner (optional) + material report ──────────────
         var btnClearCrash: Button? = null
         val container = LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
@@ -437,17 +436,17 @@ class SettingsFragment : Fragment() {
             )
         }
 
-        // "Partager" — envoi du rapport complet vers PrivateBin (moteur EVHardware).
-        // En tête du contenu : la voiture n'a pas de cible de partage, et c'est le geste
-        // qu'on cherche quand on vient d'ouvrir ce dialog pour envoyer un rapport.
-        // Absent du canal stable, qui ne déclare pas la permission INTERNET : proposer
-        // l'envoi là-bas ne produirait qu'un échec.
+        // "Share" sends the complete report to PrivateBin through EVHardware.
+        // At the top of the content: the car has no sharing target, and this is the gesture
+        // what we are looking for when we have just opened this dialog to send a report.
+        // Absent from the stable channel, which does not declare INTERNET permission: suggest
+        // sending there would only produce failure.
         val btnShare = if (BuildConfig.OFFLINE) null else Button(ctx).apply {
             text = getString(R.string.diag_share)
         }
         btnShare?.let { container.addView(it) }
 
-        // Section crash log (si un crash a été enregistré)
+        // Crash log section (if a crash was recorded)
         val crashLog = CrashLogger.read(ctx)
         if (crashLog != null) {
             val tvCrash = TextView(ctx).apply {
@@ -461,7 +460,7 @@ class SettingsFragment : Fragment() {
             }
             container.addView(tvCrash)
 
-            // Séparateur
+            // Separator
             val divider = android.view.View(ctx).apply {
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -471,14 +470,14 @@ class SettingsFragment : Fragment() {
             }
             container.addView(divider)
 
-            // "Effacer crash" déplacé dans le contenu (le slot neutre sert au Télécharger)
+            // “Clear crash” moved to the content (the neutral slot is used for Download)
             btnClearCrash = Button(ctx).apply {
                 text = getString(R.string.diag_clear_crash)
             }
             container.addView(btnClearCrash)
         }
 
-        // Section rapport matériel
+        // Hardware report section
         val tvReport = TextView(ctx).apply {
             text = getString(R.string.diag_loading)
             typeface = Typeface.MONOSPACE
@@ -489,7 +488,7 @@ class SettingsFragment : Fragment() {
         }
         container.addView(tvReport)
 
-        // Section AppLogger en temps réel (30 dernières lignes)
+        // Real-time AppLogger section (last 30 lines)
         val tvLogs = TextView(ctx).apply {
             typeface = Typeface.MONOSPACE
             textSize = 16f
@@ -498,7 +497,7 @@ class SettingsFragment : Fragment() {
             setPadding(pad, 0, pad, pad)
             val entries = AppLogger.entries
             text = if (entries.isEmpty()) "─── AppLogger vide ───"
-                   else "─── AppLogger (${entries.size} entrées) ───\n" +
+                   else "─── AppLogger (${entries.size} entries) ───\n" +
                         entries.takeLast(30).joinToString("\n") { e ->
                             "${e.time} [${e.level.name[0]}] ${e.tag}: ${e.msg}"
                         }
@@ -510,7 +509,7 @@ class SettingsFragment : Fragment() {
         }
 
         val title = if (crashLog != null)
-            "⚠ ${getString(R.string.diag_title)} — CRASH DÉTECTÉ"
+            "⚠ ${getString(R.string.diag_title)} — CRASH DETECTED"
         else
             getString(R.string.diag_title)
 
@@ -523,39 +522,39 @@ class SettingsFragment : Fragment() {
             .create()
         dialog.window?.setBackgroundDrawable(ColorDrawable(ctx.getColor(R.color.dash_card)))
 
-        // Rapport court (30 dernières lignes) pour le presse-papier ; rapport complet pour
-        // le fichier et pour l'envoi.
+        // Short report (last 30 lines) for the clipboard; full report for
+        // the file and for sending.
         //
-        // [leaving] écarte les lignes de partage : un envoi y laisse le lien et le mot de
-        // passe du paste précédent, et le journal est recopié dans le rapport. Sans ce
-        // filtre, le deuxième envoi livre le premier à son destinataire.
+        // [leaving] removes the dividing lines: a sending leaves the link and the message there
+        // passes from the previous paste, and the log is copied into the report. Without this
+        // filter, the second shipment delivers the first to its recipient.
         fun buildReport(fullLog: Boolean, leaving: Boolean = false) = buildString {
             if (crashLog != null) { appendLine(crashLog); appendLine() }
             appendLine(tvReport.text)
             appendLine()
             if (fullLog) {
                 val entries = AppLogger.entries.filterNot { leaving && it.tag == SHARE_TAG }
-                appendLine("─── AppLogger (${entries.size} entrées) ───")
+                appendLine("─── AppLogger (${entries.size} entries) ───")
                 entries.forEach { e -> appendLine("${e.time} [${e.level.name[0]}] ${e.tag}: ${e.msg}") }
             } else appendLine(tvLogs.text)
         }
 
         dialog.setOnShowListener {
-            // "Copier" — copie tout sans fermer le dialog
+            // “Copy” — copies everything without closing the dialog
             dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setOnClickListener {
                 val cm = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 cm.setPrimaryClip(ClipData.newPlainText("EVProfile Diagnostic", buildReport(false)))
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.text = getString(R.string.diag_copied)
             }
-            // "Télécharger" — écrit le rapport complet dans le dossier Download de la voiture
+            // "Download" writes the complete report to the vehicle's Downloads directory.
             dialog.getButton(AlertDialog.BUTTON_NEUTRAL)?.setOnClickListener {
                 downloadDiagnostic(ctx, buildReport(true))
             }
-            // "Partager" (dans le contenu) — envoi confirmé, le dialog reste ouvert
+            // “Share” (in content) — sending confirmed, dialog remains open
             btnShare?.setOnClickListener {
                 confirmDiagnosticShare(ctx) { buildReport(fullLog = true, leaving = true) }
             }
-            // "Effacer crash" (dans le contenu) — supprime le fichier et ferme le dialog
+            // “Clear crash” (in content) — deletes the file and closes the dialog
             btnClearCrash?.setOnClickListener {
                 CrashLogger.clear(ctx)
                 dialog.dismiss()
@@ -564,7 +563,7 @@ class SettingsFragment : Fragment() {
 
         dialog.show()
 
-        // Génération du rapport matériel sur le thread IO
+        // Generating the hardware report on the IO thread
         CoroutineScope(Dispatchers.IO).launch {
             val report = EVHardware.buildDiagnosticReport(appVersion)
             withContext(Dispatchers.Main) {
@@ -574,9 +573,9 @@ class SettingsFragment : Fragment() {
     }
 
     /**
-     * Confirmation avant envoi : le rapport quitte la voiture pour un serveur public.
-     * Chiffré et protégé par mot de passe, mais il part — ce n'est pas une décision à
-     * prendre à la place de l'utilisateur parce qu'il a touché un bouton "Partager".
+     * Confirmation before sending: the report leaves the car for a public server.
+     * Encrypted and password protected, but it leaves — it's not a decision
+     * take the user's place because they touched a "Share" button.
      */
     private fun confirmDiagnosticShare(ctx: Context, report: () -> String) {
         MaterialAlertDialogBuilder(ctx)
@@ -590,11 +589,11 @@ class SettingsFragment : Fragment() {
     }
 
     /**
-     * Envoi vers PrivateBin, hors du thread principal.
+     * Sends to PrivateBin off the main thread.
      *
-     * Le lien est écrit dans AppLogger, pas seulement affiché : un toast disparaît et la
-     * voiture n'offre aucun moyen de rattraper une URL. Le journal, lui, se relit et se
-     * retrouve dans le prochain rapport.
+     * The link is written in AppLogger, not just displayed: a toast disappears and the
+     * car offers no way to catch a URL. The newspaper can be reread and
+     * found in the next report.
      */
     private fun uploadDiagnostic(ctx: Context, report: String) {
         Toast.makeText(ctx, getString(R.string.diag_share_running), Toast.LENGTH_SHORT).show()
@@ -602,12 +601,12 @@ class SettingsFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             val message = when (val outcome = PrivateBin.paste(report, PasteConfig.CONFIG)) {
                 is PrivateBin.Outcome.Ok -> {
-                    AppLogger.i(SHARE_TAG, "diagnostic envoyé — ${outcome.url}")
-                    AppLogger.i(SHARE_TAG, "mot de passe ${PasteConfig.CONFIG.password}, expire dans 1 heure")
+                    AppLogger.i(SHARE_TAG, "diagnostic sent — ${outcome.url}")
+                    AppLogger.i(SHARE_TAG, "password ${PasteConfig.CONFIG.password}, expires in 1 hour")
                     appCtx.getString(R.string.diag_share_ok)
                 }
                 is PrivateBin.Outcome.Failed -> {
-                    AppLogger.w(SHARE_TAG, "envoi du diagnostic échoué — ${outcome.reason}")
+                    AppLogger.w(SHARE_TAG, "diagnostic upload failed — ${outcome.reason}")
                     appCtx.getString(R.string.diag_share_failed, outcome.reason)
                 }
             }
@@ -618,12 +617,12 @@ class SettingsFragment : Fragment() {
     }
 
     /**
-     * Où part un rapport partagé.
+     * Where does a shared relationship start?
      *
-     * L'instance PrivateBin de Chapril, tenue par April, association française — pas de
-     * compte, pas de pistage, et le serveur ne détient jamais la clé. Une heure est
-     * volontairement court : assez pour envoyer le lien à qui aide, trop peu pour laisser
-     * traîner le diagnostic d'une voiture.
+     * Chapril's PrivateBin instance, run by April, a French association — no
+     * account, no tracking, and the server never holds the key. One hour is
+     * deliberately short: enough to send the link to whoever helps, too little to leave
+     * dragging out the diagnosis of a car.
      */
     private object PasteConfig {
         const val HOST = "paste.chapril.org"
@@ -636,7 +635,7 @@ class SettingsFragment : Fragment() {
         )
     }
 
-    /** Écrit le rapport de diagnostic dans le dossier Download de la voiture (fichier .txt horodaté). */
+    /** Writes the diagnostic report to the car's Download folder (time-stamped .txt file). */
     private fun downloadDiagnostic(ctx: Context, report: String) {
         try {
             val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
@@ -651,11 +650,11 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    // ── Section À propos ─────────────────────────────────────────────────────
+    // ── About section ────────────────────────── ───────────────────────────
 
     /**
-     * « À propos » n'est plus une fenêtre à ouvrir : c'est la dernière catégorie du rail,
-     * au même titre que les autres. Rien n'y est actionnable en conduite, seulement lu.
+     * “About” is no longer a window to open: it is the last category of the rail,
+     * just like the others. Nothing can be activated while driving, only read.
      */
     private fun bindAboutSection(view: View) {
         val versionName = try {
@@ -679,15 +678,15 @@ class SettingsFragment : Fragment() {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(gitlabUrl)))
         }
 
-        // Trois appuis sur la version ouvrent le diagnostic. Geste caché volontairement :
-        // le rapport contient le firmware et les logs, il n'a rien à faire sous le doigt
-        // d'un passager qui explore l'écran.
+        // Three presses on the version open the diagnosis. Deliberately hidden gesture:
+        // the report contains the firmware and the logs, it has nothing to do under your finger
+        // of a passenger exploring the screen.
         var taps = 0
         var lastTap = 0L
         tvVersion.setOnClickListener {
             val now = SystemClock.elapsedRealtime()
-            // Une pause casse la série : trois appuis espacés dans le temps ne sont pas
-            // le geste, ce sont trois appuis distincts sur un champ qui n'en attend aucun.
+            // A pause breaks the series: three presses spaced in time are not
+            // the gesture is three distinct presses on a field that expects none.
             taps = if (now - lastTap > VERSION_TAP_WINDOW_MS) 1 else taps + 1
             lastTap = now
             if (taps >= VERSION_TAPS_FOR_DIAGNOSTIC) {
@@ -704,12 +703,12 @@ class SettingsFragment : Fragment() {
         const val VERSION_TAP_WINDOW_MS = 1_000L
 
         /**
-         * EVTasker, tous canaux confondus, du plus « officiel » au plus expérimental.
+         * EVTasker, all channels combined, from the most “official” to the most experimental.
          *
-         * Les suffixes historiques et actuels sont conservés pour détecter les installations
-         * déjà diffusées. Stable et unstable s'installent côte à côte, et
-         * un testeur qui n'a que le canal instable a bel et bien EVTasker — n'énumérer que
-         * l'id stable revenait à lui masquer le bouton.
+         * Historical and current suffixes are retained to detect installations
+         * already broadcast. Stable and unstable are installed side by side, and
+         * a tester that only has the unstable channel does indeed have EVTasker — only list
+         * the stable id amounted to hiding the button.
          */
         val TASKER_PACKAGES = listOf(
             "com.evsuite.tasker",

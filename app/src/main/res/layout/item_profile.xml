@@ -11,7 +11,7 @@
     android:paddingBottom="14dp"
     android:layout_marginBottom="10dp">
 
-    <!-- Nom + résumé sur une seule ligne + badge PAR DÉFAUT -->
+    <!-- Name + single line summary + DEFAULT badge -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
             android:ellipsize="end"
             android:maxLines="1" />
 
-        <!-- Badge PAR DÉFAUT -->
+        <!-- DEFAULT badge -->
         <TextView
             android:id="@+id/tv_default_badge"
             android:layout_width="wrap_content"
@@ -56,14 +56,14 @@
 
     </LinearLayout>
 
-    <!-- Séparateur -->
+    <!-- Separator -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/dash_border"
         android:layout_marginBottom="12dp" />
 
-    <!-- Boutons sur une seule ligne -->
+    <!-- Single-line buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -9,23 +9,23 @@ import java.net.URI
 import java.security.MessageDigest
 
 /**
- * Contrôles de sécurité de la chaîne OTA.
+ * OTA channel security controls.
  *
- * L'app tourne en `uid.system` : un APK d'origine non vérifiée installé sous cette
- * identité compromet le véhicule. Deux verrous, tous deux en "fail closed" :
- *   1. [ApkUrlPolicy]        — d'où l'APK a le droit de venir.
- *   2. [ApkSignatureVerifier] — que l'APK est bien signé par la même clé que nous.
+ * The app runs in `uid.system`: an unverified original APK installed under this
+ * identity compromises the vehicle. Two locks, both in “fail closed”:
+ *   1. [ApkUrlPolicy] — where the APK has the right to come from.
+ *   2. [ApkSignatureVerifier] — that the APK is signed by the same key as us.
  */
 
-/** Origines autorisées pour un APK de mise à jour. */
+/** Authorized origins for an update APK. */
 object ApkUrlPolicy {
 
     private const val TAG = "EV_UPDATE"
 
     /**
-     * Hôtes autorisés. Les deux domaines `githubusercontent.com` sont les CDN vers
-     * lesquels github.com redirige le téléchargement d'un asset de release ; sans eux
-     * la redirection est refusée et la mise à jour échoue.
+     * Authorized hosts. The two domains `githubusercontent.com` are the CDNs to
+     * which github.com redirects the download of a release asset; without them
+     * the redirect is refused and the update fails.
      */
     private val ALLOWED_HOSTS = setOf(
         "github.com",
@@ -35,11 +35,11 @@ object ApkUrlPolicy {
     )
 
     /**
-     * Vrai si [url] est en https et pointe vers un hôte autorisé.
+     * True if [url] is https and points to an authorized host.
      *
-     * Refuse tout le reste : http (y compris une rétrogradation https -> http en
-     * cours de redirection), hôte inconnu, URL non parsable, et les sous-domaines
-     * non listés explicitement (`evil-github.com`, `github.com.attacker.net`).
+     * Deny everything else: http (including a downgrade https -> http to
+     * being redirected), unknown host, unparsable URL, and subdomains
+     * not listed explicitly (`evil-github.com`, `github.com.attacker.net`).
      */
     fun isAllowed(url: String): Boolean {
         val uri = try { URI(url) } catch (_: Exception) { return false }
@@ -48,15 +48,15 @@ object ApkUrlPolicy {
         return host in ALLOWED_HOSTS
     }
 
-    /** Comme [isAllowed], mais journalise le refus — pour les points d'entrée. */
+    /** Like [isAllowed], but logs the denial — for entry points. */
     fun isAllowedLogged(url: String, where: String): Boolean {
         val ok = isAllowed(url)
-        if (!ok) AppLogger.w(TAG, "$where : URL d'APK refusée (origine non autorisée) : $url")
+        if (!ok) AppLogger.w(TAG, "$where: APK URL refused (origin not allowed): $url")
         return ok
     }
 }
 
-/** Vérifie qu'un APK est signé par la même clé que l'app en cours d'exécution. */
+/** Verifies that an APK is signed by the same key as the running app. */
 object ApkSignatureVerifier {
 
     private const val TAG = "EV_UPDATE"
@@ -64,28 +64,28 @@ object ApkSignatureVerifier {
     /**
      * Compare deux jeux d'empreintes de certificats.
      *
-     * Fail closed : un jeu vide (archive illisible, signature absente, API qui a
-     * échoué) ne correspond jamais, même face à un autre jeu vide.
+     * Fail closed: an empty game (illegible archive, missing signature, API which has
+     * failed) never matches, even against another empty game.
      */
     fun certsMatch(archive: Set<String>, installed: Set<String>): Boolean =
         archive.isNotEmpty() && installed.isNotEmpty() && archive == installed
 
     /**
-     * Vrai si [apk] est signé exactement par la même clé que l'app installée.
-     * Toute erreur (archive corrompue, API indisponible) renvoie false.
+     * True if [apk] is signed by exactly the same key as the installed app.
+     * Every error, including a corrupt archive or unavailable API, returns false.
      */
     fun matchesRunningApp(context: Context, apk: File): Boolean {
         val archive = fingerprintsOfArchive(context, apk)
         val installed = fingerprintsOfInstalled(context)
         val ok = certsMatch(archive, installed)
         if (!ok) {
-            AppLogger.w(TAG, "Signature de l'APK non conforme — installation refusée " +
-                    "(archive=${archive.size} cert(s), installée=${installed.size} cert(s))")
+            AppLogger.w(TAG, "APK signature mismatch — installation refused " +
+                    "(archive=${archive.size} cert(s), installed=${installed.size} cert(s))")
         }
         return ok
     }
 
-    /** Empreintes SHA-256 des certificats signant le fichier APK [apk]. */
+    /** SHA-256 fingerprints of the certificates signing the APK [apk] file. */
     private fun fingerprintsOfArchive(context: Context, apk: File): Set<String> = try {
         @Suppress("DEPRECATION")
         val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
@@ -95,11 +95,11 @@ object ApkSignatureVerifier {
         val info = context.packageManager.getPackageArchiveInfo(apk.absolutePath, flags)
         signatureDigests(info)
     } catch (e: Exception) {
-        AppLogger.w(TAG, "Lecture de la signature de l'archive impossible : ${e.message}")
+        AppLogger.w(TAG, "Unable to read archive signature: ${e.message}")
         emptySet()
     }
 
-    /** Empreintes SHA-256 des certificats signant l'app en cours d'exécution. */
+    /** SHA-256 fingerprints of the certificates signing the running app. */
     private fun fingerprintsOfInstalled(context: Context): Set<String> = try {
         @Suppress("DEPRECATION")
         val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)

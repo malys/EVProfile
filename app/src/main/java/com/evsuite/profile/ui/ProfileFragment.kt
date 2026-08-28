@@ -54,7 +54,7 @@ class ProfileFragment : Fragment() {
                 ProfileApplier.apply(profile) { ok ->
                     requireActivity().runOnUiThread {
                         val msg = if (ok) getString(R.string.profile_applied, profile.name)
-                                  else "Profil appliqué (vérifier les logs)"
+                                  else "Profile applied (check the logs)"
                         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -62,7 +62,7 @@ class ProfileFragment : Fragment() {
             onSetDefault = { profile ->
                 manager.setDefault(profile.id)
                 refreshList()
-                Toast.makeText(context, "Profil par défaut : ${profile.name}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Default profile: ${profile.name}", Toast.LENGTH_SHORT).show()
             },
             onEdit = { profile ->
                 showProfileDialog(existing = profile, data = profile)
@@ -105,18 +105,18 @@ class ProfileFragment : Fragment() {
     }
 
     // -------------------------------------------------------------------------
-    // Nouveau profil : lit l'état hardware courant puis ouvre le dialog pré-rempli
+    // New profile: reads the current hardware state then opens the pre-filled dialog
     // -------------------------------------------------------------------------
 
     /**
-     * Pré-remplit un nouveau profil avec l'état courant de la voiture.
+     * Pre-populates a new profile with the current status of the car.
      *
-     * Chaque réglage passe par son lecteur `…OrNull` : un signal que le firmware ne rend pas
-     * vaut `null`, pas « désactivé ». La différence compte ici plus qu'ailleurs — un profil
-     * enregistré avec `aebEnabled=false` parce que la lecture a échoué **coupera l'AEB** à
-     * chaque application. Faute de valeur « ne pas toucher » dans le modèle, on garde la
-     * valeur par défaut et on nomme les signaux illisibles dans le dialogue : c'est à
-     * l'utilisateur de les régler sciemment, pas à une lecture ratée de décider.
+     * Each setting goes through its `…OrNull` reader: a signal that the firmware does not render
+     * is `null`, not “disabled”. The difference matters here more than elsewhere — a profile
+     * saved with `aebEnabled=false` because reading failed **will turn off AEB** at
+     * each application. In the absence of a “do not touch” value in the model, we keep the
+     * default value and we name the unreadable signals in the dialog: it is
+     * the user to adjust them knowingly, not for a failed reading to decide.
      */
     private fun openNewProfileDialog() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -124,13 +124,13 @@ class ProfileFragment : Fragment() {
             val isSWI132 = FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI132
             val unread = mutableListOf<String>()
 
-            /** Retient le nom du réglage quand la voiture n'a pas répondu. */
+            /** Remembers the setting name when the car has not responded. */
             fun <T> T?.orNoted(label: String, fallback: T): T {
                 if (this == null) unread += label
                 return this ?: fallback
             }
             val prefill = if (FirmwareInfo.isVsmBased()) {
-                // SWI68/SWI69/SWI131/SWI132/SWI165 : ADAS ACC/TJA — sièges/volant uniquement sur SWI68/SWI165
+                // SWI68/SWI69/SWI131/SWI132/SWI165: ADAS ACC/TJA — seats/steering wheel only on SWI68/SWI165
                 val elkMode = EVHardware.getElkMode().let {
                     if (it < 1) (if (isSWI132) ElkMode.ALERT else ElkMode.EMERGENCY) else it
                 }
@@ -140,17 +140,17 @@ class ProfileFragment : Fragment() {
                     driveMode     = EVHardware.getDriveMode()  ?: DriveMode.NORMAL,
                     regenLevel    = EVHardware.getRegenLevel() ?: RegenLevel.MEDIUM,
                     steeringHeat  = if (hasHeat) EVHardware.steeringHeatOnOrNull().orNoted("volant chauffant", false) else false,
-                    seatHeatLeft  = if (hasHeat) EVHardware.seatHeatLeftOrNull().orNoted("siège gauche", 0) else 0,
-                    seatHeatRight = if (hasHeat) EVHardware.seatHeatRightOrNull().orNoted("siège droit", 0) else 0,
-                    // SWI132 : deux alertes indépendantes comme SWI133 (pas de soundWarning VSM)
+                    seatHeatLeft  = if (hasHeat) EVHardware.seatHeatLeftOrNull().orNoted("left seat", 0) else 0,
+                    seatHeatRight = if (hasHeat) EVHardware.seatHeatRightOrNull().orNoted("right seat", 0) else 0,
+                    // SWI132: two independent alerts like SWI133 (no VSM soundWarning)
                     overspeedAlarm = if (isSWI132) EVHardware.overspeedAlarmOnOrNull().orNoted("alerte survitesse", false) else false,
-                    speedLimitTone = if (isSWI132) EVHardware.speedLimitToneOnOrNull().orNoted("ton limite de vitesse", false) else false,
+                    speedLimitTone = if (isSWI132) EVHardware.speedLimitToneOnOrNull().orNoted("speed-limit tone", false) else false,
                     soundWarning   = if (!isSWI132) EVHardware.soundWarningOnOrNull().orNoted("alerte sonore ADAS", false) else false,
-                    // Mode ACC/TJA — SHWA (ancien codage limiteur) ramené à Off (limiteur géré à part)
+                    // ACC/TJA mode — SHWA (old limiter coding) set to Off (limiter managed separately)
                     swi68AdasMode  = EVHardware.getAccTjaMode().let {
                         if (it < 0 || it == Swi68Mode.SHWA) Swi68Mode.OFF else it
                     },
-                    // Limiteur de vitesse — capturé pour tous les firmwares VSM (SWI68/69/131/132/165)
+                    // Speed ​​limiter — captured for all VSM firmware (SWI68/69/131/132/165)
                     swi132LimiterConfigured = true,
                     swi132SasMode  = EVHardware.getSpeedLimiterMode().let { if (it < 0) 0 else it },
                     aebEnabled     = EVHardware.aebEnabledOrNull().orNoted("AEB", false),
@@ -160,11 +160,11 @@ class ProfileFragment : Fragment() {
                     elkSensitivity = elkSen,
                     lasAudibleWarning    = if (isSWI132) (EVHardware.getLasWarningSound() == 1) else true,
                     lasVibrationReminder = if (isSWI132) (EVHardware.getLasWarningVibration() == 1) else true,
-                    energySaving   = EVHardware.energySavingOnOrNull().orNoted("mode éco", false),
+                    energySaving   = EVHardware.energySavingOnOrNull().orNoted("energy-saving mode", false),
                     tsrEnabled     = EVHardware.tsrOnOrNull().orNoted("TSR", false)
                 )
             } else {
-                // SWI133/UNKNOWN : ADAS mixte, sièges et volant chauffants
+                // SWI133/UNKNOWN: mixed ADAS, heated seats and steering wheel
                 val elkMode = EVHardware.getElkMode().let { if (it < 1) ElkMode.EMERGENCY else it }
                 val elkSen  = EVHardware.getElkSensitivity().let { if (it < 1) ElkSensitivity.STANDARD else it }
                 val aebSen  = EVHardware.getAebSensitivity().let { if (it < 1) AebSensitivity.STANDARD else it }
@@ -173,24 +173,24 @@ class ProfileFragment : Fragment() {
                     driveMode      = EVHardware.getDriveMode()  ?: DriveMode.NORMAL,
                     regenLevel     = EVHardware.getRegenLevel() ?: RegenLevel.MEDIUM,
                     steeringHeat   = EVHardware.steeringHeatOnOrNull().orNoted("volant chauffant", false),
-                    seatHeatLeft   = EVHardware.seatHeatLeftOrNull().orNoted("siège gauche", 0),
-                    seatHeatRight  = EVHardware.seatHeatRightOrNull().orNoted("siège droit", 0),
+                    seatHeatLeft   = EVHardware.seatHeatLeftOrNull().orNoted("left seat", 0),
+                    seatHeatRight  = EVHardware.seatHeatRightOrNull().orNoted("right seat", 0),
                     overspeedAlarm = EVHardware.overspeedAlarmOnOrNull().orNoted("alerte survitesse", false),
-                    speedLimitTone = EVHardware.speedLimitToneOnOrNull().orNoted("ton limite de vitesse", false),
+                    speedLimitTone = EVHardware.speedLimitToneOnOrNull().orNoted("speed-limit tone", false),
                     adasMode       = EVHardware.getMixedIntelligentDrive().coerceAtLeast(0),
                     aebEnabled     = EVHardware.aebEnabledOrNull().orNoted("AEB", false),
                     aebMode        = EVHardware.aebModeOrNull().orNoted("mode AEB", AebMode.ALARM),
                     aebSensitivity = aebSen,
                     elkMode        = elkMode,
                     elkSensitivity = elkSen,
-                    energySaving   = if (FirmwareInfo.getGeneration() != FirmwareInfo.Gen.UNKNOWN) EVHardware.energySavingOnOrNull().orNoted("mode éco", false) else false,
+                    energySaving   = if (FirmwareInfo.getGeneration() != FirmwareInfo.Gen.UNKNOWN) EVHardware.energySavingOnOrNull().orNoted("energy-saving mode", false) else false,
                     tsrEnabled     = if (FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI133) EVHardware.tsrOnOrNull().orNoted("TSR", false) else false
                 )
             }
             withContext(Dispatchers.Main) {
                 if (!isAdded) return@withContext
                 if (unread.isNotEmpty()) {
-                    AppLogger.w("EVProfile.Profile", "pré-remplissage : illisibles — ${unread.joinToString(", ")}")
+                    AppLogger.w("EVProfile.Profile", "prefill: unreadable — ${unread.joinToString(", ")}")
                     Toast.makeText(
                         requireContext(),
                         getString(R.string.profile_prefill_unread, unread.joinToString(", ")),
@@ -203,7 +203,7 @@ class ProfileFragment : Fragment() {
     }
 
     // -------------------------------------------------------------------------
-    // Dialog d'édition / création — style dark MaterialButton
+    // Edit/creation dialog — dark MaterialButton style
     // -------------------------------------------------------------------------
 
     private fun showProfileDialog(existing: DrivingProfile?, data: DrivingProfile) {
@@ -219,11 +219,11 @@ class ProfileFragment : Fragment() {
                 if (active) R.color.dash_accent else R.color.text_secondary))
             btn.strokeColor = ColorStateList.valueOf(
                 ctx.getColor(if (active) R.color.dash_accent else R.color.dash_border))
-            // TalkBack annonce « sélectionné » : la couleur ne porte pas l'état seule.
+            // TalkBack announces “selected”: the color does not carry the state alone.
             btn.isSelected = active
         }
 
-        /** Lie un groupe de boutons : un seul actif à la fois. Retourne une lambda pour lire la valeur courante. */
+        /** Links a group of buttons: only one active at a time. Returns a lambda to read the current value. */
         fun <T> bindGroup(pairs: List<Pair<MaterialButton, T>>, initial: T, onSelect: (T) -> Unit) {
             pairs.forEach { (btn, value) -> activateBtn(btn, value == initial) }
             pairs.forEach { (btn, value) ->
@@ -234,7 +234,7 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        // ── Variables de sélection ───────────────────────────────────────────
+        // ── Selection variables ───────────────────── ──────────────────────
         var selectedDrive   = data.driveMode
         var selectedRegen   = data.regenLevel
         var steeringOn      = data.steeringHeat
@@ -250,14 +250,14 @@ class ProfileFragment : Fragment() {
         var elkModeSel      = data.elkMode.let { if (it == 0) ElkMode.EMERGENCY else it }
         var elkSenSel       = data.elkSensitivity.let { if (it == 0) ElkSensitivity.STANDARD else it }
         var elkEnabledSel   = elkModeSel != ElkMode.OFF
-        /** Dernier mode ELK actif pour restauration après toggle ON */
+        /** Last active ELK mode for restoration after toggle ON */
         var lastActiveElkModeD = if (elkModeSel != ElkMode.OFF) elkModeSel else ElkMode.EMERGENCY
         var lasAudibleWarningSel   = data.lasAudibleWarning
         var lasVibrationReminderSel = data.lasVibrationReminder
         var energySavingSel = data.energySaving
         var tsrEnabledSel   = data.tsrEnabled
 
-        // ── Bouton Éco énergie — déclaré tôt pour être accessible dans le binding drive mode ─
+        // ── Eco energy button — declared early to be accessible in binding drive mode ─
         val btnEnergy = dialogView.findViewById<MaterialButton>(R.id.btn_energy_saving_d)
 
         // ── Mode de conduite ─────────────────────────────────────────────────
@@ -283,8 +283,8 @@ class ProfileFragment : Fragment() {
         fun setRegenEnabled(enabled: Boolean) {
             val isSnow = selectedDrive == DriveMode.SNOW
             regenBtns.forEach { btn ->
-                // ONE_PEDAL reste accessible même quand Éco énergie est actif,
-                // sauf en mode SNOW où tous les niveaux de regen sont indisponibles.
+                // ONE_PEDAL remains accessible even when Eco energy is active,
+                // except in SNOW mode where all regen levels are unavailable.
                 val btnEnabled = enabled || (btn == btnOnePedal && !isSnow)
                 btn.isEnabled = btnEnabled
                 btn.alpha = if (btnEnabled) 1f else 0.35f
@@ -294,18 +294,18 @@ class ProfileFragment : Fragment() {
         bindGroup(drivePairs, selectedDrive) { mode ->
             selectedDrive = mode
             val isSnow = mode == DriveMode.SNOW
-            // Regen : indisponible si SNOW ou Éco énergie actif (ONE_PEDAL exempt de l'Éco)
+            // Regen: unavailable if SNOW or Eco energy active (ONE_PEDAL exempt from Eco)
             setRegenEnabled(!isSnow && !energySavingSel)
-            // Bouton Éco énergie : indisponible en mode SNOW (modes exclusifs)
+            // Eco energy button: not available in SNOW mode (exclusive modes)
             if (gen != FirmwareInfo.Gen.UNKNOWN) {
                 btnEnergy.isEnabled = !isSnow
                 btnEnergy.alpha = if (isSnow) 0.35f else 1f
             }
         }
-        // État initial : regen indisponible si SNOW ou Éco énergie déjà actif
+        // Initial state: regen unavailable if SNOW or Eco energy already active
         setRegenEnabled(data.driveMode != DriveMode.SNOW && !energySavingSel)
 
-        // ── Régénération ─────────────────────────────────────────────────────
+        // ── Regeneration ────────────────────────── ───────────────────────────
         val regenPairs = listOf(
             dialogView.findViewById<MaterialButton>(R.id.btn_regen_off_d)       to RegenLevel.OFF,
             dialogView.findViewById<MaterialButton>(R.id.btn_regen_low_d)       to RegenLevel.LOW,
@@ -323,7 +323,7 @@ class ProfileFragment : Fragment() {
         )
         bindGroup(steerPairs, steeringOn) { steeringOn = it }
 
-        // ── Siège gauche ─────────────────────────────────────────────────────
+        // ── Left seat ────────────────────────── ───────────────────────────
         val seatLeftPairs = listOf(
             dialogView.findViewById<MaterialButton>(R.id.btn_sl_0_d) to 0,
             dialogView.findViewById<MaterialButton>(R.id.btn_sl_1_d) to 1,
@@ -332,7 +332,7 @@ class ProfileFragment : Fragment() {
         )
         bindGroup(seatLeftPairs, seatLeft) { seatLeft = it }
 
-        // ── Siège droit ──────────────────────────────────────────────────────
+        // ── Right seat ─────────────────────────── ───────────────────────────
         val seatRightPairs = listOf(
             dialogView.findViewById<MaterialButton>(R.id.btn_sr_0_d) to 0,
             dialogView.findViewById<MaterialButton>(R.id.btn_sr_1_d) to 1,
@@ -341,7 +341,7 @@ class ProfileFragment : Fragment() {
         )
         bindGroup(seatRightPairs, seatRight) { seatRight = it }
 
-        // ── Sections Climat (Volant + Sièges) — masquées si pas de chauffage (SWI69/SWI131) ─
+        // ── Climate Sections (Steering Wheel + Seats) — hidden if no heating (SWI69/SWI131) ─
         val hasHeat = FirmwareInfo.hasHeatFeatures()
         dialogView.findViewById<View>(R.id.section_steering_dialog)?.visibility =
             if (hasHeat) View.VISIBLE else View.GONE
@@ -356,7 +356,7 @@ class ProfileFragment : Fragment() {
             val btnAebAlarmD  = dialogView.findViewById<MaterialButton>(R.id.btn_aeb_alarm_d)
             val btnAebBrakeD  = dialogView.findViewById<MaterialButton>(R.id.btn_aeb_alarm_brake_d)
 
-            // Sensibilité AEB — SWI133 uniquement
+            // AEB sensitivity — SWI133 only
             val aebSenSectionD = dialogView.findViewById<View>(R.id.aeb_sen_section_d)
             val btnAebSenLowD  = dialogView.findViewById<MaterialButton>(R.id.btn_aeb_sen_low_d)
             val btnAebSenStdD  = dialogView.findViewById<MaterialButton>(R.id.btn_aeb_sen_standard_d)
@@ -412,7 +412,7 @@ class ProfileFragment : Fragment() {
             val btnElkSenStdD   = dialogView.findViewById<MaterialButton>(R.id.btn_elk_sen_standard_d)
             val btnElkSenHighD  = dialogView.findViewById<MaterialButton>(R.id.btn_elk_sen_high_d)
 
-            // SWI132 : pas de mode Emergency + 2 switches supplémentaires
+            // SWI132: no Emergency mode + 2 additional switches
             if (isSWI132elk) {
                 btnElkEmergD?.visibility = View.GONE
                 dialogView.findViewById<View>(R.id.elk_sound_row_d)?.visibility = View.VISIBLE
@@ -488,9 +488,9 @@ class ProfileFragment : Fragment() {
 
         when {
             isSWI132Profile -> {
-                // SWI132 : 5 boutons ADAS Off/Lim.Manuel/Lim.Auto/ACC/ICA + alertes séparées.
-                // Le mode ACC/TJA (swi68Mode) et le limiteur de vitesse (swi132SasMode) sont
-                // deux réglages indépendants ; le sélecteur unique impose l'exclusivité.
+                // SWI132: 5 ADAS Off/Lim.Manuel/Lim.Auto/ACC/ICA buttons + separate alerts.
+                // ACC/TJA mode (swi68Mode) and speed limiter (swi132SasMode) are
+                // two independent settings; the single selector imposes exclusivity.
                 sectionSwi133.visibility = View.VISIBLE
                 sectionSwi68.visibility  = View.GONE
                 dialogView.findViewById<View>(R.id.btn_adas_auto_d)?.visibility = View.VISIBLE
@@ -523,7 +523,7 @@ class ProfileFragment : Fragment() {
             }
             FirmwareInfo.isVsmBased() -> {
                 // SWI68/SWI69/SWI131/SWI165 : section SWI68 (5 boutons + alerte sonore).
-                // Off / Lim.Manuel / Lim.Auto / ACC / TJA — mode ACC/TJA + limiteur indépendants.
+                // Off / Lim.Manuel / Lim.Auto / ACC / TJA — ACC/TJA mode + independent limiter.
                 sectionSwi68.visibility  = View.VISIBLE
                 sectionSwi133.visibility = View.GONE
                 dialogView.findViewById<Switch>(R.id.sw_sound_warning).isChecked = data.soundWarning
@@ -571,12 +571,12 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        // ── Économie d'énergie + TSR (tous firmwares connus) ───────────────
-        // btn_energy_saving_d est en Col 1 (drive section), section_tsr_dialog en Col 2
+        // ── Energy saving + TSR (all known firmware) ───────────────
+        // btn_energy_saving_d is in column 1 (drive section), section_tsr_dialog in column 2.
         val sectionTsr = dialogView.findViewById<View>(R.id.section_tsr_dialog)
         if (gen != FirmwareInfo.Gen.UNKNOWN) {
             btnEnergy.visibility = View.VISIBLE
-            // Grisé si SNOW est déjà sélectionné à l'ouverture du dialog
+            // Grayed out if SNOW is already selected when the dialog opens
             val initSnow = data.driveMode == DriveMode.SNOW
             btnEnergy.isEnabled = !initSnow
             btnEnergy.alpha = if (initSnow) 0.35f else 1f
@@ -584,10 +584,10 @@ class ProfileFragment : Fragment() {
             btnEnergy.setOnClickListener {
                 energySavingSel = !energySavingSel
                 activateBtn(btnEnergy, energySavingSel)
-                // Regen : indisponible si Éco actif ou si SNOW sélectionné
+                // Regen: unavailable if Eco active or if SNOW selected
                 setRegenEnabled(!energySavingSel && selectedDrive != DriveMode.SNOW)
             }
-            // Note : l'état initial de la regen est déjà géré après le bindGroup des modes
+            // Note: the initial state of the regen is already managed after the bindGroup of the modes
 
             sectionTsr.visibility = View.VISIBLE
             val swTsr = dialogView.findViewById<Switch>(R.id.sw_tsr_d)
@@ -595,7 +595,7 @@ class ProfileFragment : Fragment() {
             swTsr.setOnCheckedChangeListener { _, checked -> tsrEnabledSel = checked }
         }
 
-        // ── Profil par défaut ────────────────────────────────────────────────
+        // ── Default profile ──────────────────────── ────────────────────────
         val swDefault = dialogView.findViewById<Switch>(R.id.sw_set_default)
         swDefault.isChecked = existing?.id == manager.getDefaultId()
 
@@ -603,14 +603,14 @@ class ProfileFragment : Fragment() {
         val etName = dialogView.findViewById<EditText>(R.id.et_profile_name)
         if (existing != null) etName.setText(existing.name)
 
-        // ── Création du dialog sans chrome Android ───────────────────────────
+        // ── Creating the dialog without Android chrome ───────────────────────────
         val dialog = AlertDialog.Builder(ctx, R.style.Theme_EV_Picker)
             .setView(dialogView)
             .setCancelable(true)
             .create()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        // Titre dynamique intégré dans le layout
+        // Dynamic title integrated into the layout
         dialogView.findViewById<TextView>(R.id.tv_dialog_title).text =
             if (existing != null) getString(R.string.profile_edit) else getString(R.string.profile_add)
 
@@ -619,7 +619,7 @@ class ProfileFragment : Fragment() {
             dialog.dismiss()
         }
 
-        // ── Bouton Enregistrer : ne ferme PAS si le nom est vide ────────────
+        // ── Save button: does NOT close if name is empty ────────────
         dialogView.findViewById<MaterialButton>(R.id.btn_dialog_save).setOnClickListener {
             val name = etName.text.toString().trim()
             if (name.isEmpty()) {
@@ -628,7 +628,7 @@ class ProfileFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // SWI132 utilise désormais sectionSwi133 (mêmes IDs que SWI133 — sans suffixe _d)
+            // SWI132 now uses sectionSwi133 (same IDs as SWI133 — without _d suffix)
             val overspeedAlarm = dialogView.findViewById<Switch?>(R.id.sw_overspeed_alarm)?.isChecked ?: false
             val speedLimitTone = dialogView.findViewById<Switch?>(R.id.sw_speed_limit_tone)?.isChecked ?: false
             val soundWarning   = dialogView.findViewById<Switch?>(R.id.sw_sound_warning)?.isChecked ?: false
@@ -664,10 +664,10 @@ class ProfileFragment : Fragment() {
             dialog.dismiss()
         }
 
-        // ── Rail de catégories ───────────────────────────────────────────────
-        // Le volet de droite n'affiche qu'une catégorie à la fois : le rail porte toute la
-        // navigation de l'éditeur, aucun geste n'est requis. Une catégorie dont toutes les
-        // sections sont masquées par le firmware disparaît du rail plutôt que d'ouvrir un
+        // ── Category rail ─────────────────────── ────────────────────────
+        // The right pane only displays one category at a time: the rail carries the entire
+        // editor navigation, no gestures required. A category of which all
+        // sections are hidden by the firmware disappears from the rail rather than opening a
         // volet vide.
         val detail = dialogView.findViewById<ViewFlipper>(R.id.profile_detail)
         val railEntries = listOf(
@@ -684,7 +684,7 @@ class ProfileFragment : Fragment() {
             railButtons.forEachIndexed { i, button ->
                 val current = i == index
                 activateBtn(button, current)
-                // TalkBack annonce la catégorie courante : la couleur ne la porte pas seule.
+                // TalkBack announces the current category: color does not carry it alone.
                 button.isSelected = current
             }
         }

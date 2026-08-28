@@ -9,7 +9,7 @@
     android:gravity="center"
     android:padding="20dp">
 
-    <!-- ── Carte « Volume à l'ouverture de porte » (SWI132/133) ── -->
+    <!-- ── “Volume at door opening” card (SWI132/133) ── -->
     <LinearLayout
         android:id="@+id/door_volume_card"
         android:layout_width="match_parent"
@@ -77,7 +77,7 @@
             android:value="0"
             android:stepSize="1" />
 
-        <!-- Restaurer le volume à la fermeture -->
+        <!-- Restore volume on close -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -100,7 +100,7 @@
 
         </LinearLayout>
 
-        <!-- Choix des portes déclencheuses -->
+        <!-- Choice of trigger doors -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

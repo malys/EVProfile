@@ -6,22 +6,22 @@ import android.bluetooth.BluetoothProfile
 import android.content.Context
 
 /**
- * [BT-PROFILES] Utilitaires Bluetooth pour la fonctionnalité de profils automatiques.
+ * [BT-PROFILES] Bluetooth utilities for automatic profiles functionality.
  *
- * Les associations Bluetooth ↔ Profil sont désormais stockées directement dans
- * [DrivingProfile.btDeviceMac] — ce fichier ne gère que :
- *   • le suivi en mémoire des appareils ACL connectés
- *   • la liste des appareils appairés (pour l'UI de l'éditeur de profil)
- *   • la requête HFP async (fix "première configuration")
+ * Bluetooth ↔ Profile associations are now stored directly in
+ * [DrivingProfile.btDeviceMac] — this file only manages:
+ *   • in-memory tracking of connected ACL devices
+ *   • the list of paired devices (for the profile editor UI)
+ *   • the asynchronous HFP query (fixes first-time setup)
  *
- * Pour supprimer la fonctionnalité : supprimer ce fichier + tous les blocs
- * marqués // [BT-PROFILES] dans les autres fichiers modifiés.
+ * To remove the feature: delete this file + all blocks
+ * marked // [BT-PROFILES] in other modified files.
  */
 object BluetoothProfileManager {
 
-    // ── Appareils actuellement connectés (en mémoire) ─────────────────────────
-    // Mis à jour depuis EVProfileService via ACTION_ACL_CONNECTED/DISCONNECTED.
-    // Remis à zéro si le service redémarre — le chemin HFP async compense ce cas.
+    // ── Currently connected devices (in memory) ─────────────────────────
+    // Updated from EVProfileService via ACTION_ACL_CONNECTED/DISCONNECTED.
+    // Reset if the service restarts — the HFP async path compensates for this case.
 
     private val connectedMacs = mutableSetOf<String>()
 
@@ -29,11 +29,11 @@ object BluetoothProfileManager {
     fun onDeviceDisconnected(mac: String) { connectedMacs.remove(mac) }
     fun getConnectedMacs(): Set<String>   = connectedMacs.toSet()
 
-    // ── Appareils appairés ────────────────────────────────────────────────────
+    // ── Paired devices ────────────────────────── ──────────────────────────
 
     data class BtDeviceInfo(val name: String, val mac: String)
 
-    /** Retourne la liste des appareils Bluetooth appairés, triée par nom. */
+    /** Returns the list of paired Bluetooth devices, sorted by name. */
     fun getBondedDevices(context: Context): List<BtDeviceInfo> {
         val adapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)
             ?.adapter ?: return emptyList()
@@ -46,15 +46,15 @@ object BluetoothProfileManager {
         } catch (_: SecurityException) { emptyList() }
     }
 
-    // ── Appareils HFP actuellement connectés (requête async) ─────────────────
+    // ── Currently connected HFP devices (async request) ─────────────────
     //
-    // Utilisé dans applyProfileOnIgnition() quand connectedMacs est vide,
-    // ce qui se produit si le téléphone était déjà connecté avant le démarrage
-    // du service (première configuration, redémarrage du service AAOS).
+    // Used in applyProfileOnIgnition() when connectedMacs is empty,
+    // what happens if the phone was already connected before booting
+    // of the service (first configuration, restart of the AAOS service).
     //
-    // On utilise BluetoothProfile.HEADSET (profil HFP AG, rôle voiture) :
-    // sur AAOS la voiture est l'Audio Gateway, les téléphones connectés sont
-    // donc accessibles via ce profil. HEADSET_CLIENT n'est pas exposé sur AAOS.
+    // We use BluetoothProfile.HEADSET (HFP AG profile, car role):
+    // on AAOS the car is the Audio Gateway, the connected phones are
+    // therefore accessible via this profile. HEADSET_CLIENT is not exposed on AAOS.
 
     fun checkConnectedHfpDevices(context: Context, onResult: (List<BluetoothDevice>) -> Unit) {
         val adapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)

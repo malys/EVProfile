@@ -22,12 +22,12 @@ class BootReceiver : BroadcastReceiver() {
         val action = intent.action ?: return
         if (action !in BOOT_ACTIONS) return
 
-        AppLogger.i(TAG, "onReceive: $action — démarrage EVProfileService")
+        AppLogger.i(TAG, "onReceive: $action — starting EVProfileService")
 
-        // Pas de retry différé ici : startForegroundService revient normalement dans les
-        // cas d'échec qui comptent, donc les anciennes relances à 3 s et 8 s ne se
-        // déclenchaient jamais — et un postDelayed survivrait de toute façon à la durée
-        // de vie légitime du receiver. Le service se relance seul (START_STICKY).
+        // No delayed retry here: startForegroundService returns normally within
+        // failure cases that count, so the old restarts at 3 s and 8 s do not
+        // would never trigger — and a postDelayed would survive the duration anyway
+        // legitimate life of the receiver. The service restarts alone (START_STICKY).
         val started = tryStart(context, Intent(context, EVProfileService::class.java))
         AppLogger.i(TAG, "startForegroundService → $started")
     }

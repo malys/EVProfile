@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Marquage au sol : deux lignes continues, une ligne discontinue au centre —
-     l'écran Sortie de voie (ELK). Teinté par @color/nav_tab_foreground. -->
+<!-- Ground marking: two continuous lines, one broken line in the center —
+     the Lane Departure (ELK) screen. Tinted by @color/nav_tab_foreground. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"

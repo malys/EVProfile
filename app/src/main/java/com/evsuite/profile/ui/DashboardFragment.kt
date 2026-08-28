@@ -24,25 +24,25 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Une page du dashboard.
- *   [PAGE_CONTROLS] : paramètres de conduite, climat, alertes
+ * A dashboard page.
+ *   [PAGE_CONTROLS]: driving parameters, climate, alerts
  *   [PAGE_ELK]      : assistant de sortie de voie (ELK) et AEB
  *
- * Le fragment n'a plus de ViewPager2 à lui : les deux pages sont deux instances, et c'est
- * le pager de [com.evsuite.profile.MainActivity] qui les tient, au même rang que Profils ou
- * Réglages. Un pager imbriqué dans un pager n'aurait pas chaîné le balayage — le geste se
- * serait arrêté au bord du dashboard au lieu de continuer vers les écrans suivants.
+ * The fragment no longer has its own ViewPager2: the two pages are two instances, and it is
+ * the pager of [com.evsuite.profile.MainActivity] which holds them at the same rank as Profiles or
+ * Settings. A pager nested within a pager would not have chained the scan — the gesture would
+ * would be stopped at the edge of the dashboard instead of continuing to the following screens.
  */
 class DashboardFragment : Fragment() {
 
-    /** Laquelle des deux pages cette instance affiche. */
+    /** Which of the two pages this instance displays. */
     private val page: Int
         get() = arguments?.getInt(ARG_PAGE) ?: PAGE_CONTROLS
 
     // ── Page 0 — Drive mode ─────────────────────────────────────────────────
     private val driveModeButtons = mutableMapOf<DriveMode, Button>()
 
-    // ── Page 0 — Régénération ───────────────────────────────────────────────
+    // ── Page 0 — Regeneration ─────────────────────── ────────────────────────
     private val regenButtons = mutableMapOf<RegenLevel, Button>()
 
     // ── Page 0 — ADAS SWI133 ────────────────────────────────────────────────
@@ -75,16 +75,16 @@ class DashboardFragment : Fragment() {
     private var switchSoundWarning: Switch? = null
     private var alertsGroupSwi133: View? = null
 
-    // ── Page 0 — TSR + Économie d'énergie ───────────────────────────────────
+    // ── Page 0 — TSR + Energy saving ───────────────────────────────────
     private var switchTsr: Switch? = null
     private var btnEnergySaving: Button? = null
     private var energySavingOn = false
-    /** Dernier mode de conduite connu — nécessaire pour arbitrer les exclusions SNOW / Éco énergie. */
+    /** Last known driving mode — necessary to arbitrate SNOW / Eco energy exclusions. */
     private var currentDriveMode: DriveMode? = null
-    /** Dernier niveau de regen connu — sert à n'annoncer que les vrais changements. */
+    /** Last known regen level — used to announce only real changes. */
     private var currentRegenLevel: RegenLevel? = null
 
-    // ── AEB : page 0 pour VSM-based, page 1 (SWI133) pour les autres ───────────
+    // ── AEB: page 0 for VSM-based, page 1 (SWI133) for others ───────────
     private var switchAeb: Switch? = null
     private var btnAebAlarm: Button? = null
     private var btnAebAlarmBrake: Button? = null
@@ -110,12 +110,12 @@ class DashboardFragment : Fragment() {
     private val elkSenMap: Map<Int, Button?>
         get() = mapOf(ElkSensitivity.LOW to btnElkSenLow, ElkSensitivity.STANDARD to btnElkSenStandard, ElkSensitivity.HIGH to btnElkSenHigh)
 
-    /** True pendant les mises à jour programmatiques des Switch — bloque les listeners. */
+    /** True during programmatic Switch updates — blocks listeners. */
     private var isRefreshing = false
-    /** Dernier mode ELK actif connu (pour restaurer le mode lors du toggle ON). */
+    /** Last known active ELK mode (to restore mode when toggle ON). */
     private var lastActiveElkMode = ElkMode.EMERGENCY
 
-    // ── Couleurs (lazy pour contexte disponible) ─────────────────────────────
+    // ── Colours (lazy so the context is available) ───────────────────────────
     private val colorActive   by lazy { requireContext().getColor(R.color.dash_accent_dim) }
     private val colorInactive by lazy { requireContext().getColor(R.color.dash_btn) }
     private val colorTextActive   by lazy { requireContext().getColor(R.color.dash_accent) }
@@ -149,10 +149,10 @@ class DashboardFragment : Fragment() {
         EVHardware.whenKatman4Ready {
             if (isAdded) {
                 refreshAdas()
-                if (FirmwareInfo.isVsmBased()) refreshElk()  // ELK utilise sVsm sur ces firmwares
+                if (FirmwareInfo.isVsmBased()) refreshElk()  // ELK uses sVsm on these firmware generations.
             }
         }
-        refreshElk()  // SWI133 — sVsm133 indépendant de Katman4
+        refreshElk()  // SWI133 — sVsm133 independent of Katman4
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -163,7 +163,7 @@ class DashboardFragment : Fragment() {
         bindMainViews(view)
         applyFirmwareVisibility(view)
         setupMainListeners()
-        // Refresh immédiat (la page vient d'être créée)
+        // Immediate refresh (the page has just been created)
         refreshDriveRegen()
         refreshClimate()
         EVHardware.whenKatman4Ready {
@@ -221,11 +221,11 @@ class DashboardFragment : Fragment() {
         switchSoundWarning = view.findViewById(R.id.switch_sound_warning)
         alertsGroupSwi133  = view.findViewById(R.id.alerts_group_swi133)
 
-        // TSR + Économie d'énergie
+        // TSR + Energy saving
         switchTsr       = view.findViewById(R.id.switch_tsr)
         btnEnergySaving = view.findViewById(R.id.btn_energy_saving)
 
-        // AEB déplacé sur page 1 pour tous les firmwares — pas de binding ici
+        // AEB moved to page 1 for all firmwares — no binding here
     }
 
     private fun applyFirmwareVisibility(view: View) {
@@ -235,16 +235,16 @@ class DashboardFragment : Fragment() {
         val isKnown    = gen != FirmwareInfo.Gen.UNKNOWN
         val hasClimate = FirmwareInfo.hasHeatFeatures()
 
-        // SWI132 utilise les 4 boutons Off/Lim/ACC/ICA (même groupe que SWI133), pas Off/ACC/TJA
+        // SWI132 uses the 4 Off/Lim/ACC/ICA buttons (same group as SWI133), not Off/ACC/TJA
         view.findViewById<View>(R.id.adas_group_swi133).visibility   = if (!isVsmBased || isSWI132) View.VISIBLE else View.GONE
         view.findViewById<View>(R.id.adas_group_swi68).visibility    = if (isVsmBased && !isSWI132) View.VISIBLE else View.GONE
-        // SWI132 utilise deux alertes séparées (survitesse + ton) comme SWI133, pas soundWarning
+        // SWI132 uses two separate alerts (overspeed + tone) like SWI133, not soundWarning
         view.findViewById<View>(R.id.alerts_group_swi133).visibility = if (!isVsmBased || isSWI132) View.VISIBLE else View.GONE
         view.findViewById<View>(R.id.alerts_group_swi68).visibility  = if (isVsmBased && !isSWI132) View.VISIBLE else View.GONE
-        // AEB déplacé sur page 1 pour tous les firmwares
+        // AEB moved to page 1 for all firmwares
         view.findViewById<View>(R.id.aeb_group).visibility           = View.GONE
         view.findViewById<View>(R.id.climate_card).visibility        = if (hasClimate) View.VISIBLE else View.GONE
-        // TSR + Économie d'énergie — tous firmwares connus
+        // TSR + Power saving — all known firmware
         view.findViewById<View>(R.id.section_tsr).visibility    = if (isKnown) View.VISIBLE else View.GONE
         view.findViewById<View>(R.id.btn_energy_saving).visibility = if (isKnown) View.VISIBLE else View.GONE
     }
@@ -274,15 +274,15 @@ class DashboardFragment : Fragment() {
 
         // ADAS
         // SWI133/UNKNOWN : setMixedIntelligentDrive (VPM) — indices 0/1/3/4 → Off/Lim/ACC/ICA
-        // SWI132          : setAccTjaMode (VSM) — valeurs 0x4/0x3/0x1/0x2 → Off/Lim/ACC/ICA
-        // SWI68/SWI69/SWI131/SWI165 : setAccTjaMode (VSM) — valeurs 0x4/0x1/0x2 → Off/ACC/TJA
+        // SWI132: setAccTjaMode (VSM) — values 0x4/0x3/0x1/0x2 → Off/Limiter/ACC/ICA
+        // SWI68/SWI69/SWI131/SWI165: setAccTjaMode (VSM) — values 0x4/0x1/0x2 → Off/ACC/TJA
         if (!isVsmBased || isSWI132) {
             swi133AdasMap.forEach { (modeIndex, btn) ->
                 btn?.setOnClickListener {
                     CoroutineScope(Dispatchers.IO).launch {
                         if (isSWI132) {
-                            // SWI132 : mode ACC/TJA (setAccTjaMode) et limiteur de vitesse (setSasMode)
-                            // sont deux réglages indépendants ; le sélecteur unique impose l'exclusivité.
+                            // SWI132: ACC/TJA mode (setAccTjaMode) and speed limiter (setSasMode)
+                            // are two independent settings; the single selector imposes exclusivity.
                             applyVsmAdasMode(modeIndex)
                         } else {
                             EVHardware.setMixedIntelligentDrive(modeIndex)
@@ -292,8 +292,8 @@ class DashboardFragment : Fragment() {
                 }
             }
         } else {
-            // SWI68/SWI69/SWI131/SWI165 : sélecteur 5 modes (index 0-4), même logique que SWI132
-            // (mode ACC/TJA + limiteur de vitesse indépendants, exclusivité via le sélecteur unique).
+            // SWI68/SWI69/SWI131/SWI165: 5 mode selector (index 0-4), same logic as SWI132
+            // (ACC/TJA mode + independent speed limiter, exclusivity via the single selector).
             swi68AdasMap.forEach { (modeIndex, btn) ->
                 btn?.setOnClickListener {
                     CoroutineScope(Dispatchers.IO).launch {
@@ -318,7 +318,7 @@ class DashboardFragment : Fragment() {
             } }
         }
 
-        // Alertes SWI133 + SWI132 (deux toggles indépendants : survitesse + ton limite)
+        // SWI133 + SWI132 alerts (two independent toggles: overspeed + limit tone)
         if (!isVsmBased || isSWI132) {
             switchOverspeed?.setOnCheckedChangeListener { _, checked ->
                 if (!isRefreshing)
@@ -344,9 +344,9 @@ class DashboardFragment : Fragment() {
                 if (!isRefreshing) {
                     val gen = FirmwareInfo.getGeneration()
                     val hasTwoAlerts = gen == FirmwareInfo.Gen.SWI133 || gen == FirmwareInfo.Gen.SWI132
-                    // Mise à jour UI immédiate — pas besoin d'attendre le hardware :
-                    // TSR OFF → alertes forcées à OFF et section grisée (non modifiable)
-                    // TSR ON  → section ré-activée ; les valeurs réelles sont lues après le SET
+                    // Immediate UI update — no need to wait for hardware:
+                    // TSR OFF → alerts forced to OFF and grayed out section (not editable)
+                    // TSR ON → section re-activated; the actual values ​​are read after the SET
                     if (hasTwoAlerts) {
                         if (!checked) {
                             isRefreshing = true
@@ -362,12 +362,12 @@ class DashboardFragment : Fragment() {
                             if (checked && hasTwoAlerts) {
                                 when (gen) {
                                     FirmwareInfo.Gen.SWI133 -> {
-                                        // Le firmware SWI133 remet overspeed/speedTone à ON dès que
-                                        // le TSR est activé. setTsrMode() les restaure ensuite via VPM,
-                                        // mais les écritures VPM ont une latence de propagation pouvant
-                                        // dépasser 500ms : lire le hardware ici renverrait encore ON.
-                                        // → On utilise directement les valeurs sauvegardées en prefs,
-                                        //   qui sont exactement ce que setTsrMode() vient de restaurer.
+                                        // The SWI133 firmware resets overspeed/speedTone to ON as soon as
+                                        // TSR is activated. setTsrMode() then restores them via VPM,
+                                        // but VPM writes have a propagation latency that can
+                                        // exceed 500ms: reading the hardware here would still return ON.
+                                        // → We directly use the values ​​saved in prefs,
+                                        //   which are exactly what setTsrMode() just restored.
                                         val (overspeed, speedTone) = EVHardware.savedTsrAlerts()
                                         withContext(Dispatchers.Main) {
                                             if (!isAdded) return@withContext
@@ -378,8 +378,8 @@ class DashboardFragment : Fragment() {
                                         }
                                     }
                                     FirmwareInfo.Gen.SWI132 -> {
-                                        // SWI132 : activer le TSR réinitialise overspeed/speedTone à ON
-                                        // dans la voiture. Forcer les toggles à ON dans l'UI directement.
+                                        // SWI132: enabling TSR resets overspeed/speedTone to ON
+                                        // in the car. Force toggles ON in the UI directly.
                                         withContext(Dispatchers.Main) {
                                             if (!isAdded) return@withContext
                                             isRefreshing = true
@@ -397,7 +397,7 @@ class DashboardFragment : Fragment() {
             }
         }
 
-        // Économie d'énergie — tous firmwares connus
+        // Energy saving — all known firmware
         if (isKnown) {
             btnEnergySaving?.setOnClickListener {
                 energySavingOn = !energySavingOn
@@ -408,7 +408,7 @@ class DashboardFragment : Fragment() {
             }
         }
 
-        // AEB : listeners sur page 1 via setupAebPage2Listeners() — rien ici
+        // AEB listeners are on page 1 through setupAebPage2Listeners(); nothing to bind here.
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -417,18 +417,18 @@ class DashboardFragment : Fragment() {
 
     private fun bindElkPage(view: View) {
         val isSWI132elk = FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI132
-        // ELK — switch principal : IDs différents selon le firmware
+        // ELK — main switch: different IDs depending on the firmware
         if (isSWI132elk) {
-            // SWI132 : layout multi-lignes dans elk_activation_swi132
+            // SWI132: multi-line layout in elk_activation_swi132.
             view.findViewById<View>(R.id.elk_activation_simple).visibility = View.GONE
             view.findViewById<View>(R.id.elk_activation_swi132).visibility = View.VISIBLE
             switchElk         = view.findViewById(R.id.switch_elk_s132)
             switchElkSound    = view.findViewById(R.id.switch_elk_sound)
             switchElkVibration= view.findViewById(R.id.switch_elk_vibration)
-            // SWI132 : pas de mode Emergency — masqué
+            // SWI132: no Emergency mode — hidden
             btnElkEmergency   = view.findViewById(R.id.btn_elk_emergency)
             btnElkEmergency?.visibility = View.GONE
-            // Défaut SWI132 : Alerte (mode 2), pas Emergency
+            // Fault SWI132: Alert (mode 2), not Emergency
             lastActiveElkMode = ElkMode.ALERT
         } else {
             switchElk         = view.findViewById(R.id.switch_elk)
@@ -440,7 +440,7 @@ class DashboardFragment : Fragment() {
         btnElkSenStandard = view.findViewById(R.id.btn_elk_sen_standard)
         btnElkSenHigh     = view.findViewById(R.id.btn_elk_sen_high)
 
-        // AEB — page 1 pour tous les firmwares connus
+        // AEB — page 1 for all known firmware
         val aebCard = view.findViewById<View>(R.id.aeb_card_page2)
         if (FirmwareInfo.getGeneration() != FirmwareInfo.Gen.UNKNOWN) {
             aebCard.visibility    = View.VISIBLE
@@ -464,7 +464,7 @@ class DashboardFragment : Fragment() {
         switchElk?.setOnCheckedChangeListener { _, checked ->
             if (!isRefreshing) {
                 val mode = if (checked) lastActiveElkMode else ElkMode.OFF
-                // SWI132 : grise les 2 switches supplémentaires si désactivé
+                // SWI132: grays the 2 additional switches if disabled
                 if (isSWI132elk) applyElkSoundVibEnabled(checked)
                 CoroutineScope(Dispatchers.IO).launch {
                     EVHardware.setElkMode(mode)
@@ -535,7 +535,7 @@ class DashboardFragment : Fragment() {
                 withContext(Dispatchers.Main) { if (isAdded) applyAebModeUI(AebMode.ALARM_BRAKE) }
             }
         }
-        // Sensibilité
+        // Sensitivity
         aebSenMap.forEach { (level, btn) ->
             btn?.setOnClickListener {
                 CoroutineScope(Dispatchers.IO).launch {
@@ -569,9 +569,9 @@ class DashboardFragment : Fragment() {
     // ═════════════════════════════════════════════════════════════════════════
 
     /**
-     * SWI132 : applique l'index du sélecteur ADAS en distinguant le mode ACC/TJA (setAccTjaMode)
-     * du limiteur de vitesse (setSasMode), deux réglages indépendants sur la voiture. Le sélecteur
-     * unique impose l'exclusivité : choisir un mode désactive l'autre sous-système.
+     * SWI132: applies the ADAS selector index distinguishing between ACC/TJA mode (setAccTjaMode)
+     * speed limiter (setSasMode), two independent settings on the car. The selector
+     * unique imposes exclusivity: choosing one mode deactivates the other subsystem.
      *   0=Off, 1=Lim.Manuel(SAS 2), 2=Lim.Auto/Intelligent(SAS 3), 3=ACC, 4=ICA
      */
     private fun applyVsmAdasMode(index: Int) {
@@ -585,7 +585,7 @@ class DashboardFragment : Fragment() {
     }
 
     /**
-     * SWI132 : convertit l'état lu (mode ACC/TJA + limiteur SAS) en index de bouton (0-4).
+     * SWI132: converts read status (ACC/TJA mode + SAS limiter) to button index (0-4).
      * Manuel→1 (Lim.Manuel), Intelligent→2 (Lim.Auto), ACC→3, TJA→4, sinon Off→0.
      */
     private fun vsmStateToIndex(accTja: Int, sas: Int): Int = when {
@@ -597,9 +597,9 @@ class DashboardFragment : Fragment() {
     }
 
     /**
-     * SWI133 / SWI132 : active ou grise la section des 2 alertes sonores.
-     * Quand le TSR (RECO. PANNEAUX) est OFF, les alertes sont désactivées et non modifiables.
-     * L'alpha est appliqué sur le conteneur entier (labels + switches) pour un rendu cohérent.
+     * SWI133 / SWI132: activates or grays out the 2 sound alerts section.
+     * When the TSR (PANEL RECOGNITION) is OFF, the alerts are deactivated and cannot be modified.
+     * Alpha is applied to the entire container (labels + switches) for consistent rendering.
      */
     private fun setAlertsSwi133Enabled(enabled: Boolean) {
         alertsGroupSwi133?.alpha    = if (enabled) 1f else 0.4f
@@ -608,11 +608,11 @@ class DashboardFragment : Fragment() {
     }
 
     // ═════════════════════════════════════════════════════════════════════════
-    //  Refresh depuis le hardware
+    //  Refresh from hardware
     // ═════════════════════════════════════════════════════════════════════════
 
     private fun refreshDriveRegen() {
-        if (driveModeButtons.isEmpty()) return  // page pas encore créée
+        if (driveModeButtons.isEmpty()) return  // page not yet created
         CoroutineScope(Dispatchers.IO).launch {
             val mode  = EVHardware.getDriveMode()
             val regen = EVHardware.getRegenLevel()
@@ -649,8 +649,8 @@ class DashboardFragment : Fragment() {
     }
 
     private fun refreshAdas() {
-        // Vérifie que les boutons ADAS de page 0 sont créés (AEB est sur page 1)
-        // SWI132 utilise les boutons swi133 (Off/Lim/ACC/ICA), pas les boutons swi68
+        // Verifies that page 0 ADAS buttons are created (AEB is on page 1)
+        // SWI132 uses swi133 buttons (Off/Lim/ACC/ICA), not swi68 buttons
         val isSWI132forGuard = FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI132
         if (!FirmwareInfo.isVsmBased() || isSWI132forGuard) { if (btnAdasOff == null) return }
         else { if (btnSwi68Off == null) return }
@@ -684,7 +684,7 @@ class DashboardFragment : Fragment() {
             switchTsr?.isChecked          = tsrOn
             applyEnergySavingUI(energySaving)
             isRefreshing = false
-            setAlertsSwi133Enabled(tsrOn)   // grise les alertes si TSR est OFF
+            setAlertsSwi133Enabled(tsrOn)   // grays alerts if TSR is OFF
             applySwi133AdasUI(adasMode)
             applyAebModeButtonsEnabled(aebOn)
             if (aebMode > 0) applyAebModeUI(aebMode)
@@ -693,7 +693,7 @@ class DashboardFragment : Fragment() {
 
     /**
      * SWI132 : mode ACC/TJA (CarVehicleSettingClient) + alertes binder direct
-     * (overspeed TX 0x129, speedTone TX 0x12b) + TSR binder direct + AEB + économie.
+     * (overspeed TX 0x129, speedTone TX 0x12b) + direct TSR binder + AEB + economy.
      */
     private suspend fun refreshSwi132Adas() {
         val mode         = EVHardware.getAccTjaMode()
@@ -717,7 +717,7 @@ class DashboardFragment : Fragment() {
             switchTsr?.isChecked       = tsrOn
             applyEnergySavingUI(energySaving)
             isRefreshing = false
-            setAlertsSwi133Enabled(tsrOn)   // grise les alertes si TSR est OFF
+            setAlertsSwi133Enabled(tsrOn)   // grays alerts if TSR is OFF
             applySwi133AdasUI(vsmStateToIndex(mode, sas))  // SWI132 : Off/Limiteur/ACC/ICA
             applyAebModeButtonsEnabled(aebOn)
             if (aebMode > 0) applyAebModeUI(aebMode)
@@ -751,7 +751,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun refreshElk() {
-        if (switchElk == null) return  // page pas encore créée
+        if (switchElk == null) return  // page not yet created
         val isSWI132elk = FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI132
         CoroutineScope(Dispatchers.IO).launch {
             val mode  = EVHardware.getElkMode()
@@ -786,13 +786,13 @@ class DashboardFragment : Fragment() {
         btnEnergySaving?.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
         btnEnergySaving?.isSelected = active
         btnEnergySaving?.setTextColor(if (active) colorTextActive else colorTextInactive)
-        // Regen : indisponible si Éco actif OU si SNOW sélectionné
+        // Regen: unavailable if Eco active OR if SNOW selected
         setRegenEnabled(!active && currentDriveMode != DriveMode.SNOW)
     }
 
     private fun applyDriveModeUI(mode: DriveMode) {
-        // Le changement de valeur est annoncé une fois, pas à chaque rafraîchissement
-        // périodique : sans cela TalkBack ne dit rien du tout quand le mode change.
+        // The value change is announced once, not on each refresh
+        // periodic: otherwise TalkBack says nothing at all when the mode changes.
         if (mode != currentDriveMode) {
             announceValue(R.string.card_drive, getString(mode.labelRes))
         }
@@ -808,9 +808,9 @@ class DashboardFragment : Fragment() {
             btn.setTextColor(text)
             btn.isSelected = m == mode
         }
-        // Regen : indisponible si SNOW OU si Éco énergie actif
+        // Regen: unavailable if SNOW OR if Eco energy active
         setRegenEnabled(mode != DriveMode.SNOW && !energySavingOn)
-        // Bouton Éco énergie : indisponible en mode SNOW (modes exclusifs)
+        // Eco energy button: not available in SNOW mode (exclusive modes)
         val isSnow = mode == DriveMode.SNOW
         btnEnergySaving?.isEnabled = !isSnow
         btnEnergySaving?.alpha = if (isSnow) 0.35f else 1f
@@ -829,7 +829,7 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    /** Annonce « <réglage> : <valeur> » à TalkBack. La couleur du bouton ne suffit pas. */
+    /** Announces “<setting>: <value>” to TalkBack. The color of the button is not enough. */
     private fun announceValue(labelRes: Int, value: String) {
         view?.announceForAccessibility("${getString(labelRes)} : $value")
     }
@@ -837,8 +837,8 @@ class DashboardFragment : Fragment() {
     private fun setRegenEnabled(enabled: Boolean) {
         val isSnow = currentDriveMode == DriveMode.SNOW
         regenButtons.forEach { (level, btn) ->
-            // ONE_PEDAL reste accessible même quand Éco énergie est actif,
-            // sauf en mode SNOW où tous les niveaux de regen sont indisponibles.
+            // ONE_PEDAL remains accessible even when Eco energy is active,
+            // except in SNOW mode where all regen levels are unavailable.
             val btnEnabled = enabled || (level == RegenLevel.ONE_PEDAL && !isSnow)
             btn.isEnabled = btnEnabled
             btn.alpha = if (btnEnabled) 1f else 0.35f

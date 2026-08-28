@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Contour d'un onglet. L'onglet actif n'en a pas besoin — son fond plein le détache
-     déjà — mais garder un contour de la même couleur que le fond évite que sa taille
-     saute d'un dp au changement de page. -->
+<!-- Outline of a tab. The active tab doesn't need it — its solid background detaches it
+     already — but keeping an outline of the same color as the background prevents its size
+     jumps one dp on page change. -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true" android:color="@color/dash_accent" />
     <item android:color="@color/dash_border" />

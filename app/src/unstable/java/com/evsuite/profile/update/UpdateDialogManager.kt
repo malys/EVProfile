@@ -28,10 +28,10 @@ import java.io.File
 import java.util.UUID
 
 /**
- * Gère l'affichage du dialog de mise à jour.
+ * Manages the display of the update dialog.
  * 3 phases distinctes :
- *   1. Info      : versions + boutons Télécharger / Manuel / Plus tard
- *   2. Progress  : téléchargement privé, redirections contrôlées, puis vérification
+ *   1. Info: versions + Download / Manual / Later buttons
+ *   2. Progress: private download, controlled redirects, then verification
  *   3. Manuel    : instructions GitHub/QR code
  */
 object UpdateDialogManager {
@@ -48,7 +48,7 @@ object UpdateDialogManager {
             .setCancelable(false)
             .create()
 
-        // ── Références vues ──────────────────────────────────────────────────
+        // ── References seen ───────────────────────── ─────────────────────────
         val groupInfo     = view.findViewById<View>(R.id.group_info)
         val groupProgress = view.findViewById<View>(R.id.group_progress)
         val groupManual   = view.findViewById<View>(R.id.group_manual)
@@ -88,7 +88,7 @@ object UpdateDialogManager {
         rowDataWarn.visibility = if (onWifi) View.GONE else View.VISIBLE
 
 
-        // ── Bouton NE PLUS ME RAPPELER ───────────────────────────────────────
+        // ── DON’T CALL ME AGAIN button ───────────────────────────────────────
         btnSkip.setOnClickListener {
             UpdateChecker.skipVersion(activity, info.versionName)
             dialog.dismiss()
@@ -122,7 +122,7 @@ object UpdateDialogManager {
         // ── Bouton INSTALLATION MANUELLE ─────────────────────────────────────
         btnManual.setOnClickListener { showManualPanel() }
 
-        // ── Bouton TÉLÉCHARGER L'APK ──────────────────────────────────────────
+        // ── DOWNLOAD APK button ───────────────────── ─────────────────────
         btnAuto.setOnClickListener {
             if (!onWifi) {
                 MaterialAlertDialogBuilder(activity)
@@ -147,7 +147,7 @@ object UpdateDialogManager {
         dialog.show()
     }
 
-    // ── Téléchargement privé vérifié → dossier Téléchargements public ───
+    // ── Verified Private Download → Public Downloads folder ───
 
     private fun launchDownload(
         activity: AppCompatActivity,
@@ -158,9 +158,9 @@ object UpdateDialogManager {
         btnCancel: MaterialButton,
         onDownloaded: () -> Unit
     ) {
-        // Deuxième barrière : UpdateChecker a déjà filtré l'URL, on ne fait jamais
-        // confiance à une URL distante au point de la passer telle quelle au système.
-        if (!ApkUrlPolicy.isAllowedLogged(info.apkUrl, "Téléchargement")) {
+        // Second barrier: UpdateChecker has already filtered the URL, we never do
+        // trust a remote URL to the point of passing it as is to the system.
+        if (!ApkUrlPolicy.isAllowedLogged(info.apkUrl, "Download")) {
             tvStatus.setText(R.string.update_error_download)
             btnCancel.setText(R.string.update_close)
             return
@@ -222,7 +222,7 @@ object UpdateDialogManager {
         }
     }
 
-    // ── Ouvre le dossier Téléchargements dans le gestionnaire AAOS ───────────
+    // ── Opens the Downloads folder in AAOS Manager ───────────
 
     private fun openDownloadsFolder(context: Context) {
         try {
@@ -230,9 +230,9 @@ object UpdateDialogManager {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             context.startActivity(intent)
-            Log.i(TAG, "Dossier Téléchargements ouvert")
+            Log.i(TAG, "Downloads directory opened")
         } catch (e: Exception) {
-            Log.w(TAG, "Impossible d'ouvrir Téléchargements : ${e.message}")
+            Log.w(TAG, "Unable to open Downloads: ${e.message}")
         }
     }
 

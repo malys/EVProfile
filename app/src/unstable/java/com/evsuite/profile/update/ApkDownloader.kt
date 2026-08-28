@@ -7,13 +7,13 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 /**
- * Télécharge un fichier APK depuis une URL vers un fichier local.
- * Gère les redirections HTTP/HTTPS (GitHub CDN).
- * La progression (0–100) est remontée via [onProgress] sur le thread appelant.
+ * Downloads an APK file from a URL to a local file.
+ * Handles HTTP/HTTPS redirects (GitHub CDN).
+ * The progress (0–100) is reported via [onProgress] on the calling thread.
  */
 object ApkDownloader {
 
-    /** Plafond de taille : l'APK fait ~10 Mo, au-delà on refuse plutôt que remplir le disque. */
+    /** Size ceiling: the APK is ~10 MB, beyond that we refuse rather than fill the disk. */
     private const val MAX_APK_BYTES = 100L * 1024 * 1024
 
     suspend fun download(
@@ -22,10 +22,10 @@ object ApkDownloader {
         onProgress: suspend (Int) -> Unit
     ): Boolean = withContext(Dispatchers.IO) {
         try {
-            // Supprimer un éventuel fichier précédent
+            // Delete any previous file
             if (destFile.exists()) destFile.delete()
 
-            if (!ApkUrlPolicy.isAllowedLogged(url, "Téléchargement")) return@withContext false
+            if (!ApkUrlPolicy.isAllowedLogged(url, "Download")) return@withContext false
 
             val conn = openConnection(url) ?: return@withContext false
             if (conn.responseCode != 200) {
@@ -47,7 +47,7 @@ object ApkDownloader {
                     while (input.read(buffer).also { read = it } != -1) {
                         output.write(buffer, 0, read)
                         downloaded += read
-                        // Le Content-Length est déclaratif : on coupe aussi sur les octets réels.
+                        // The Content-Length is declarative: we also cut on the real bytes.
                         if (downloaded > MAX_APK_BYTES) {
                             destFile.delete()
                             return@withContext false
@@ -70,15 +70,15 @@ object ApkDownloader {
     }
 
     /**
-     * Ouvre une connexion en suivant manuellement les redirections (GitHub → CDN).
-     * Chaque saut est revalidé : sans cela un `Location:` en http suffit à faire
-     * accepter une rétrogradation https → http ou un hôte arbitraire.
-     * Renvoie null si un saut sort de la liste d'origines autorisées.
+     * Opens a connection by manually following redirects (GitHub → CDN).
+     * Each jump is revalidated: otherwise a `Location:` in http is enough to do
+     * accept downgrade https → http or arbitrary host.
+     * Returns null if a jump falls outside the list of allowed origins.
      */
     private fun openConnection(urlStr: String, depth: Int = 0): HttpURLConnection? {
         if (!ApkUrlPolicy.isAllowedLogged(urlStr, "Redirection")) return null
         val conn = (URL(urlStr).openConnection() as HttpURLConnection).apply {
-            // Les redirections sont suivies à la main pour pouvoir contrôler chaque saut.
+            // Redirections are followed by hand to be able to control each jump.
             instanceFollowRedirects = false
             setRequestProperty("User-Agent", "EVProfile-Android")
             connectTimeout = 15_000

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Raccourcis volant — navigation liste/détail.
+    Flying shortcuts — list/detail navigation.
 
-    L'écran montrait d'un coup les deux boutons ★, la configuration 1 pédale et jusqu'à
-    dix boutons ADAS : quatre sujets sans hiérarchie sur une seule surface. Le rail de
-    gauche les sépare, le volet de droite n'en montre qu'un. Le commutateur global reste
-    au-dessus du rail : il conditionne les quatre volets, il n'est pas l'un d'eux.
+    The screen suddenly showed the two ★ buttons, the 1 pedal configuration and up to
+    ten ADAS buttons: four subjects without hierarchy on a single surface. The rail of
+    left separates them, the right pane only shows one. The global switch remains
+    above the rail: it conditions the four shutters, it is not one of them.
 
-    Les identifiants sont inchangés : ShortcutsFragment lie les mêmes vues.
+    The identifiers are unchanged: ShortcutsFragment links the same views.
 -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -46,7 +46,7 @@
 
     </LinearLayout>
 
-    <!-- ── Zone principale (désactivée visuellement si toggle OFF) ───── -->
+    <!-- ── Main zone (visually disabled if toggle OFF) ───── -->
     <LinearLayout
         android:id="@+id/shortcuts_content"
         android:layout_width="match_parent"
@@ -244,7 +244,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-            <!-- ── Config : 1 Pédale (regen de retour) ──────────────── -->
+            <!-- ── Config: 1 Pedal (return regen) ──────────────── -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

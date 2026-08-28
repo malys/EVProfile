@@ -14,22 +14,22 @@
 -keep interface com.evsuite.profile.api.IProfileControl { *; }
 -keep class com.evsuite.profile.api.IProfileControl$* { *; }
 
-# Gson (profils + sauvegarde). Sans Signature, le type générique de
-# TypeToken<List<DrivingProfile>> est effacé et la désérialisation rend une liste de
-# LinkedTreeMap : les profils disparaîtraient silencieusement au premier lancement d'une
-# release minifiée.
+# Gson (profiles and backups). Without Signature, the generic type of
+# TypeToken<List<DrivingProfile>> is erased and deserialization returns a list of
+# LinkedTreeMap instances: profiles would silently disappear on the first launch of a
+# minified release.
 -keepattributes Signature, InnerClasses, EnclosingMethod
 -keepattributes *Annotation*
 -keep class com.google.gson.reflect.TypeToken { *; }
 -keep class * extends com.google.gson.reflect.TypeToken
 
-# Les champs des classes sérialisées sont lus par réflexion : ne pas les renommer.
+# Serialized class fields are read through reflection; do not rename them.
 -keepclassmembers class com.evsuite.hardware.model.** {
     <fields>;
     <init>(...);
 }
 
-# Stack traces exploitables dans le rapport de crash (CrashLogger) — sans ça les lignes
-# obfusquées rendent le rapport inutilisable sans le fichier mapping.
+# Keep stack traces useful in CrashLogger reports. Otherwise obfuscated lines make the
+# report unusable without the mapping file.
 -keepattributes SourceFile, LineNumberTable
 -renamesourcefileattribute SourceFile

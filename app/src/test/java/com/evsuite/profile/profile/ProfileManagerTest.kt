@@ -33,19 +33,19 @@ class ProfileManagerTest {
     }
 
     @Test
-    fun `liste vide au demarrage`() {
+    fun `list is empty at startup`() {
         assertTrue(manager.getAll().isEmpty())
     }
 
     @Test
-    fun `save puis getById retourne le profil`() {
+    fun `save then getById returns the profile`() {
         val p = profile("Ville")
         assertTrue(manager.save(p))
         assertEquals("Ville", manager.getById(p.id)?.name)
     }
 
     @Test
-    fun `save sur un id existant met a jour au lieu d ajouter`() {
+    fun `save updates an existing id instead of adding one`() {
         val p = profile("Ville")
         manager.save(p)
         manager.save(p.copy(name = "Autoroute"))
@@ -54,14 +54,14 @@ class ProfileManagerTest {
     }
 
     @Test
-    fun `save refuse au dela de MAX_PROFILES`() {
+    fun `save refuses beyond MAX_PROFILES`() {
         repeat(ProfileManager.MAX_PROFILES) { assertTrue(manager.save(profile("P$it"))) }
         assertFalse(manager.save(profile("overflow")))
         assertEquals(ProfileManager.MAX_PROFILES, manager.getAll().size)
     }
 
     @Test
-    fun `delete retire le profil`() {
+    fun `delete removes the profile`() {
         val p = profile("Ville")
         manager.save(p)
         manager.delete(p.id)
@@ -69,7 +69,7 @@ class ProfileManagerTest {
     }
 
     @Test
-    fun `delete du profil par defaut efface le defaut`() {
+    fun `deleting the default profile clears the default`() {
         val p = profile("Ville")
         manager.save(p)
         manager.setDefault(p.id)
@@ -79,8 +79,8 @@ class ProfileManagerTest {
     }
 
     @Test
-    fun `migration aebMode zero force AEB actif en alerte plus freinage`() {
-        // Profil créé avant l'ajout de l'AEB : aebMode=0 (défaut JVM), aebEnabled=false.
+    fun `migration of zero aebMode enables AEB with alert and braking`() {
+        // Profile created before adding AEB: aebMode=0 (JVM default), aebEnabled=false.
         manager.save(profile("Legacy", aebMode = 0).copy(aebEnabled = false))
         val migrated = manager.getAll().single()
         assertTrue(migrated.aebEnabled)
@@ -88,7 +88,7 @@ class ProfileManagerTest {
     }
 
     @Test
-    fun `migration ne touche pas les profils deja configures`() {
+    fun `migration preserves profiles already configured`() {
         manager.save(profile("Moderne", aebMode = 1).copy(aebEnabled = false))
         val kept = manager.getAll().single()
         assertFalse(kept.aebEnabled)
@@ -96,7 +96,7 @@ class ProfileManagerTest {
     }
 
     @Test
-    fun `getProfileForBtDevice ignore la casse du MAC`() {
+    fun `getProfileForBtDevice ignores MAC case`() {
         manager.save(profile("BT").copy(btDeviceMac = "AA:BB:CC:DD:EE:FF"))
         assertEquals("BT", manager.getProfileForBtDevice("aa:bb:cc:dd:ee:ff")?.name)
         assertNull(manager.getProfileForBtDevice("11:22:33:44:55:66"))

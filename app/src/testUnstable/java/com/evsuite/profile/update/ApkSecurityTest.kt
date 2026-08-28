@@ -9,19 +9,19 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Politique d'origine des APK et comparaison de signatures.
+ * APK origin policy and signature comparison.
  *
- * Robolectric est nécessaire uniquement parce que [ApkUrlPolicy] journalise via
- * AppLogger (android.util.Log) ; la logique testée reste pure.
+ * Robolectric is only necessary because [ApkUrlPolicy] logs via
+ * AppLogger(android.util.Log); the tested logic remains pure.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 class ApkSecurityTest {
 
-    // ── Origines autorisées ──────────────────────────────────────────────────
+    // ── Authorized origins ───────────────────────── ─────────────────────────
 
     @Test
-    fun `https vers un hote autorise est accepte`() {
+    fun `https to an allowed host is accepted`() {
         assertTrue(ApkUrlPolicy.isAllowed(
             "https://github.com/malys/EVProfile/releases/download/unstable/EVProfile-unstable-2.7.0.42.apk"))
         assertTrue(ApkUrlPolicy.isAllowed(
@@ -29,33 +29,33 @@ class ApkSecurityTest {
     }
 
     @Test
-    fun `http est refuse meme sur un hote autorise`() {
+    fun `http is refused even on an allowed host`() {
         assertFalse(ApkUrlPolicy.isAllowed("http://github.com/malys/EVProfile/app.apk"))
     }
 
     @Test
-    fun `hote etranger est refuse`() {
+    fun `foreign host is refused`() {
         assertFalse(ApkUrlPolicy.isAllowed("https://evil.example.com/app.apk"))
     }
 
     @Test
-    fun `hote qui imite un hote autorise est refuse`() {
-        // Suffixe / préfixe trompeurs : la comparaison est exacte, pas un endsWith.
+    fun `host imitating an allowed host is refused`() {
+        // Misleading suffix/prefix: the comparison is exact, not an endsWith.
         assertFalse(ApkUrlPolicy.isAllowed("https://github.com.attacker.net/app.apk"))
         assertFalse(ApkUrlPolicy.isAllowed("https://evil-github.com/app.apk"))
         assertFalse(ApkUrlPolicy.isAllowed("https://notgithub.com/app.apk"))
     }
 
     @Test
-    fun `url vide ou non parsable est refusee`() {
+    fun `empty or invalid URL is refused`() {
         assertFalse(ApkUrlPolicy.isAllowed(""))
-        assertFalse(ApkUrlPolicy.isAllowed("pas une url"))
+        assertFalse(ApkUrlPolicy.isAllowed("not a URL"))
         assertFalse(ApkUrlPolicy.isAllowed("ftp://github.com/app.apk"))
         assertFalse(ApkUrlPolicy.isAllowed("file:///sdcard/Download/app.apk"))
     }
 
     @Test
-    fun `la casse de l hote n a pas d importance`() {
+    fun `host case does not matter`() {
         assertTrue(ApkUrlPolicy.isAllowed("https://GitHub.com/malys/EVProfile/app.apk"))
         assertTrue(ApkUrlPolicy.isAllowed("HTTPS://github.com/malys/EVProfile/app.apk"))
     }
@@ -73,13 +73,13 @@ class ApkSecurityTest {
     }
 
     @Test
-    fun `signature supplementaire dans l archive ne correspond pas`() {
+    fun `additional archive signature does not match`() {
         assertFalse(ApkSignatureVerifier.certsMatch(setOf("aa11", "bb22"), setOf("aa11")))
     }
 
     @Test
-    fun `jeu vide ne correspond jamais - fail closed`() {
-        // Archive illisible ou API en échec : refuser, jamais accepter par défaut.
+    fun `empty set never matches and fails closed`() {
+        // Unreadable archive or failed API: refuse, never accept by default.
         assertFalse(ApkSignatureVerifier.certsMatch(emptySet(), setOf("aa11")))
         assertFalse(ApkSignatureVerifier.certsMatch(setOf("aa11"), emptySet()))
         assertFalse(ApkSignatureVerifier.certsMatch(emptySet(), emptySet()))

@@ -17,17 +17,17 @@ class EVApp : Application() {
         super.onCreate()
 
         // ── Crash handler global ──────────────────────────────────────────────
-        // Intercepte toute exception non gérée, écrit la stack trace + les logs
-        // AppLogger dans filesDir/last_crash.txt, puis laisse le handler par défaut
-        // terminer le processus normalement (Android affiche son propre écran de crash).
+        // Catch any unhandled exception, write stack trace + logs
+        // AppLogger in filesDir/last_crash.txt, then leaves the default handler
+        // complete the process normally (Android displays its own crash screen).
         CrashLogger.install(this, "EVProfile")
 
-        // ── Migration + initialisation du thème ───────────────────────────────
+        // ── Migration + theme initialization ───────────────────────────────
         val prefs = getSharedPreferences("ev_settings", Context.MODE_PRIVATE)
 
         if (!prefs.contains(ThemeHelper.PREF_THEME_MODE)) {
-            // Migration depuis l'ancien booléen "dark_theme" (version < 2.x)
-            // Sur nouvelle installation : "auto" (tous les firmwares le supportent)
+            // Migration from the old boolean "dark_theme" (version < 2.x)
+            // On new installation: "auto" (all firmwares support it)
             val defaultMode = when {
                 prefs.contains("dark_theme") ->
                     if (prefs.getBoolean("dark_theme", true)) "dark" else "light"

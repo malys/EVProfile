@@ -4,8 +4,8 @@ import android.os.Environment
 import android.util.Log
 
 /**
- * Nettoie automatiquement les APK de l'app dans le dossier Téléchargements.
- * Ne conserve que les [MAX_APK] plus récents.
+ * Automatically cleans the app's APKs in the Downloads folder.
+ * Only keeps the most recent [MAX_APK].
  */
 object ApkCleanup {
 
@@ -13,9 +13,9 @@ object ApkCleanup {
     private const val MAX_APK = 5
 
     /**
-     * Vrai si [name] est un APK de EVProfile dans les Téléchargements.
-     * Couvre le naming actuel `EVProfile-<flavor>-<version>.apk` ET l'ancien `MGControl<version>.apk`
-     * (pour nettoyer aussi les téléchargements déjà présents avant le changement de nom).
+     * True if [name] is an APK of EVProfile in Downloads.
+     * Covers the current `EVProfile-<flavor>-<version>.apk` name and legacy `MGControl<version>.apk`.
+     * (to also clean downloads already present before the name change).
      */
     fun isAppApk(name: String): Boolean =
         (name.startsWith("EVProfile", ignoreCase = true) ||
@@ -33,11 +33,11 @@ object ApkCleanup {
         val toDelete = apkFiles.sortedBy { it.lastModified() }.take(apkFiles.size - MAX_APK)
         toDelete.forEach { file ->
             if (file.delete()) {
-                Log.i(TAG, "Supprimé : ${file.name}")
+                Log.i(TAG, "Deleted: ${file.name}")
             } else {
-                Log.w(TAG, "Échec suppression : ${file.name}")
+                Log.w(TAG, "Delete failed: ${file.name}")
             }
         }
-        Log.i(TAG, "${toDelete.size} APK(s) supprimé(s) — ${MAX_APK} conservé(s)")
+        Log.i(TAG, "${toDelete.size} APK(s) deleted — ${MAX_APK} retained")
     }
 }

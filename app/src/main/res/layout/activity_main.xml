@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Layout principal de l'activité : une top-bar fixe au-dessus d'un ViewPager2 unique.
+    Main layout of the activity: a fixed top-bar above a single ViewPager2.
 
-    Tous les écrans — Conduite, ELK, Audio, Profils, Raccourcis, Réglages — sont des pages
-    du même pager, dans l'ordre de la barre du haut. Chaque bouton de la barre amène à sa
-    page, et le balayage horizontal les parcourt toutes : le geste et le bouton désignent
-    la même chose, ce qui rend le bouton « Fermer » de chaque écran inutile (il n'existe
-    plus de sous-écran d'où revenir).
+    All screens — Driving, ELK, Audio, Profiles, Shortcuts, Settings — are pages
+    of the same pager, in the order of the top bar. Each button on the bar leads to its
+    page, and the horizontal swipe goes through them all: the gesture and the button designate
+    the same thing, which makes the “Close” button on each screen useless (there is no
+    no more subscreen to return from).
 
-    Automatisation (EVTasker) n'est pas un écran : c'est un raccourci vers une autre
-    application, rangé dans Réglages plutôt que dans cette barre de pages.
+    Automation (EVTasker) is not a screen: it is a shortcut to another
+    application, stored in Settings rather than in this page bar.
 -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -136,7 +136,7 @@
 
     </LinearLayout>
 
-    <!-- ── ZONE DE CONTENU (pager de tous les écrans) ────────────────── -->
+    <!-- ── CONTENT AREA (pager of all screens) ────────────────── -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/main_pager"
         android:layout_width="match_parent"

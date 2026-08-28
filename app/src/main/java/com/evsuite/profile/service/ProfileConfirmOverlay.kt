@@ -20,9 +20,9 @@ import com.evsuite.hardware.model.DrivingProfile
 import com.evsuite.profile.util.LocaleHelper
 
 /**
- * Popup OUI/NON demandant s'il faut appliquer [profile] car la temp ext dépasse un seuil.
- * Calqué sur ProfilePickerOverlay (fenêtre overlay, compte à rebours 8 s, verrou 0 km/h).
- * OUI → onConfirmed ; NON ou timeout → onDeclined (une seule fois).
+ * YES/NO popup asking whether to apply [profile] because the ext temp exceeds a threshold.
+ * Modeled after ProfilePickerOverlay (window overlay, 8 sec countdown, 0 km/h lock).
+ * YES → onConfirmed; NO or timeout → onDeclined (exactly once).
  */
 object ProfileConfirmOverlay {
 
@@ -55,9 +55,9 @@ object ProfileConfirmOverlay {
         onConfirmed: () -> Unit,
         onDeclined: () -> Unit
     ) {
-        // En roulant (verrou actif) : pas d'écriture → on décline directement (fallback BT/défaut).
+        // While driving (active lock): no writing → we decline directly (BT fallback/default).
         if (VehicleWriteGate.decideNow() != VehicleWriteGate.Decision.ALLOWED) {
-            AppLogger.w(TAG, "Confirm non affiché : sécurité conduite active → onDeclined")
+            AppLogger.w(TAG, "Confirmation not shown: driving safety gate active → onDeclined")
             onDeclined(); return
         }
         dismiss(context)
@@ -72,7 +72,7 @@ object ProfileConfirmOverlay {
         view.findViewById<TextView>(R.id.confirm_message).text =
             localized.getString(msgRes, threshold, tempStr, profile.name)
 
-        // Un seul chemin de sortie : garde-fou pour ne déclencher qu'un callback.
+        // A single exit path: safeguard to only trigger one callback.
         var done = false
         fun finish(confirmed: Boolean) {
             if (done) return
@@ -86,8 +86,8 @@ object ProfileConfirmOverlay {
         view.findViewById<View>(R.id.confirm_backdrop).setOnClickListener { finish(false) }
 
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        // Focusable : c'est une confirmation d'écriture véhicule, elle doit être atteignable
-        // au clavier et annoncée par TalkBack. RETOUR vaut « Non », comme le fond.
+        // Focusable: this is a confirmation of vehicle writing, it must be reachable
+        // on the keyboard and announced by TalkBack. RETURN is “No”, like the background.
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
@@ -106,7 +106,7 @@ object ProfileConfirmOverlay {
         wm.addView(view, params)
         view.requestFocus()
         overlayView = view
-        AppLogger.i(TAG, "Confirm affiché pour '${profile.name}'")
+        AppLogger.i(TAG, "Confirmation shown for '${profile.name}'")
 
         val tvCountdown = view.findViewById<TextView>(R.id.confirm_countdown)
         var remaining = (AUTO_DISMISS_MS / 1_000L).toInt()
@@ -137,7 +137,7 @@ object ProfileConfirmOverlay {
         overlayView = null
         try {
             (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).removeView(v)
-            AppLogger.i(TAG, "Confirm fermé")
+            AppLogger.i(TAG, "Confirmation closed")
         } catch (e: Exception) {
             AppLogger.i(TAG, "Erreur fermeture confirm : ${e.message}")
         }

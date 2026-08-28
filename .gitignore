@@ -3,13 +3,13 @@
 build/
 **/build/
 
-# Local config (ne jamais committer — contient les chemins locaux SDK)
+# Local config (never commit — contains local SDK paths)
 local.properties
 
 # mokup
 mockup/
 
-# Analyse interne (non commitée) — docs de travail générés
+# Internal analysis (uncommitted) — generated working docs
 analysis/DIFF_2.7.0.md
 analysis/DIFF_2.7.0.full.diff
 analysis/SOH_feasibility.md
@@ -28,7 +28,7 @@ analysis/FEATURE_BACKLOG.md
 *.ipr
 .DS_Store
 
-# Keystore & secrets de signature (ne jamais committer)
+# Keystore & signing secrets (never commit)
 *.jks
 *.keystore
 keystore.properties
@@ -39,7 +39,7 @@ signing.properties
 *.log
 
 
-# mise : mise.toml est COMMITÉ (il décrit le build). Seules les surcharges
-# locales, machine-spécifiques, sont ignorées.
+# mise: mise.toml is COMMITTED (it describes the build). Only overloads
+# local, machine-specific, are ignored.
 mise.local.toml
 .mise.local.toml

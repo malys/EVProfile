@@ -18,6 +18,13 @@ It is the reference for interactive write sequencing and user-visible refusal ha
 EVHardware remains authoritative for shared primitives, firmware routing and low-level
 safety gates.
 
+## Language
+
+EVProfile is maintained in English only. Changelog entries, documentation, source comments,
+developer tooling output and the default Android resources must be English. Do not add a
+French documentation variant or French locale option. Other supported UI translations stay
+in their qualified `values-<locale>` directories; English stays in unqualified `values`.
+
 ## The one rule that shapes everything
 
 **A write is a physical act.** Every code path that reaches the vehicle is gated on

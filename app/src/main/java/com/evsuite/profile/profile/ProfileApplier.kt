@@ -19,65 +19,66 @@ object ProfileApplier {
     private const val TAG = "EV_PROFILE"
 
     /**
-     * Scope unique et supervisé pour toutes les applications de profil. Remplace
-     * GlobalScope : une application qui échoue n'emporte pas les suivantes.
+     * Single, supervised scope for all profile applications. Replaces
+     * GlobalScope: One application that fails does not affect subsequent ones.
      */
     private val applierScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     /**
-     * Sérialise les applications de profil. Bouton volant, connexion Bluetooth et passage
-     * en READY peuvent se déclencher simultanément ; sans ce verrou les écritures
-     * s'entrelacent et les séquences AEB multi-étapes (setFcwAutoBrakeMode puis
-     * setFcwState) sont coupées par le profil concurrent, laissant l'ADAS dans un état
-     * indéterminé.
+     * Serializes profile applications. Steering wheel button, Bluetooth connection and pass
+     * in READY can be triggered simultaneously; without this lock the writes
+     * interleave and multi-step AEB sequences (setFcwAutoBrakeMode then
+     * setFcwState) can be interrupted by a concurrent profile, leaving ADAS in an
+     * indeterminate state.
      */
     private val applyMutex = Mutex()
 
-    /** Application en cours : annulée dès qu'une nouvelle est demandée. */
+    /** Application in progress: canceled as soon as a new one is requested. */
     @Volatile
     private var currentApply: Job? = null
 
     /**
-     * Id du dernier profil appliqué MANUELLEMENT (popup volant, bouton dans l'app, raccourci
-     * APPLY_PROFILE) — c.-à-d. avec autoStart=false. Permet au passage en READY de respecter le
-     * choix explicite de l'utilisateur au lieu de ré-appliquer le profil par défaut.
-     * En mémoire : réinitialisé à l'extinction de la voiture (IGNITION_OFF) ou au redémarrage du process.
+     * ID of the last profile applied MANUALLY (steering-wheel picker, app button, shortcut
+     * APPLY_PROFILE) — i.e. with autoStart=false. Allows switching to READY to respect the
+     * explicit choice of the user instead of re-applying the default profile.
+     * In memory: reset when the car is turned off (IGNITION_OFF) or when the process is restarted.
      */
     @Volatile
     var lastManualProfileId: String? = null
 
     /**
-     * Applique tous les paramètres de [profile] au véhicule de façon asynchrone.
-     * Les opérations HVAC (siège/volant) sont bloquantes (polling jusqu'à 7s),
-     * exécutées sur le dispatcher IO.
+     * Applies all [profile] settings to the vehicle asynchronously.
+     * HVAC operations (seat/steering wheel) are blocking (polling up to 7s) and are
+     * executed on the IO dispatcher.
      *
-     * @param autoStart true si l'application est déclenchée automatiquement au démarrage
-     *   (IGNITION/boot). Active la passe de vérification des alertes sonores (SWI132/SWI133) :
-     *   au démarrage à froid, le firmware peut ré-asserter OVERSPEED/SPEED_TONE après nos
-     *   écritures — on relit et on réécrit en cas d'écart. Inutile en application manuelle.
+     * @param autoStart true if the application is triggered automatically on startup
+     *   (IGNITION/boot). Enables the sound alert verification pass (SWI132/SWI133):
+     *   on cold start, the firmware may re-assert OVERSPEED/SPEED_TONE after our
+     *   writes, so the values are read again and corrected on mismatch. This is unnecessary
+     *   for manual profile application.
      */
     fun apply(profile: DrivingProfile, autoStart: Boolean = false, onComplete: ((Boolean) -> Unit)? = null) {
-        AppLogger.i(TAG, "Application du profil : ${profile.name} (autoStart=$autoStart)")
+        AppLogger.i(TAG, "Applying profile: ${profile.name} (autoStart=$autoStart)")
 
-        // Application manuelle (popup volant / app / raccourci) → on mémorise le choix de l'utilisateur
-        // pour que le passage en READY le respecte au lieu de ré-appliquer le profil par défaut.
+        // Manual application (popup flyout / app / shortcut) → we store the user's choice
+        // so that switching to READY respects it instead of re-applying the default profile.
         if (!autoStart) {
             lastManualProfileId = profile.id
-            AppLogger.i(TAG, "  Choix manuel mémorisé : ${profile.name} (id=${profile.id})")
+            AppLogger.i(TAG, "  Remembered manual selection: ${profile.name} (id=${profile.id})")
         }
 
         val previous = currentApply
         currentApply = applierScope.launch {
-            // Annule l'application précédente avant de prendre le verrou : la nouvelle
-            // demande fait autorité, on ne fait pas la queue derrière une séquence obsolète.
+            // Cancels the previous application before taking the lock: the new one
+            // authoritative request, we do not queue behind an obsolete sequence.
             previous?.cancelAndJoin()
             applyMutex.withLock { applyLocked(profile, autoStart, onComplete) }
         }
     }
 
     /**
-     * Corps de l'application, exécuté sous [applyMutex] : une seule séquence d'écritures
-     * véhicule à la fois.
+     * Body of the application, executed under [applyMutex]: a single sequence of writes
+     * vehicle at a time.
      */
     private fun applyLocked(profile: DrivingProfile, autoStart: Boolean, onComplete: ((Boolean) -> Unit)?) {
             var ok = true
@@ -87,12 +88,12 @@ object ProfileApplier {
             AppLogger.i(TAG, "  DriveMode=${profile.driveMode.label} → $dmOk")
             ok = ok && dmOk
 
-            // Niveau de régénération (rapide — binder call)
+            // Regeneration level (fast — binder call)
             val rlOk = EVHardware.setRegenLevel(profile.regenLevel)
             AppLogger.i(TAG, "  RegenLevel=${profile.regenLevel.label} → $rlOk")
             ok = ok && rlOk
 
-            // Volant + Sièges chauffants — uniquement SWI133 et SWI68 (SWI69/SWI131 n'ont pas ces équipements)
+            // Steering wheel + Heated seats — only SWI133 and SWI68 (SWI69/SWI131 do not have this equipment)
             if (FirmwareInfo.hasHeatFeatures()) {
                 val shOk = EVHardware.setSteeringHeat(profile.steeringHeat)
                 AppLogger.i(TAG, "  SteeringHeat=${profile.steeringHeat} → $shOk")
@@ -102,36 +103,36 @@ object ProfileApplier {
                 AppLogger.i(TAG, "  SeatHeatRight=${profile.seatHeatRight} → $srOk")
             }
 
-            AppLogger.i(TAG, "Profil '${profile.name}' Katman1 terminé — ok=$ok")
+            AppLogger.i(TAG, "Profile '${profile.name}' Katman1 completed — ok=$ok")
             onComplete?.invoke(ok)
 
-            // ADAS (Katman4) — appliqué dès que le service est prêt
+            // ADAS (Katman4) — applied as soon as the service is ready
             EVHardware.whenKatman4Ready {
-                AppLogger.i(TAG, "  Application ADAS pour profil '${profile.name}'")
+                AppLogger.i(TAG, "  Applying ADAS for profile '${profile.name}'")
                 if (FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI132) {
                     // ── SWI132 ──────────────────────────────────────────────────────────
                     //
-                    // SWI132 utilise CarVehicleSettingClient pour l'ADAS (ACC/TJA)
-                    // mais le binder direct IVehicleSettingService pour les alertes sonores.
-                    // → setOverspeedAlarm() et setSpeedLimitTone() envoient les TX binder corrects
-                    //   (0x128 et 0x12a) sans passer par VehicleSettingManager.
+                    // SWI132 uses CarVehicleSettingClient for ADAS (ACC/TJA)
+                    // but the IVehicleSettingService direct binder for sound alerts.
+                    // → setOverspeedAlarm() and setSpeedLimitTone() send the correct binder transactions.
+                    //   (0x128 and 0x12a) without going through VehicleSettingManager.
 
-                    // TSR (SLIF) via VSM — appliqué en premier comme SWI133
+                    // TSR (SLIF) via VSM — applied first as SWI133
                     val tsrOk = EVHardware.setTsrMode(profile.tsrEnabled)
                     AppLogger.i(TAG, "  TsrEnabled=${profile.tsrEnabled} → $tsrOk")
 
                     // Alertes sonores via VSM
-                    // Le firmware SWI132 remet overspeed et speedTone à ON ~400ms après l'activation
-                    // du TSR (même comportement que SWI133). setTsrMode() retourne immédiatement sans
-                    // attendre cette réinitialisation. Si on écrit les alertes trop tôt, le firmware
-                    // les écrase ensuite. On attend 450ms pour laisser le firmware terminer sa
-                    // réinitialisation avant d'appliquer les valeurs du profil.
+                    // SWI132 firmware resets overspeed and speedTone to ON ~400ms after activation
+                    // of the TSR (same behavior as SWI133). setTsrMode() returns immediately without
+                    // wait for this reset. If we write alerts too early, the firmware
+                    // then crushes them. We wait 450ms to let the firmware complete its
+                    // reset before applying profile values.
                     if (profile.tsrEnabled) {
                         try { Thread.sleep(450) } catch (_: InterruptedException) {}
                     }
-                    // Délai de 150ms entre les deux écritures : le middleware traite les propriétés
-                    // dans une file avec debounce — deux écritures trop rapides font que seule la
-                    // dernière est validée. 150ms garantit que la première est traitée.
+                    // Delay of 150ms between the two writes: the middleware processes the properties
+                    // in a queue with debounce — two writes too fast mean that only the
+                    // last one is validated. 150ms ensures that the first one is processed.
                     val oaOk = EVHardware.setOverspeedAlarm(profile.overspeedAlarm)
                     AppLogger.i(TAG, "  OverspeedAlarm=${profile.overspeedAlarm} → $oaOk")
                     try { Thread.sleep(150) } catch (_: InterruptedException) {}
@@ -139,41 +140,41 @@ object ProfileApplier {
                     AppLogger.i(TAG, "  SpeedLimitTone=${profile.speedLimitTone} → $stOk")
 
                     // Mode ACC/TJA via CarVehicleSettingClient (setAccTjaState).
-                    // SHWA (ancien codage limiteur) n'est plus un mode ACC/TJA → ramené à Off ;
-                    // le limiteur est géré séparément via setSasMode ci-dessous.
+                    // SHWA (old limiter coding) is no longer an ACC/TJA mode → returned to Off;
+                    // the limiter is handled separately via setSasMode below.
                     val cruiseMode = if (profile.swi68AdasMode == Swi68Mode.SHWA) Swi68Mode.OFF else profile.swi68AdasMode
                     val adOk = EVHardware.setAccTjaMode(cruiseMode)
                     AppLogger.i(TAG, "  AdasMode=0x${cruiseMode.toString(16)} → $adOk")
-                    // Limiteur de vitesse (SAS) — appliqué uniquement si le profil l'a configuré.
-                    // Profils créés avant cette fonction (swi132LimiterConfigured=false) → non touché.
+                    // Speed ​​limiter (SAS) — applied only if the profile has configured it.
+                    // Profiles created before this function (swi132LimiterConfigured=false) → not affected.
                     if (profile.swi132LimiterConfigured) {
                         EVHardware.setSpeedLimiterMode(profile.swi132SasMode)
                         AppLogger.i(TAG, "  SasMode=${profile.swi132SasMode} (0=Off 2=Manuel 3=Intelligent)")
                     }
                     applyAeb(profile.aebEnabled, profile.aebMode, profile.aebSensitivity)
 
-                    // Économie d'énergie — via CarVehicleSettingClient (setEnduranceMode), même path que SWI69
+                    // Energy saving — via CarVehicleSettingClient (setEnduranceMode), same path as SWI69
                     val esOk = EVHardware.setEnergySavingMode(profile.energySaving)
                     AppLogger.i(TAG, "  EnergySaving=${profile.energySaving} → $esOk")
 
                 } else if (FirmwareInfo.isVsmBased()) {
                     // ── SWI68/SWI69/SWI131/SWI165 ──────────────────────────────────────
                     //
-                    // Le TSR est appliqué EN PREMIER : setTsrMode() bloque 400 ms en interne
-                    // et restaure soundWarning depuis les préférences. On l'appelle en premier
-                    // pour pouvoir ensuite écraser l'alerte sonore avec la valeur du profil.
+                    // The TSR is applied FIRST: setTsrMode() blocks 400 ms internally
+                    // and restores soundWarning from preferences. We call him first
+                    // to then be able to overwrite the sound alert with the profile value.
                     val tsrOk = EVHardware.setTsrMode(profile.tsrEnabled)
                     AppLogger.i(TAG, "  TsrEnabled=${profile.tsrEnabled} → $tsrOk")
 
-                    // Alerte sonore — appliquée APRÈS le TSR pour écraser sa restauration interne
+                    // Audible alert — applied AFTER the TSR to overwrite its internal restore
                     val swOk = EVHardware.setSoundWarning(profile.soundWarning)
                     AppLogger.i(TAG, "  SoundWarning=${profile.soundWarning} → $swOk")
 
-                    // Mode ACC/TJA — SHWA (ancien codage limiteur) ramené à Off (limiteur géré à part)
+                    // ACC/TJA mode — SHWA (old limiter coding) set to Off (limiter managed separately)
                     val cruiseMode = if (profile.swi68AdasMode == Swi68Mode.SHWA) Swi68Mode.OFF else profile.swi68AdasMode
                     val adOk = EVHardware.setAccTjaMode(cruiseMode)
                     AppLogger.i(TAG, "  AdasMode=0x${cruiseMode.toString(16)} → $adOk")
-                    // Limiteur de vitesse — appliqué uniquement si le profil l'a configuré.
+                    // Speed ​​limiter — applied only if the profile has configured it.
                     // (SWI69/SWI131 → setSasMode ; SWI68/SWI165 → setSpeedAsstMode, dispatch interne)
                     if (profile.swi132LimiterConfigured) {
                         EVHardware.setSpeedLimiterMode(profile.swi132SasMode)
@@ -181,24 +182,24 @@ object ProfileApplier {
                     }
                     applyAeb(profile.aebEnabled, profile.aebMode, profile.aebSensitivity)
 
-                    // Économie d'énergie — firmwares VSM hors SWI132 (SWI68/SWI69/SWI131/SWI165)
+                    // Power saving — VSM firmwares excluding SWI132 (SWI68/SWI69/SWI131/SWI165)
                     val esOk = EVHardware.setEnergySavingMode(profile.energySaving)
                     AppLogger.i(TAG, "  EnergySaving=${profile.energySaving} → $esOk")
                 } else {
                     // ── SWI133/UNKNOWN ──────────────────────────────────────────────────
                     //
-                    // Même logique : activer le TSR ré-active OVERSPEED_ALARM et SPEED_LIMIT_TONE.
-                    // setTsrMode() restaure depuis les préférences — on l'appelle en premier
-                    // puis on écrase avec les valeurs du profil.
+                    // Same logic: activating TSR re-enables OVERSPEED_ALARM and SPEED_LIMIT_TONE.
+                    // setTsrMode() restores from preferences — we call it first
+                    // then we overwrite with the profile values.
                     if (FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI133) {
                         val tsrOk = EVHardware.setTsrMode(profile.tsrEnabled)
                         AppLogger.i(TAG, "  TsrEnabled=${profile.tsrEnabled} → $tsrOk")
                     }
 
-                    // Alertes vitesse — appliquées APRÈS le TSR
-                    // Délai de 150ms entre les deux écritures : le middleware véhicule (VPM) traite
-                    // les propriétés dans une file avec debounce — deux écritures trop rapides font
-                    // que seule la dernière est validée. 150ms garantit que la première est traitée.
+                    // Speed ​​alerts — applied AFTER TSR
+                    // Delay of 150ms between the two writes: the vehicle middleware (VPM) processes
+                    // properties in a queue with debounce — two writes too fast make
+                    // that only the last one is validated. 150ms ensures that the first one is processed.
                     val oaOk = EVHardware.setOverspeedAlarm(profile.overspeedAlarm)
                     AppLogger.i(TAG, "  OverspeedAlarm=${profile.overspeedAlarm} → $oaOk")
                     try { Thread.sleep(150) } catch (_: InterruptedException) {}
@@ -209,19 +210,19 @@ object ProfileApplier {
                     AppLogger.i(TAG, "  AdasMode=${profile.adasMode} → $adOk")
                     applyAeb(profile.aebEnabled, profile.aebMode, profile.aebSensitivity)
 
-                    // Économie d'énergie — SWI133 via VPM
+                    // Energy saving — SWI133 via VPM
                     if (FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI133) {
                         val esOk = EVHardware.setEnergySavingMode(profile.energySaving)
                         AppLogger.i(TAG, "  EnergySaving=${profile.energySaving} → $esOk")
                     }
                 }
-                // ELK — commun à tous les firmwares connus
+                // ELK — common to all known firmware
                 applyElk(profile.elkMode, profile.elkSensitivity, profile.lasAudibleWarning, profile.lasVibrationReminder)
 
-                // ── Passe de vérification ADAS (auto-démarrage uniquement) ────────────
-                // Au démarrage à froid, le firmware peut ré-asserter certains réglages APRÈS
-                // notre écriture (alertes survitesse/ton ~400ms après le SLIF/TSR ; ELK remis à
-                // sa valeur par défaut). On relit après stabilisation et on réécrit en cas d'écart.
+                // ── ADAS verification pass (self-start only) ────────────
+                // On cold start, the firmware may re-assert certain settings AFTER
+                // our writing (overspeed/tone alerts ~400ms after SLIF/TSR; ELK reset to
+                // its default value). We reread after stabilization and we rewrite in the event of a discrepancy.
                 // Concerne SWI132/SWI133 (2 alertes distinctes + ELK).
                 val gen = FirmwareInfo.getGeneration()
                 if (autoStart && (gen == FirmwareInfo.Gen.SWI133 || gen == FirmwareInfo.Gen.SWI132)) {
@@ -231,13 +232,13 @@ object ProfileApplier {
     }
 
     /**
-     * Passe de vérification post-application (auto-démarrage, SWI132/SWI133). Attend la fin de
-     * la fenêtre de ré-assertion firmware puis relit/réécrit en cas d'écart :
+     * Post-application verification pass (self-start, SWI132/SWI133). Wait for the end of
+     * the firmware re-assertion window then rereads/rewrites in the event of a deviation:
      *   - alertes sonores survitesse + ton
-     *   - ELK (assistant de sortie de voie) — le firmware le remet à sa valeur par défaut au boot
+     *   - ELK (lane departure assist) — the firmware resets it to its default value at boot
      */
     private fun verifyAdasWithRetry(profile: DrivingProfile) {
-        AppLogger.i(TAG, "  [VERIFY] Vérification ADAS (auto-démarrage) — stabilisation 500ms")
+        AppLogger.i(TAG, "  [VERIFY] Checking ADAS after automatic startup — waiting 500ms")
         try { Thread.sleep(500) } catch (_: InterruptedException) {}
         verifyOneAlert("OverspeedAlarm", profile.overspeedAlarm,
             { EVHardware.overspeedAlarmOnOrNull() }, { EVHardware.setOverspeedAlarm(it) })
@@ -247,26 +248,26 @@ object ProfileApplier {
     }
 
     /**
-     * Vérifie le mode ELK (assistant de sortie de voie) après stabilisation et le réécrit s'il a
-     * dérivé (réactivation auto par le firmware). Ne fait rien si le profil ne configure pas l'ELK
-     * (elkMode=0). Réapplique la config ELK complète (mode + sensibilité + sonore/vibration SWI132).
+     * Checks ELK (Lane Departure Assist) mode after stabilization and rewrites it if it has
+     * derivative (auto reactivation by firmware). Does nothing if the profile does not configure the ELK
+     * (elkMode=0). Reapplies the complete ELK config (mode + sensitivity + SWI132 sound/vibration).
      */
     private fun verifyElk(profile: DrivingProfile) {
-        if (profile.elkMode == 0) return   // ELK non configuré dans ce profil → ne pas toucher
+        if (profile.elkMode == 0) return   // ELK not configured in this profile → do not touch
         repeat(3) { i ->
             val actual = EVHardware.getElkMode()
-            // -1 = illisible. Sans ce garde-fou la boucle réécrit trois fois l'ELK sur un
-            // firmware qui ne rend jamais son mode, en le comptant chaque fois comme un écart.
+            // -1 = unreadable. Without this safeguard the loop rewrites the ELK three times on a
+            // firmware which never returns its mode, counting it each time as a deviation.
             if (actual < 0) {
-                AppLogger.w(TAG, "  [VERIFY] ElkMode illisible — vérification abandonnée")
+                AppLogger.w(TAG, "  [VERIFY] ElkMode unreadable — verification stopped")
                 return
             }
             if (actual == profile.elkMode) {
                 AppLogger.i(TAG, "  [VERIFY] ElkMode conforme (lu=$actual" +
-                    if (i > 0) ", après $i correction(s))" else ")")
+                    if (i > 0) ", after $i correction(s))" else ")")
                 return
             }
-            AppLogger.w(TAG, "  [VERIFY] ElkMode ÉCART (lu=$actual, attendu=${profile.elkMode}) → réécriture (tentative ${i + 1}/3)")
+            AppLogger.w(TAG, "  [VERIFY] ElkMode MISMATCH (read=$actual, expected=${profile.elkMode}) → rewriting (attempt ${i + 1}/3)")
             applyElk(profile.elkMode, profile.elkSensitivity, profile.lasAudibleWarning, profile.lasVibrationReminder)
             try { Thread.sleep(300) } catch (_: InterruptedException) {}
         }
@@ -274,28 +275,28 @@ object ProfileApplier {
         if (finalVal == profile.elkMode)
             AppLogger.i(TAG, "  [VERIFY] ElkMode finalement conforme (lu=$finalVal)")
         else
-            AppLogger.w(TAG, "  [VERIFY] ElkMode ÉCHEC après 3 tentatives (lu=$finalVal, attendu=${profile.elkMode})")
+            AppLogger.w(TAG, "  [VERIFY] ElkMode FAILED after 3 attempts (read=$finalVal, expected=${profile.elkMode})")
     }
 
     /**
-     * Relit une alerte ; si elle diffère de la valeur voulue, la réécrit et réessaie.
-     * Jusqu'à 3 tentatives espacées de 300ms pour couvrir un écrasement firmware tardif.
+     * Replays an alert; if it differs from the desired value, rewrite it and try again.
+     * Up to 3 attempts spaced 300ms apart to cover a late firmware overwrite.
      */
     private fun verifyOneAlert(name: String, desired: Boolean, read: () -> Boolean?, write: (Boolean) -> Boolean) {
         repeat(3) { i ->
             val actual = read()
-            // null = le firmware n'a pas répondu. On ne peut pas vérifier ce qu'on ne peut pas
-            // lire : insister trois fois réécrirait un réglage sur la foi d'une lecture ratée.
+            // null = firmware did not respond. We cannot verify what we cannot
+            // read: insisting three times would rewrite a setting based on a failed reading.
             if (actual == null) {
-                AppLogger.w(TAG, "  [VERIFY] $name illisible — vérification abandonnée")
+                AppLogger.w(TAG, "  [VERIFY] $name unreadable — verification stopped")
                 return
             }
             if (actual == desired) {
                 AppLogger.i(TAG, "  [VERIFY] $name conforme (lu=$actual" +
-                    if (i > 0) ", après $i correction(s))" else ")")
+                    if (i > 0) ", after $i correction(s))" else ")")
                 return
             }
-            AppLogger.w(TAG, "  [VERIFY] $name ÉCART (lu=$actual, attendu=$desired) → réécriture (tentative ${i + 1}/3)")
+            AppLogger.w(TAG, "  [VERIFY] $name MISMATCH (read=$actual, expected=$desired) → rewriting (attempt ${i + 1}/3)")
             write(desired)
             try { Thread.sleep(300) } catch (_: InterruptedException) {}
         }
@@ -303,17 +304,17 @@ object ProfileApplier {
         if (finalVal == desired)
             AppLogger.i(TAG, "  [VERIFY] $name finalement conforme (lu=$finalVal)")
         else
-            AppLogger.w(TAG, "  [VERIFY] $name ÉCHEC après 3 tentatives (lu=$finalVal, attendu=$desired)")
+            AppLogger.w(TAG, "  [VERIFY] $name FAILED after 3 attempts (read=$finalVal, expected=$desired)")
     }
 
     /**
-     * Applique les réglages ELK (assistant de sortie de voie) du profil — tous firmwares.
-     * Si elkMode=0 (valeur par défaut — profil créé avant l'ajout de l'ELK),
-     * on ne touche pas aux réglages ELK pour éviter une modification involontaire.
+     * Applies the ELK (lane departure assist) settings of the profile — all firmwares.
+     * If elkMode=0 (default value — profile created before adding the ELK),
+     * we do not touch the ELK settings to avoid unintentional modification.
      */
     private fun applyElk(elkMode: Int, elkSensitivity: Int, lasAudibleWarning: Boolean = true, lasVibrationReminder: Boolean = true) {
         if (elkMode == 0) {
-            AppLogger.i(TAG, "  ELK — valeurs par défaut, skip (évite modification involontaire)")
+            AppLogger.i(TAG, "  ELK — default values, skipping to avoid unintended changes")
             return
         }
         val modeOk = EVHardware.setElkMode(elkMode)
@@ -322,9 +323,9 @@ object ProfileApplier {
             val senOk = EVHardware.setElkSensitivity(elkSensitivity)
             AppLogger.i(TAG, "  ElkSensitivity=$elkSensitivity → $senOk")
         }
-        // SWI132 : Alerte sonore + Vibration appliquées après délai
-        // Le firmware peut réinitialiser ces valeurs lors du changement de mode ELK.
-        // 300ms garantit que le firmware a terminé sa réinitialisation interne.
+        // SWI132: Audible alert + Vibration applied after delay
+        // The firmware can reset these values ​​when changing ELK mode.
+        // 300ms ensures that the firmware has completed its internal reset.
         if (FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI132 && elkMode != EVHardware.ElkMode.OFF) {
             try { Thread.sleep(300) } catch (_: InterruptedException) {}
             val soundOk = EVHardware.setLasWarningSound(lasAudibleWarning)
@@ -335,14 +336,14 @@ object ProfileApplier {
     }
 
     /**
-     * Applique les réglages AEB du profil.
-     * Si aebEnabled=false ET aebMode=1 ET aebSensitivity=0 (valeurs par défaut),
-     * on ne touche pas à l'état AEB de la voiture pour éviter une désactivation involontaire.
+     * Applies the profile's AEB settings.
+     * If aebEnabled=false AND aebMode=1 AND aebSensitivity=0 (default values),
+     * we do not touch the AEB state of the car to avoid unintentional deactivation.
      */
     private fun applyAeb(aebEnabled: Boolean, aebMode: Int, aebSensitivity: Int = 0) {
         val isDefault = !aebEnabled && aebMode == 1 && aebSensitivity == 0
         if (isDefault) {
-            AppLogger.i(TAG, "  AEB — valeurs par défaut, skip (évite désactivation involontaire)")
+            AppLogger.i(TAG, "  AEB — default values, skipping to avoid unintended disable")
             return
         }
         val aebOk = EVHardware.setAebEnabled(aebEnabled)

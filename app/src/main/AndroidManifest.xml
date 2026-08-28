@@ -5,11 +5,11 @@
     <!-- Permissions — same as original DriveHub Dort -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <!-- [T-910] Exigée à partir d'API 34 pour foregroundServiceType="connectedDevice". -->
+    <!-- [T-910] Required from API 34 for foregroundServiceType="connectedDevice". -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <!-- Requise depuis l'API 33 pour afficher la notification du service de premier plan,
-         seul signe visible que EVProfile tourne. Sans elle, elle est supprimée en silence. -->
+    <!-- Required since API 33 to display foreground service notification,
+         only visible sign that EVProfile is running. Without it, it is silently suppressed. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
@@ -25,12 +25,12 @@
     <uses-permission android:name="android.car.permission.CAR_VENDOR_EXTENSION" />
     <uses-permission android:name="android.car.permission.CONTROL_CAR_CLIMATE" />
 
-    <!-- [T-902] "com.saic.keyevent.hardkey.report" n'est pas un broadcast protégé :
-         n'importe quelle app installée peut le forger et piloter les raccourcis, donc
-         écrire mode de conduite / régen / ADAS / AEB. Le receiver exige désormais cette
-         permission côté ÉMETTEUR. En protectionLevel="signature", seule une app signée
-         avec la clé plateforme de la ROM l'obtient — c'est le cas de l'émetteur système
-         d'origine, jamais d'une app tierce. -->
+    <!-- [T-902] "com.saic.keyevent.hardkey.report" is not a protected broadcast:
+         any installed app can forge it and control the shortcuts, so
+         write driving mode / regen / ADAS / AEB. The receiver now requires this
+         permission on the TRANSMITTER side. In protectionLevel="signature", only a signed app
+         with the platform key of the ROM obtains it — this is the case of the system transmitter
+         original, never from a third-party app. -->
     <permission
         android:name="com.evsuite.profile.permission.RECEIVE_HARDKEY"
         android:protectionLevel="signature" />
@@ -42,14 +42,14 @@
         android:name="com.evsuite.profile.permission.CONTROL_PROFILES"
         android:protectionLevel="signature" />
 
-    <!-- Réseau / OTA : déclarés UNIQUEMENT dans le canal unstable
-         (src/unstable/AndroidManifest.xml). Stable n'en a aucun, par construction. -->
+    <!-- Network / OTA: declared ONLY in the unstable channel
+         (src/unstable/AndroidManifest.xml). Stable has none by construction. -->
 
-    <!-- API 30+ : sans ça, EVTasker est invisible pour getLaunchIntentForPackage() et le
-         bouton Automatisation resterait masqué sur une voiture où l'app est installée. -->
-    <!-- EVTasker, tous canaux confondus. Un testeur qui installe le canal unstable, ou la
-         variante offline, a la même app : ne déclarer que l'id stable rendait le bouton
-         Automatisation invisible sur ces installations. -->
+    <!-- API 30+: without this, EVTasker is invisible for getLaunchIntentForPackage() and the
+         Automation button would remain hidden on a car where the app is installed. -->
+    <!-- EVTasker, all channels combined. A tester who installs the unstable channel, or the
+         offline variant, has the same app: only declaring the stable id made the button
+         Automation would otherwise be invisible on those installations. -->
     <queries>
         <package android:name="com.evsuite.tasker" />
         <package android:name="com.evsuite.tasker.unstable" />
@@ -66,7 +66,7 @@
         android:fullBackupContent="false"
         android:supportsRtl="true">
 
-        <!-- API Car AOSP (CarDoorLockManager pour la détection d'ouverture de porte) -->
+        <!-- Car API AOSP (CarDoorLockManager for door opening detection) -->
         <uses-library android:name="android.car" android:required="false" />
 
         <activity
@@ -81,11 +81,11 @@
             </intent-filter>
         </activity>
 
-        <!-- [T-910] foregroundServiceType est OBLIGATOIRE à partir d'API 34 : sans lui,
-             startForeground() lève MissingForegroundServiceTypeException. Sans effet sur
-             AAOS 9 (API 28), mais le déclarer maintenant évite un crash au premier bump de
-             SDK. "connectedDevice" correspond à ce que fait le service : suivre l'état du
-             véhicule. -->
+        <!-- [T-910] foregroundServiceType is MANDATORY from API 34: without it,
+             startForeground() throws MissingForegroundServiceTypeException. No effect on
+             AAOS 9 (API 28), but declaring it now avoids a crash on the first bump of
+             SDK. "connectedDevice" corresponds to what the service does: track the state of the
+             vehicle. -->
         <service
             android:name=".service.EVProfileService"
             android:exported="false"

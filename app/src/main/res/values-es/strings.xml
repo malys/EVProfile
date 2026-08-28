@@ -264,7 +264,6 @@
     <string name="settings_theme_light">Modo claro</string>
     <string name="settings_theme_desc">Cambiar entre tema oscuro y claro</string>
     <string name="settings_language">Idioma</string>
-    <string name="settings_language_fr">Français</string>
     <string name="settings_language_en">English</string>
     <string name="settings_language_de">Deutsch</string>
     <string name="settings_language_es">Español</string>

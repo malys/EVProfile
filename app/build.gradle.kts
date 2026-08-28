@@ -14,8 +14,8 @@ android {
         versionName = "3.0.2"
     }
 
-    // Signature avec la clé plateforme de la ROM (requise par sharedUserId=android.uid.system).
-    // Secrets lus depuis l'environnement (CI) ou gradle.properties local — JAMAIS commités.
+    // Signing with the ROM platform key (required by sharedUserId=android.uid.system).
+    // Secrets read from the local environment (CI) or gradle.properties — NEVER committed.
     val keystorePath = System.getenv("EV_KEYSTORE") ?: (project.findProperty("evsuite.keystore") as String?)
     signingConfigs {
         if (keystorePath != null && file(keystorePath).exists()) {
@@ -49,10 +49,10 @@ android {
 
     buildTypes {
         release {
-            // [T-909] R8 activé : shrink + obfuscation. Le code est très réflexif —
-            // proguard-rules.pro liste les cibles à conserver. Toute release DOIT passer
-            // le test manuel sur véhicule (Katman1/2/3, HVAC, ADAS/AEB/ELK, allumage, OTA)
-            // avant diffusion.
+            // [T-909] R8 enabled: shrink + obfuscation. The code is very reflective —
+            // proguard-rules.pro lists the targets to keep. Any release MUST pass
+            // manual test on vehicle (Katman1/2/3, HVAC, ADAS/AEB/ELK, ignition, OTA)
+            // before publishing.
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfigs.findByName("platform")?.let { signingConfig = it }
@@ -72,13 +72,13 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
-        // ITaskerBridge : contrat IPC partagé avec EVTasker (même package AIDL des deux côtés).
+        // ITaskerBridge: IPC contract shared with EVTasker (same AIDL package on both sides).
         aidl = true
     }
 
 
-    // Tests unitaires JVM (pas de véhicule, pas d'émulateur) : Robolectric a besoin des
-    // ressources Android pour instancier un Context.
+    // JVM unit testing (no vehicle, no emulator): Robolectric needs the
+    // Android resources to instantiate a Context.
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
@@ -116,10 +116,10 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.viewpager2)
 
-    // QR code (génération dans le dialog Infos), dans les deux flavors. Le QR est le seul
-    // moyen de sortir une URL d'un écran de voiture vers un téléphone : le build stable en a
-    // besoin davantage que l'autre, puisqu'il ne peut rien télécharger lui-même. ZXing core
-    // est du Java pur, sans réseau ni permission.
+    // QR code (generation in the Info dialog), in both flavors. The QR is the only
+    // way to output a URL from a car screen to a phone: the stable build has it
+    // need it more than the other, since it can't download anything itself. ZXing core
+    // is pure Java, without networks or permissions.
     implementation("com.google.zxing:core:3.5.3")
 
     testImplementation(libs.junit)

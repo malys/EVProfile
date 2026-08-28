@@ -47,7 +47,7 @@ class ProfileAdapter(
                 4 -> "ICA"
                 else -> ""
             }
-            // SWI68/SWI69/SWI131 : mêmes modes ADAS (ACC / TJA / Off)
+            // SWI68/SWI69/SWI131: same ADAS modes (ACC / TJA / Off)
             else -> if (!FirmwareInfo.isVsmBased()) "" else when (profile.swi68AdasMode) {
                 Swi68Mode.OFF -> "ADAS Off"
                 Swi68Mode.ACC -> "ACC"

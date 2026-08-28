@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Overlay affiché au-dessus du launcher MG quand l'utilisateur déclenche
-    le raccourci "Sélecteur de profil" via le volant.
-    Le fond semi-transparent capte les appuis en dehors de la carte pour la fermer.
-    Les boutons de profil sont ajoutés en grille 2 colonnes dans ProfilePickerOverlay.kt.
+    Overlay displayed above the MG launcher when the user triggers
+    the “Profile Selector” shortcut via the steering wheel.
+    The semi-transparent background captures presses outside the card to close it.
+    Profile buttons are added in a 2-column grid in ProfilePickerOverlay.kt.
 -->
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -15,7 +15,7 @@
     android:clickable="true"
     android:focusable="true">
 
-    <!-- Carte centrale — pleine largeur avec marges latérales -->
+    <!-- Center card — full width with side margins -->
     <LinearLayout
         android:id="@+id/overlay_card"
         android:layout_width="match_parent"
@@ -41,7 +41,7 @@
             android:textStyle="bold"
             android:layout_marginBottom="18dp" />
 
-        <!-- ☀ Luminosité (en haut) — masqué si le firmware ne supporte pas le contrôle -->
+        <!-- ☀ Brightness (top) — hidden if firmware does not support control -->
         <LinearLayout
             android:id="@+id/overlay_brightness_section"
             android:layout_width="match_parent"
@@ -60,7 +60,7 @@
                 android:textAllCaps="true"
                 android:layout_marginBottom="12dp" />
 
-            <!-- 3 presets : Nuit / Moyen / Jour (gros boutons, faciles à viser) -->
+            <!-- 3 presets: Night / Medium / Day (large buttons, easy to aim) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
 
             </LinearLayout>
 
-            <!-- Curseur (gros pouce + piste épaisse, réglable en conduisant) + % -->
+            <!-- Slider (big thumb + thick track, adjustable while driving) + % -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -132,7 +132,7 @@
 
             </LinearLayout>
 
-            <!-- Séparateur -->
+            <!-- Separator -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -141,7 +141,7 @@
 
         </LinearLayout>
 
-        <!-- Liste de profils défilante (prend l'espace restant entre luminosité et bas) -->
+        <!-- Scrolling profile list (takes the remaining space between brightness and low) -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -158,7 +158,7 @@
 
         </ScrollView>
 
-        <!-- Séparateur -->
+        <!-- Separator -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -166,14 +166,14 @@
             android:layout_marginTop="14dp"
             android:layout_marginBottom="12dp" />
 
-        <!-- Ligne bas : bouton Fermer + compte à rebours -->
+        <!-- Bottom line: Close button + countdown -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <!-- Zone gauche (poids 1) : FERMER + compte à rebours -->
+            <!-- Left zone (weight 1): CLOSE + countdown -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -207,7 +207,7 @@
 
             </LinearLayout>
 
-            <!-- Centre : bouton Éteindre la voiture (gated firmware dans le code) -->
+            <!-- Center: Turn off car button (gated firmware in code) -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/overlay_btn_poweroff"
                 android:layout_width="wrap_content"
@@ -224,7 +224,7 @@
                 app:iconTint="@color/dash_text_lo"
                 app:iconGravity="textStart" />
 
-            <!-- Zone droite (poids 1) : bouton Ouvrir EVProfile (équilibre aussi le centre) -->
+            <!-- Right zone (weight 1): Open EVProfile button (also balances the center) -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

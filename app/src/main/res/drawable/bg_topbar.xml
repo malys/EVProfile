@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Barre de pages : la surface, plus un filet accent de 2 dp en bas. Sans ce filet, la
-     barre et la page se touchent sans frontière visible dès que la page a un fond clair,
-     et la rangée d'onglets cesse de se lire comme une barre. -->
+<!-- Page bar: the surface, plus a 2 dp accent rule at the bottom. Without this net, the
+     bar and page touch without visible border as soon as the page has a light background,
+     and the row of tabs stops reading like a bar. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">

@@ -32,15 +32,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
- * Overlay flottant affichant la liste des profils de conduite.
+ * Floating overlay displaying the list of driving profiles.
  *
  * Deux modes d'utilisation :
- *  - Raccourci volant → show(ctx) : affiche tous les profils
- *  - Conflit BT       → show(ctx, profiles, onAutoDismiss) : affiche uniquement
- *    les profils associés aux appareils connectés ; si l'utilisateur ne choisit
- *    pas avant le timeout, [onAutoDismiss] est appelé (ex. applique le 1er profil).
+ *  - Steering-wheel shortcut → show(ctx): displays all profiles
+ *  - Bluetooth conflict      → show(ctx, profiles, onAutoDismiss): displays only
+ *    profiles associated with connected devices; if the user does not choose
+ *    not before the timeout, [onAutoDismiss] is called (e.g. applies the 1st profile).
  *
- * Toutes les opérations WindowManager se font sur le thread principal.
+ * All WindowManager operations are done on the main thread.
  */
 object ProfilePickerOverlay {
 
@@ -56,72 +56,72 @@ object ProfilePickerOverlay {
     // ── API publique ─────────────────────────────────────────────────────────
 
     /**
-     * Affiche l'overlay avec tous les profils (raccourci volant).
-     * Peut être appelé depuis n'importe quel thread.
+     * Displays the overlay with all profiles (flying shortcut).
+     * Can be called from any thread.
      */
     fun show(context: Context) {
         handler.post { showOnMainThread(context, profiles = null, onAutoDismiss = null) }
     }
 
     /**
-     * Affiche l'overlay avec une liste restreinte de profils (conflit BT).
-     * [onAutoDismiss] est appelé si le timeout s'écoule sans sélection.
-     * Peut être appelé depuis n'importe quel thread.
+     * Shows the overlay with a restricted list of profiles (BT conflict).
+     * [onAutoDismiss] is called if the timeout elapses without selection.
+     * Can be called from any thread.
      */
     fun show(context: Context, profiles: List<DrivingProfile>, onAutoDismiss: () -> Unit) {
         handler.post { showOnMainThread(context, profiles, onAutoDismiss) }
     }
 
     /**
-     * Ferme l'overlay immédiatement (sans déclencher onAutoDismiss).
-     * Peut être appelé depuis n'importe quel thread.
+     * Closes the overlay immediately (without triggering onAutoDismiss).
+     * Can be called from any thread.
      */
     fun dismiss(context: Context) {
         handler.post { dismissOnMainThread(context, fireAutoDismiss = false) }
     }
 
-    // ── Implémentation (main thread) ─────────────────────────────────────────
+    // ── Implementation (main thread) ──────────────────── ─────────────────────
 
     private fun showOnMainThread(
         context: Context,
         profiles: List<DrivingProfile>?,
         onAutoDismiss: (() -> Unit)?
     ) {
-        // [T-904] L'overlay ne sert qu'à appliquer un profil, donc à écrire dans le
-        // véhicule : inutile et dangereux de le poser devant le conducteur en roulant.
-        // Même politique que les écritures — refus aussi si la vitesse est illisible.
+        // [T-904] The overlay is only used to apply a profile, therefore to write in the
+        // vehicle: useless and dangerous to place it in front of the driver while driving.
+        // Same policy as writing - also refusal if the speed is illegible.
         if (VehicleWriteGate.decide(EVHardware.getVehicleSpeedKmh())
                 != VehicleWriteGate.Decision.ALLOWED) {
-            AppLogger.w(TAG, "Overlay non affiché : véhicule non à l'arrêt")
+            AppLogger.w(TAG, "Overlay not shown: vehicle is not stopped")
             onAutoDismiss?.invoke()
             return
         }
 
-        // Si déjà affiché → on remplace (sans déclencher l'ancien onAutoDismiss)
+        // If already displayed → we replace (without triggering the old onAutoDismiss)
         dismissOnMainThread(context, fireAutoDismiss = false)
 
         val profilesToShow = profiles ?: ProfileManager(context).getAll()
         if (profilesToShow.isEmpty()) {
-            AppLogger.i(TAG, "Aucun profil — overlay non affiché")
+            AppLogger.i(TAG, "No profiles — overlay not shown")
             return
         }
 
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
-        // Le contexte du Service n'applique pas la langue choisie dans l'app
-        // (LocaleHelper n'est posé que sur MainActivity/EVApp). Sans ça, le popup
-        // tombe sur la langue système. On enveloppe avec la locale courante (lecture
-        // fraîche → reflète un changement de langue en cours de session).
+        // The context of the Service does not apply the language chosen in the app
+        // (LocaleHelper is only placed on MainActivity/EVApp). Without that, the popup
+        // falls on the system language. We wrap with the current locale (reading
+        // fresh → reflects a language change during the session).
         val localizedContext = LocaleHelper.applyLocale(context)
 
-        // Le contexte du Service n'a pas de thème Material → on l'enveloppe
-        // avec le thème de l'app pour que MaterialButton puisse s'instancier.
+        // The context of the Service does not have a Material theme → we wrap it
+        // with the app theme so that MaterialButton can instantiate itself.
         val themedContext = ContextThemeWrapper(localizedContext, R.style.Theme_EVProfile)
 
-        // Inflate la vue depuis le layout XML (utilise le contexte thémé)
+        // Inflate the view from the XML layout (uses the themed context)
         val view = LayoutInflater.from(themedContext).inflate(R.layout.overlay_profile_picker, null)
 
-        // ── Grille 2 colonnes de profils ─────────────────────────────────
+        // ── Two-column profile grid ──────────────────────────────────────
         val container      = view.findViewById<LinearLayout>(R.id.overlay_profiles_container)
         val accentColor    = context.getColor(R.color.dash_accent)
         val accentDimColor = context.getColor(R.color.dash_accent_dim)
@@ -140,7 +140,7 @@ object ProfilePickerOverlay {
                 strokeWidth        = dp(1f)
                 cornerRadius       = dp(12f)
                 setOnClickListener {
-                    AppLogger.i(TAG, "Profil sélectionné : '${profile.name}'")
+                    AppLogger.i(TAG, "Profile selected: '${profile.name}'")
                     CoroutineScope(Dispatchers.IO).launch {
                         ProfileApplier.apply(profile)
                     }
@@ -148,7 +148,7 @@ object ProfilePickerOverlay {
                 }
             }
 
-        // Découpe en lignes de 2, chaque ligne = LinearLayout horizontal
+        // Cut into lines of 2, each line = horizontal LinearLayout
         profilesToShow.chunked(2).forEach { row ->
             val rowLayout = LinearLayout(themedContext).apply {
                 orientation = LinearLayout.HORIZONTAL
@@ -167,7 +167,7 @@ object ProfilePickerOverlay {
                 rowLayout.addView(btn)
             }
 
-            // Nombre impair → placeholder invisible pour garder la symétrie
+            // Odd number → invisible placeholder to keep symmetry
             if (row.size == 1) {
                 val spacer = android.view.View(themedContext).apply {
                     layoutParams = LinearLayout.LayoutParams(0, dp(90f), 1f)
@@ -183,28 +183,28 @@ object ProfilePickerOverlay {
             dismissOnMainThread(context)
         }
 
-        // ── Bouton « Éteindre la voiture » (centré, gated firmware) ────────
+        // ── “Turn off car” button (centered, gated firmware) ────────
         val btnPowerOff = view.findViewById<MaterialButton>(R.id.overlay_btn_poweroff)
         if (!EVHardware.hasVehiclePowerOff()) {
             btnPowerOff?.visibility = View.GONE
         } else {
             btnPowerOff?.setOnClickListener {
-                dismissOnMainThread(context)              // ferme le popup profils
+                dismissOnMainThread(context)              // closes the profile picker
                 showVehiclePowerOffConfirm(context)       // P-check + confirmation
             }
         }
 
-        // ── Tap sur le fond → fermeture ───────────────────────────────────
+        // ── Tap on the bottom → close ───────────────────────────────────
         view.findViewById<View>(R.id.overlay_backdrop)?.setOnClickListener {
             dismissOnMainThread(context)
         }
-        // La carte intérieure intercepte les appuis sans propager au fond
+        // The interior card intercepts supports without propagating to the bottom
         view.findViewById<View>(R.id.overlay_card)?.setOnClickListener { /* consommer */ }
 
-        // ── Paramètres WindowManager ──────────────────────────────────────
-        // La fenêtre est focusable : l'overlay demande un choix, il doit donc entrer dans
-        // l'ordre de focus et être lisible par TalkBack. FLAG_NOT_FOCUSABLE l'en excluait.
-        // En contrepartie elle reçoit les touches : RETOUR la ferme, comme un appui sur le fond.
+        // ── WindowManager Settings ──────────────────────────────────────
+        // The window is focusable: the overlay requires a choice, so it must enter
+        // the focus order and be readable by TalkBack. FLAG_NOT_FOCUSABLE excluded it.
+        // In return it receives the keys: RETURN closes it, like a press on the bottom.
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
@@ -225,9 +225,9 @@ object ProfilePickerOverlay {
         wm.addView(view, params)
         view.requestFocus()
         overlayView = view
-        AppLogger.i(TAG, "Overlay affiché — ${profilesToShow.size} profil(s)")
+        AppLogger.i(TAG, "Overlay shown — ${profilesToShow.size} profile(s)")
 
-        // ── Compte à rebours ──────────────────────────────────────────────
+        // ── Countdown ─────────────────────── ───────────────────────
         val tvCountdown = view.findViewById<TextView>(R.id.overlay_countdown)
         var remaining = (AUTO_DISMISS_MS / 1_000L).toInt()
 
@@ -245,8 +245,8 @@ object ProfilePickerOverlay {
         handler.post(tick)
 
         // ── Fermeture automatique ─────────────────────────────────────────
-        // onAutoDismiss est appelé UNIQUEMENT ici (timeout sans sélection).
-        // Si l'utilisateur choisit un profil ou appuie sur Fermer,
+        // onAutoDismiss is ONLY called here (timeout without selection).
+        // If the user chooses a profile or presses Close,
         // dismissOnMainThread(fireAutoDismiss=false) annule ce runnable.
         val dr = Runnable {
             AppLogger.i(TAG, "Overlay — timeout, fallback onAutoDismiss")
@@ -256,8 +256,8 @@ object ProfilePickerOverlay {
         dismissRunnable = dr
         handler.postDelayed(dr, AUTO_DISMISS_MS)
 
-        // Ré-arme les deux timers (appelé à chaque interaction luminosité pour
-        // ne pas fermer le popup pendant le réglage).
+        // Re-arms the two timers (called at each brightness interaction to
+        // do not close the popup while setting).
         fun resetTimers() {
             handler.removeCallbacks(dr)
             handler.postDelayed(dr, AUTO_DISMISS_MS)
@@ -266,7 +266,7 @@ object ProfilePickerOverlay {
             handler.post(tick)
         }
 
-        // ── Bloc luminosité (ancien SDK SWI133/68/165 ; A9 = phase 2) ─────
+        // ── Brightness block (old SDK SWI133/68/165; A9 = phase 2) ─────
         val briSection = view.findViewById<View>(R.id.overlay_brightness_section)
         if (!EVHardware.hasBrightnessControl()) {
             briSection?.visibility = View.GONE
@@ -277,7 +277,7 @@ object ProfilePickerOverlay {
             fun applyBrightnessAsync(pct: Int) {
                 CoroutineScope(Dispatchers.IO).launch { EVHardware.setScreenBrightnessPercent(pct) }
             }
-            // Debounce des écritures pendant le glissement (évite de spammer le binder)
+            // Debounce writes while dragging (avoids spamming the binder)
             val pendingApply = Runnable { slider?.let { applyBrightnessAsync(it.value.toInt()) } }
 
             slider?.addOnChangeListener { _, value, fromUser ->
@@ -297,7 +297,7 @@ object ProfilePickerOverlay {
                 }
             })
 
-            // Presets — déplacent le curseur (met à jour le label via le listener) puis appliquent
+            // Presets — move the cursor (updates the label via the listener) then apply
             fun preset(pct: Int) {
                 slider?.value = pct.toFloat()
                 applyBrightnessAsync(pct)
@@ -307,13 +307,13 @@ object ProfilePickerOverlay {
             view.findViewById<View>(R.id.overlay_bri_mid)?.setOnClickListener   { preset(50) }
             view.findViewById<View>(R.id.overlay_bri_day)?.setOnClickListener   { preset(100) }
 
-            // Initialisation depuis la valeur courante (lecture binder en arrière-plan)
+            // Initialization from the current value (binder reading in background)
             briValue?.text = "…"
             CoroutineScope(Dispatchers.IO).launch {
                 val cur = EVHardware.getScreenBrightnessPercent()
                 handler.post {
                     if (overlayView == null) return@post
-                    if (cur >= 0) slider?.value = cur.coerceIn(5, 100).toFloat()  // label via le listener
+                    if (cur >= 0) slider?.value = cur.coerceIn(5, 100).toFloat()  // label updated by listener
                     else briValue?.text = "--%"
                 }
             }
@@ -321,9 +321,9 @@ object ProfilePickerOverlay {
     }
 
     /**
-     * « Éteindre la voiture » depuis l'overlay : vérifie la position P (lecture gear),
-     * puis affiche le MÊME dialogue de confirmation que les Réglages/raccourci, en
-     * fenêtre overlay. Si pas en P → Toast. `vehiclePowerOff()` re-vérifie le P à l'envoi.
+     * “Turn off the car” from the overlay: checks the P position (gear reading),
+     * then displays the SAME confirmation dialog as Settings/shortcut, in
+     * overlay window. If not in P → Toast. `vehiclePowerOff()` re-checks the P on sending.
      */
     private fun showVehiclePowerOffConfirm(context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -338,7 +338,7 @@ object ProfilePickerOverlay {
                         .setPositiveButton(R.string.vehicle_power_dialog_confirm) { _, _ ->
                             CoroutineScope(Dispatchers.IO).launch {
                                 val ok = EVHardware.vehiclePowerOff()
-                                AppLogger.i(TAG, "OVERLAY VEHICLE_POWER_OFF confirmé → $ok")
+                                AppLogger.i(TAG, "OVERLAY VEHICLE_POWER_OFF confirmed → $ok")
                             }
                         }
                         .create()
@@ -362,7 +362,7 @@ object ProfilePickerOverlay {
         try {
             val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
             wm.removeView(v)
-            AppLogger.i(TAG, "Overlay fermé")
+            AppLogger.i(TAG, "Overlay closed")
         } catch (e: Exception) {
             AppLogger.i(TAG, "Erreur fermeture overlay : ${e.message}")
         }

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Dialog mise à jour — style dark dashboard
+    Dialog update — dark dashboard style
     3 groupes commutables :
-      group_info     : infos version + boutons d'action (affiché par défaut)
-      group_progress : barre de progression pendant le téléchargement
-      group_manual   : instructions + QR code pour installation manuelle
+      group_info: version info + action buttons (displayed by default)
+      group_progress: progress bar during download
+      group_manual: instructions + QR code for manual installation
 -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -15,7 +15,7 @@
     android:background="@color/dash_card"
     android:minWidth="680dp">
 
-    <!-- En-tête -->
+    <!-- Stubborn -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
         android:background="@color/dash_border" />
 
     <!-- ══════════════════════════════════════════════════════════ -->
-    <!--  GROUP INFO (affiché par défaut)                          -->
+    <!--  GROUP INFO (displayed by default)                          -->
     <!-- ══════════════════════════════════════════════════════════ -->
     <LinearLayout
         android:id="@+id/group_info"
@@ -167,7 +167,7 @@
 
         </LinearLayout>
 
-        <!-- Avertissement données mobiles (caché si WiFi) -->
+        <!-- Mobile data warning (hidden if WiFi) -->
         <LinearLayout
             android:id="@+id/row_data_warning"
             android:layout_width="match_parent"
@@ -197,7 +197,7 @@
             android:orientation="horizontal"
             android:gravity="end">
 
-            <!-- Ne plus me rappeler — poussé à gauche via spacer -->
+            <!-- Don't call me back — pushed left via spacer -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_update_skip"
                 style="@style/Widget.EV.Button.Outlined"
@@ -266,7 +266,7 @@
     </LinearLayout>
 
     <!-- ══════════════════════════════════════════════════════════ -->
-    <!--  GROUP PROGRESS (téléchargement + installation)           -->
+    <!--  GROUP PROGRESS (download + installation)           -->
     <!-- ══════════════════════════════════════════════════════════ -->
     <LinearLayout
         android:id="@+id/group_progress"
@@ -352,7 +352,7 @@
                 android:lineSpacingExtra="3dp"
                 android:layout_marginBottom="8dp" />
 
-            <!-- Chemin local de l'APK téléchargé (visible uniquement après téléchargement) -->
+            <!-- Local path of the downloaded APK (visible only after download) -->
             <TextView
                 android:id="@+id/tv_apk_path"
                 android:layout_width="match_parent"

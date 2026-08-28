@@ -14,8 +14,8 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 /**
- * [T-906] Le buffer de logs est écrit depuis le thread d'application de profil et lu par
- * l'UI. Ces tests couvrent le plafond sous concurrence et le rendu incrémental.
+ * [T-906] The log buffer is written from the profile application thread and read by
+ * him. These tests cover concurrency cap and incremental rendering.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
@@ -29,13 +29,13 @@ class AppLoggerTest {
     }
 
     @Test
-    fun `le buffer ne depasse jamais le plafond`() {
+    fun `buffer never exceeds its capacity`() {
         repeat(maxEntries + 250) { AppLogger.i("T", "msg$it") }
         assertEquals(maxEntries, AppLogger.entries.size)
     }
 
     @Test
-    fun `les entrees les plus anciennes sont evincees en premier`() {
+    fun `oldest entries are evicted first`() {
         repeat(maxEntries + 5) { AppLogger.i("T", "msg$it") }
         val entries = AppLogger.entries
         assertEquals("msg5", entries.first().msg)
@@ -43,14 +43,14 @@ class AppLoggerTest {
     }
 
     @Test
-    fun `totalCount compte les entrees evincees`() {
+    fun `totalCount includes evicted entries`() {
         repeat(maxEntries + 50) { AppLogger.i("T", "msg$it") }
         assertEquals((maxEntries + 50).toLong(), AppLogger.totalCount)
         assertEquals(maxEntries, AppLogger.entries.size)
     }
 
     @Test
-    fun `ecritures concurrentes ne depassent pas le plafond`() {
+    fun `concurrent writes do not exceed capacity`() {
         val threads = 8
         val perThread = 200
         val start = CountDownLatch(1)
@@ -68,10 +68,10 @@ class AppLoggerTest {
         assertEquals((threads * perThread).toLong(), AppLogger.totalCount)
     }
 
-    // ---- Rendu incrémental ----
+    // ---- Incremental rendering ----
 
     @Test
-    fun `entriesSince ne rend que les nouvelles entrees`() {
+    fun `entriesSince returns only new entries`() {
         repeat(10) { AppLogger.i("T", "msg$it") }
         val seen = AppLogger.totalCount
         AppLogger.i("T", "nouveau1")
@@ -85,22 +85,22 @@ class AppLoggerTest {
     }
 
     @Test
-    fun `entriesSince rend une liste vide quand rien n a bouge`() {
+    fun `entriesSince returns an empty list when nothing changed`() {
         repeat(3) { AppLogger.i("T", "msg$it") }
         assertEquals(emptyList<AppLogger.Entry>(), AppLogger.entriesSince(AppLogger.totalCount))
     }
 
     @Test
-    fun `entriesSince demande un rendu complet quand des entrees ont ete evincees`() {
+    fun `entriesSince requests a full render after entries were evicted`() {
         AppLogger.i("T", "premier")
         val seen = AppLogger.totalCount
         repeat(maxEntries + 10) { AppLogger.i("T", "msg$it") }
-        // Ce que l'appelant n'a pas encore vu a été évincé : impossible de compléter.
+        // What the caller has not yet seen has been evicted: impossible to complete.
         assertNull(AppLogger.entriesSince(seen))
     }
 
     @Test
-    fun `entriesSince demande un rendu complet apres clear`() {
+    fun `entriesSince requests a full render after clear`() {
         repeat(10) { AppLogger.i("T", "msg$it") }
         val seen = AppLogger.totalCount
         AppLogger.clear()

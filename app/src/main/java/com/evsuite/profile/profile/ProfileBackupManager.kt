@@ -10,11 +10,11 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 /**
- * Lit/écrit le fichier de sauvegarde des profils — et lui seul.
+ * Reads/writes the profile backup file — and only it.
  *
- * Le fichier vit dans un dossier PARTAGÉ de la voiture qui survit à la désinstallation
- * de l'app (le stockage privé de l'app, lui, est effacé). L'app étant signée plateforme
- * (`uid.system`), elle y écrit directement.
+ * The file lives in a SHARED folder in the car which survives uninstallation
+ * of the app (the private storage of the app is deleted). The app being signed platform
+ * (`uid.system`), it writes directly there.
  */
 class ProfileBackupManager {
 
@@ -32,13 +32,13 @@ class ProfileBackupManager {
     private val backupFile: File
         get() = File(backupDir, FILE_NAME)
 
-    /** True si un fichier de sauvegarde non vide est présent. */
+    /** True if a non-empty save file is present. */
     fun backupExists(): Boolean = backupFile.isFile && backupFile.length() > 0
 
     /**
-     * Écrit la sauvegarde de façon ATOMIQUE (fichier temporaire puis rename), afin
-     * qu'une écriture interrompue ne laisse jamais un fichier corrompu. Jamais bloquant :
-     * toute erreur (stockage non inscriptible, etc.) est loggée et ignorée.
+     * Writes the backup ATOMICALLY (temporary file then rename), in order to
+     * that an interrupted write never leaves a file corrupted. Never blocking:
+     * any errors (unwritable storage, etc.) are logged and ignored.
      */
     fun writeBackup(profiles: List<DrivingProfile>, defaultId: String?): Boolean {
         return try {
@@ -49,29 +49,29 @@ class ProfileBackupManager {
                 profiles = profiles
             )
             val json = gson.toJson(payload)
-            // Fichier temporaire UNIQUE : deux sauvegardes concurrentes écrivaient le même
-            // ".tmp" et entrelaçaient leur contenu.
+            // SINGLE temporary file: two concurrent backups were writing the same
+            // ".tmp" and interleaved their content.
             val tmp = File.createTempFile(FILE_NAME, ".tmp", backupDir)
             tmp.writeText(json)
-            // Remplacement atomique SANS delete() préalable : l'ancienne sauvegarde reste
-            // lisible jusqu'à la seconde près où la nouvelle prend sa place.
+            // Atomic replacement WITHOUT prior delete(): the old backup remains
+            // readable up to the second when the news takes its place.
             try {
                 Files.move(tmp.toPath(), backupFile.toPath(),
                     StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE)
             } catch (_: Exception) {
-                // Systèmes de fichiers sans move atomique : copie puis suppression du tmp.
+                // File systems without atomic move: copy then delete the tmp.
                 tmp.copyTo(backupFile, overwrite = true)
                 tmp.delete()
             }
-            AppLogger.i(TAG, "writeBackup → ${profiles.size} profil(s) @ ${backupFile.absolutePath}")
+            AppLogger.i(TAG, "writeBackup → ${profiles.size} profile(s) @ ${backupFile.absolutePath}")
             true
         } catch (e: Exception) {
-            AppLogger.w(TAG, "writeBackup échec (${backupFile.absolutePath}): ${e.message}")
+            AppLogger.w(TAG, "writeBackup failed (${backupFile.absolutePath}): ${e.message}")
             false
         }
     }
 
-    /** Lit la sauvegarde, ou null si absente/illisible/corrompue. */
+    /** Reads the backup, or null if missing/unreadable/corrupt. */
     fun readBackup(): ProfileBackup? {
         return try {
             if (!backupExists()) return null

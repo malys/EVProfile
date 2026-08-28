@@ -57,18 +57,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Les deux permissions runtime que l'app déclarait sans jamais les demander.
+     * The two runtime permissions that the app declared without ever asking for them.
      *
-     * Sur Android, une permission déclarée et jamais demandée n'est pas détenue : la
-     * notification du service était supprimée en silence, la liste des appareils appairés
-     * revenait vide, et le type de service `connectedDevice` — qui exige BLUETOOTH_CONNECT
-     * depuis l'API 34 — n'était pas couvert. Un refus ne coûte que la fonction concernée,
-     * donc rien n'attend la réponse.
+     * On Android, a permission declared and never requested is not held: the
+     * service notification was silently deleted, the list of paired devices
+     * was returning empty, and the service type `connectedDevice` — which requires BLUETOOTH_CONNECT
+     * since API 34 — was not covered. A refusal only costs the function concerned,
+     * so nothing awaits the response.
      */
     private val startupPermissions =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
-            // Un accès Bluetooth accordé change le type de service que EVProfileService peut
-            // détenir : le relancer est ce qui l'applique sans attendre le prochain démarrage.
+            // Granted Bluetooth access changes the type of service that EVProfileService can
+            // hold: restarting it is what applies it without waiting for the next start.
             if (granted[Manifest.permission.BLUETOOTH_CONNECT] == true) {
                 startForegroundService(Intent(this, EVProfileService::class.java))
             }
@@ -91,14 +91,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Init firmware EN PREMIER — avant toute inflation de fragment
-        // Charge le mode forcé éventuel depuis les prefs
+        // Initialize firmware first, before inflating any fragment.
+        // Load any forced mode from the prefs
         FirmwareInfo.initWithContext(this)
 
-        // [THEME-AUTO] Recrée l'activité quand le launcher MG change de thème en mode "auto"
+        // [THEME-AUTO] Recreates the activity when the MG launcher changes theme in “auto” mode
         ThemeHelper.onThemeChanged = { recreate() }
 
-        // Premier lancement : choix de la langue avant tout
+        // First launch: choice of language above all
         if (LocaleHelper.isFirstLaunch(this)) {
             showLanguagePicker()
             return
@@ -108,7 +108,7 @@ class MainActivity : AppCompatActivity() {
 
         requestStartupPermissions()
         startForegroundService(Intent(this, EVProfileService::class.java))
-        EVHardware.initAudio(applicationContext)  // connecte le helper audio vendor (A9 uniquement, no-op ailleurs)
+        EVHardware.initAudio(applicationContext)  // connects the audio vendor helper (A9 only, no-op elsewhere)
 
         pager = findViewById(R.id.main_pager)
 
@@ -120,9 +120,9 @@ class MainActivity : AppCompatActivity() {
         checkProfileRestore()
     }
 
-    // ── Restauration des profils depuis la sauvegarde (après réinstallation) ──────
-    // Ne se déclenche QUE si l'app n'a aucun profil local (vraie désinstallation /
-    // effacement de données — pas une simple mise à jour qui conserve les données).
+    // ── Restoring profiles from backup (after reinstallation) ──────
+    // ONLY triggers if the app has no local profile (real uninstallation /
+    // data erasure — not a simple update that retains the data).
     private fun checkProfileRestore() {
         val pm = ProfileManager(this)
         if (pm.getAll().isNotEmpty()) return
@@ -160,7 +160,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ── Déblocage du bouton Diagnostic (5 clics sur le logo) ────────────────
+    // ── Unlocking the Diagnostic button (5 clicks on the logo) ────────────────
 
     private var logoClickCount = 0
 
@@ -171,31 +171,31 @@ class MainActivity : AppCompatActivity() {
             if (logoClickCount >= 5) {
                 logoClickCount = 0
                 diagnosticUnlocked = true
-                // Révèle immédiatement le bouton si l'onglet Réglages est déjà affiché
+                // Immediately reveals the button if the Settings tab is already displayed
                 findViewById<View>(R.id.btn_diagnostic)?.visibility = View.VISIBLE
                 Toast.makeText(this, getString(R.string.diagnostic_unlocked), Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    // ── Navigation vers l'écran par défaut au démarrage ─────────────────────
+    // ── Navigate to default screen on startup ─────────────────────
 
     private fun navigateToDefaultScreen(savedInstanceState: android.os.Bundle?) {
-        // Ne naviguer que si c'est un vrai démarrage (pas une rotation / recreate)
+        // Only navigate if it's a real start (not a rotation/recreate)
         if (savedInstanceState != null) return
         val prefs = getSharedPreferences("ev_settings", android.content.Context.MODE_PRIVATE)
         val buttonId = when (prefs.getString("default_screen", "dashboard")) {
             "profiles"  -> R.id.btn_nav_profiles
             "shortcuts" -> R.id.btn_nav_shortcuts
-            else        -> return  // "dashboard" → c'est déjà la première page
+            else        -> return  // "dashboard" → it's already the first page
         }
         val index = screens.indexOfFirst { it.buttonId == buttonId }
-        // Sans animation : au démarrage il n'y a pas de mouvement à expliquer, seulement un
-        // écran de départ.
+        // Without animation: at start-up there is no movement to explain, only a
+        // starting screen.
         if (index >= 0) pager.setCurrentItem(index, false)
     }
 
-    // ── Vérification de mise à jour au démarrage ──────────────────────────────
+    // ── Update check at startup ──────────────────────────────
 
     private fun checkForUpdates() {
         UpdateChannel.checkAtStartup(this)
@@ -204,14 +204,14 @@ class MainActivity : AppCompatActivity() {
     // ── Dialog firmware non reconnu ───────────────────────────────────────────
 
     private fun checkUnknownFirmware() {
-        // Ne montre le dialog que si le firmware est inconnu ET pas encore de choix forcé
+        // Only shows the dialog if the firmware is unknown AND no forced choice yet
         if (FirmwareInfo.getGeneration() != FirmwareInfo.Gen.UNKNOWN) return
         if (FirmwareInfo.isForced(this)) return
 
         val dialogView = LayoutInflater.from(this)
             .inflate(R.layout.dialog_unknown_firmware, null)
 
-        // Affiche la chaîne firmware brute dans le badge (ex: "SWI69-12345")
+        // Displays the raw firmware string in the badge (ex: "SWI69-12345")
         dialogView.findViewById<TextView>(R.id.tv_fw_detected_badge).text =
             FirmwareInfo.getDetectedString()
 
@@ -226,7 +226,7 @@ class MainActivity : AppCompatActivity() {
 
         dialogView.findViewById<MaterialButton>(R.id.btn_fw_continue).setOnClickListener {
             dialog.dismiss()
-            // L'utilisateur peut maintenant taper sur les chips SWI133/SWI68
+            // User can now tap on SWI133/SWI68 chips
         }
 
         dialog.show()
@@ -236,19 +236,19 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    // ── Boutons de navigation dans la top-bar ─────────────────────────────────
+    // ── Navigation buttons in the top bar ─────────────────────────────────
 
     /**
      * Wires the top bar to the pager: every button is a page, and every page is a button.
      *
-     * There is no "close" anywhere any more. Profils, Réglages and Raccourcis used to be
+     * There is no "close" anywhere any more. Profiles, Settings and Shortcuts used to be
      * sub-screens reached by a button and left by a Fermer button in their own bottom row —
      * a row that cost 72 dp on a 480 dp panel and existed only to undo the previous tap. As
      * pages they are left the way they were reached: another button, or a swipe.
      */
     private fun setupNavButtons() {
-        // Bouton Audio : contrôle vendor caradapter dispo uniquement sur A9. Ailleurs, ni
-        // bouton ni page — un écran vide atteignable au balayage serait pire que son absence.
+        // Audio button: vendor caradaptor control only available on A9. Elsewhere, neither
+        // button or page — a blank screen reachable by scanning would be worse than its absence.
         val hasAudio = EVHardware.hasAudioControl()
         findViewById<MaterialButton>(R.id.btn_nav_audio).visibility =
             if (hasAudio) View.VISIBLE else View.GONE
@@ -303,7 +303,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ── Dialogue de choix de langue au premier lancement ─────────────────────
+    // ── First-launch language picker ─────────────────────────────────────────
 
     private fun showLanguagePicker() {
         val dialogView = LayoutInflater.from(this)
@@ -315,7 +315,6 @@ class MainActivity : AppCompatActivity() {
             .create()
 
         val buttons = mapOf(
-            R.id.btn_pick_fr to "fr",
             R.id.btn_pick_en to "en",
             R.id.btn_pick_de to "de",
             R.id.btn_pick_es to "es",
@@ -339,8 +338,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         /**
-         * Débloqué via 5 clics sur le logo en haut à gauche. En mémoire uniquement :
-         * réinitialisé au redémarrage du process (le bouton Diagnostic reste masqué par défaut).
+         * Unlocked via 5 clicks on the logo at the top left. In memory only:
+         * reset when the process restarts (the Diagnostic button remains hidden by default).
          */
         @Volatile var diagnosticUnlocked = false
     }

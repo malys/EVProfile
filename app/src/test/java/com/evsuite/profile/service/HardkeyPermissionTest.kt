@@ -9,27 +9,27 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * [T-902] Le broadcast hardkey pilote des écritures véhicule. La seule barrière contre
- * un émetteur tiers est le niveau de protection de la permission exigée : si elle
- * retombe en "normal", n'importe quelle app peut la demander et forger l'action.
+ * [T-902] The broadcast hardkey controls vehicle entries. The only barrier against
+ * a third-party issuer is the level of protection of the permission required: if it
+ * falls back to "normal", any app can request it and forge the action.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 class HardkeyPermissionTest {
 
     @Test
-    fun `la permission hardkey est declaree en signature`() {
+    fun `hardkey permission is declared as signature`() {
         val pm = ApplicationProvider.getApplicationContext<android.content.Context>().packageManager
         val info = pm.getPermissionInfo(EVProfileService.HARDKEY_PERMISSION, 0)
         assertEquals(
-            "La permission hardkey doit rester signature-only",
+            "The hardkey permission must remain signature-only",
             PermissionInfo.PROTECTION_SIGNATURE,
             info.protection
         )
     }
 
     @Test
-    fun `le nom de la permission correspond a celui du Manifest`() {
+    fun `permission name matches the Manifest`() {
         assertEquals("com.evsuite.profile.permission.RECEIVE_HARDKEY",
             EVProfileService.HARDKEY_PERMISSION)
     }

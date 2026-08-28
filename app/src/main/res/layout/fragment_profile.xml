@@ -8,7 +8,7 @@
     android:background="@color/dash_bg"
     android:padding="12dp">
 
-    <!-- Liste des profils -->
+    <!-- Profile list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_profiles"
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
         android:layout_marginBottom="10dp"
         android:clipToPadding="false" />
 
-    <!-- Bouton Nouveau profil -->
+    <!-- New profile button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_add_profile"
         android:layout_width="match_parent"

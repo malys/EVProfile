@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Page 1 du dashboard — Sécurité (AEB) + Assistant de sortie de voie (ELK)
-    Carte AEB  : Toggle ON/OFF | Mode (Alerte / Al.+Freinage) | Sensibilité (3 niveaux)
-    Carte ELK  : Toggle ON/OFF | Mode d'assistance (3 choix)  | Sensibilité (3 choix)
-    La carte AEB est masquée en visibility=gone par défaut (code la montre pour SWI133).
+    Page 1 of the dashboard — Safety (AEB) + Lane departure assistant (ELK)
+    AEB card: Toggle ON/OFF | Mode (Alert / Al.+Braking) | Sensitivity (3 levels)
+    ELK card: Toggle ON/OFF | Assistance mode (3 choices) | Sensitivity (3 choices)
+    The AEB card is hidden in visibility=gone by default (codes it for SWI133).
 -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -15,7 +15,7 @@
     android:padding="12dp">
 
     <!-- ══════════════════════════════════════════════════════════════════ -->
-    <!--  CARTE : Anticollision avant (AEB) — SWI133 uniquement            -->
+    <!--  MAP: Forward collision avoidance (AEB) — SWI133 only            -->
     <!-- ══════════════════════════════════════════════════════════════════ -->
     <LinearLayout
         android:id="@+id/aeb_card_page2"
@@ -47,7 +47,7 @@
             android:layout_height="1dp"
             android:background="@color/dash_border" />
 
-        <!-- Contenu : 3 colonnes — Toggle | Mode | Sensibilité -->
+        <!-- Content: 3 columns — Toggle | Fashion | Sensitivity -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -162,7 +162,7 @@
 
             </LinearLayout>
 
-            <!-- ── Colonne 3 : Sensibilité ───────────────────────── -->
+            <!-- ── Column 3: Sensitivity ───────────────────────── -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -278,7 +278,7 @@
             android:layout_height="1dp"
             android:background="@color/dash_border" />
 
-        <!-- Contenu : 3 colonnes — Toggle | Mode | Sensibilité -->
+        <!-- Content: 3 columns — Toggle | Fashion | Sensitivity -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -313,7 +313,7 @@
                     android:background="@color/dash_border"
                     android:layout_marginBottom="5dp" />
 
-                <!-- Non-SWI132 : switch centré (layout par défaut) -->
+                <!-- Non-SWI132: centered switch (default layout) -->
                 <LinearLayout
                     android:id="@+id/elk_activation_simple"
                     android:layout_width="match_parent"
@@ -328,7 +328,7 @@
 
                 </LinearLayout>
 
-                <!-- SWI132 : 3 lignes labelisées — visibility=gone par défaut (affiché par code) -->
+                <!-- SWI132: 3 labeled lines — visibility=gone by default (displayed by code) -->
                 <LinearLayout
                     android:id="@+id/elk_activation_swi132"
                     android:layout_width="match_parent"
@@ -488,7 +488,7 @@
 
             </LinearLayout>
 
-            <!-- ── Colonne 3 : Sensibilité des alertes ───────────── -->
+            <!-- ── Column 3: Alert sensitivity ───────────── -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

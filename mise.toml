@@ -1,15 +1,15 @@
-# Environnement de développement EVProfile.
+# EVProfile development environment.
 #
-# Commité volontairement : il décrit comment construire le projet, pas la machine de
-# quelqu'un. Pour une surcharge locale, créer un mise.local.toml (ignoré par git).
+# This file is intentionally committed: it describes how to build the project, not a
+# specific machine. Create a gitignored mise.local.toml for local overrides.
 #
-#   mise install       installe le JDK
-#   mise run bootstrap installe le SDK Android si absent
-#   mise run test      tests unitaires (les deux flavors)
-#   mise tasks         liste tout
+#   mise install       installs the JDK
+#   mise run bootstrap installs the Android SDK when missing
+#   mise run test      runs unit tests for both channels
+#   mise tasks         lists all tasks
 #
-# Pourquoi épingler le JDK : AGP 8.5.2 exige Java 17. Le JDK par défaut de la machine
-# (26) fait échouer le build avec une erreur de version de classe peu parlante.
+# AGP 8.5.2 requires Java 17. Pinning the JDK avoids an unclear class-version failure
+# when the machine default is a newer JDK.
 
 [tools]
 java = "17"
@@ -17,38 +17,36 @@ java = "17"
 [env]
 ANDROID_HOME = "{{env.HOME}}/Android/Sdk"
 ANDROID_SDK_ROOT = "{{env.HOME}}/Android/Sdk"
-# Gradle lit JAVA_HOME ; mise le pose déjà via [tools], on force l'ordre du PATH
-# pour les outils du SDK.
+# Gradle reads JAVA_HOME. Mise already sets it through [tools]; the SDK tool order is
+# made explicit in PATH.
 _.path = [
     "{{env.HOME}}/Android/Sdk/platform-tools",
     "{{env.HOME}}/Android/Sdk/cmdline-tools/latest/bin",
 ]
 
-# Version du SDK requise par app/build.gradle.kts (compileSdk = 34).
+# SDK version required by app/build.gradle.kts (compileSdk = 34).
 COMPILE_SDK = "34"
 BUILD_TOOLS = "34.0.0"
 
-# Gradle doit tourner sur le JDK de mise. Sans -Dorg.gradle.java.home, Gradle réutilise
-# un daemon déjà lancé par l'extension Java de VS Code, qui embarque un JRE 21 sans
-# jlink : le build échoue alors sur JdkImageTransform, sans rapport avec le code.
-# ── Émulateur ────────────────────────────────────────────────────────────────────
+# Gradle must use Mise's JDK. Without -Dorg.gradle.java.home, Gradle may reuse a daemon
+# started by the VS Code Java extension with a JRE 21 that lacks jlink, causing an
+# unrelated JdkImageTransform failure.
+# ── Emulator ──────────────────────────────────────────────────────────────────
 #
-# ATTENTION sur la fidélité : le véhicule tourne en AAOS 9 (API 28). Google ne publie
-# AUCUNE image système Automotive en dessous d'API 33 — vérifié avec sdkmanager --list.
-# Il n'existe donc pas d'émulateur qui reproduise à la fois l'OS et l'API voiture du MG4.
-# D'où deux profils, chacun fidèle sur un axe :
+# Fidelity warning: the vehicle runs AAOS 9 (API 28). Google publishes no Automotive
+# system image below API 33, as verified with sdkmanager --list. No emulator reproduces
+# both the MG4 OS version and vehicle API, so two profiles cover one axis each:
 #
-#   emulator-car     API 33 Automotive — a bien un CarPropertyManager, mauvaise version
-#                    d'OS. Pour tester le cycle de vie du service et le chemin voiture.
-#                    Les propriétés VENDEUR SAIC (0x216xxxxx : SOC, autonomie) n'existent
-#                    pas dans l'émulateur : ces lectures échoueront, c'est normal.
-#   emulator-screen  API 28 tablette — bonne version d'OS et bon écran (1920x1080 @ 160dpi,
-#                    12,8" HD comme le MG4), mais AUCUN service voiture.
-#                    Pour l'UI, les layouts et la densité.
+#   emulator-car     API 33 Automotive: has CarPropertyManager but the wrong OS version.
+#                    Use it for service lifecycle and vehicle-access paths. SAIC vendor
+#                    properties (0x216xxxxx: SOC, range) do not exist, so reads fail normally.
+#   emulator-screen  API 28 tablet: correct OS version and screen (1920x1080 @ 160dpi,
+#                    12.8-inch HD like the MG4), but no vehicle service. Use it for UI,
+#                    layouts and density.
 #
-# Rien de tout cela ne remplace un essai sur le véhicule.
-# Densité cible du projet : 160 dpi.
-# Écran 12,8" 1920x1080. Firmware de référence : SWI68-29958-1300R69.
+# Neither profile replaces on-vehicle testing.
+# Target density: 160 dpi.
+# Screen: 12.8-inch 1920x1080. Reference firmware: SWI68-29958-1300R69.
 
 EMU_CAR_AVD = "evprofile-car"
 EMU_CAR_IMAGE = "system-images;android-33;android-automotive;x86_64"
@@ -60,16 +58,16 @@ EMU_DENSITY = "160"
 
 
 [tasks.bootstrap]
-description = "Installe le SDK Android (platform + build-tools) s'il manque"
+description = "Install the Android SDK platform and build tools when missing"
 run = """
 set -e
 if [ -d "$ANDROID_HOME/platforms/android-$COMPILE_SDK" ]; then
-  echo "SDK $COMPILE_SDK déjà présent → rien à faire"
+  echo "SDK $COMPILE_SDK is already installed"
   exit 0
 fi
 mkdir -p "$ANDROID_HOME"
 if [ ! -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" ]; then
-  echo "Téléchargement des commandline-tools…"
+  echo "Downloading Android command-line tools…"
   tmp=$(mktemp -d)
   curl -sSL -o "$tmp/tools.zip" \
     https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
@@ -82,51 +80,51 @@ yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_H
 "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_HOME" \
   "platform-tools" "platforms;android-$COMPILE_SDK" "build-tools;$BUILD_TOOLS"
 echo "sdk.dir=$ANDROID_HOME" > local.properties
-echo "SDK installé, local.properties écrit"
+echo "SDK installed and local.properties written"
 """
 
 [tasks.build]
-description = "Compile le canal stable hors ligne en debug"
+description = "Build the offline stable debug channel"
 run = './gradlew -Dorg.gradle.java.home=$JAVA_HOME assembleStableDebug'
 
 [tasks.test]
-description = "Tests unitaires JVM — les deux canaux"
+description = "Run JVM unit tests for both channels"
 run = './gradlew -Dorg.gradle.java.home=$JAVA_HOME testStableDebugUnitTest testUnstableDebugUnitTest'
 
 [tasks.lint]
-description = "Analyse lint Android"
+description = "Run Android lint"
 run = './gradlew -Dorg.gradle.java.home=$JAVA_HOME lintStableDebug lintUnstableDebug'
 
 [tasks.permissions]
-description = "Contrôle de dérive des permissions (le même que la CI)"
+description = "Check permission drift using the CI gate"
 run = "bash .github/security/check-permissions.sh"
 
 [tasks.check]
-description = "Ce que la CI exécute : permissions + tests"
+description = "Run the CI permission and test gates"
 depends = ["permissions", "test"]
 
 [tasks.release]
-description = "APK release des deux canaux (R8 activé — passe véhicule requise avant diffusion)"
+description = "Build both release APKs with R8; on-vehicle validation is required before publishing"
 run = './gradlew -Dorg.gradle.java.home=$JAVA_HOME assembleStableRelease assembleUnstableRelease'
 
 [tasks.clean]
 run = './gradlew -Dorg.gradle.java.home=$JAVA_HOME clean'
 
 [tasks.emulator-setup]
-description = "Installe l'émulateur + les images système et crée les deux AVD"
+description = "Install emulator system images and create both AVDs"
 run = '''
 set -e
 SDK="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
 AVDM="$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager"
 
 if [ ! -e /dev/kvm ]; then
-  echo "ERREUR : /dev/kvm absent — pas d'accélération matérielle, l'émulateur sera inutilisable." >&2
-  echo "Sous WSL2 : activer la virtualisation imbriquée côté Windows." >&2
+  echo "ERROR: /dev/kvm is missing; the emulator cannot use hardware acceleration." >&2
+  echo "On WSL2, enable nested virtualization in Windows." >&2
   exit 1
 fi
 if ! id -nG | tr ' ' '\n' | grep -qx kvm; then
-  echo "ATTENTION : utilisateur absent du groupe kvm. Corriger avec :" >&2
-  echo "  sudo usermod -aG kvm $USER   # puis se reconnecter" >&2
+  echo "WARNING: the current user is not in the kvm group. Fix with:" >&2
+  echo "  sudo usermod -aG kvm $USER   # then log in again" >&2
 fi
 
 yes | "$SDK" --sdk_root="$ANDROID_HOME" --licenses > /dev/null
@@ -135,13 +133,13 @@ yes | "$SDK" --sdk_root="$ANDROID_HOME" --licenses > /dev/null
 create_avd() {
   name="$1"; image="$2"; device="$3"
   if "$AVDM" list avd 2>/dev/null | grep -q "Name: $name"; then
-    echo "AVD $name déjà présent"
+    echo "AVD $name already exists"
   else
     echo no | "$AVDM" create avd -n "$name" -k "$image" -d "$device" --force
   fi
   cfg="$HOME/.android/avd/$name.avd/config.ini"
-  # Écran du MG4. Sans ça l'AVD garde la densité du profil générique et les layouts
-  # ne ressemblent pas à ce que voit le conducteur.
+  # MG4 screen geometry. Without this, the AVD keeps the generic profile density and
+  # layouts do not match what the driver sees.
   sed -i '/^hw.lcd/d;/^disk.dataPartition.size/d' "$cfg"
   {
     echo "hw.lcd.width=$EMU_WIDTH"
@@ -149,7 +147,7 @@ create_avd() {
     echo "hw.lcd.density=$EMU_DENSITY"
     echo "disk.dataPartition.size=4G"
   } >> "$cfg"
-  echo "AVD $name configuré en ${EMU_WIDTH}x${EMU_HEIGHT} @ ${EMU_DENSITY}dpi"
+  echo "Configured AVD $name at ${EMU_WIDTH}x${EMU_HEIGHT} @ ${EMU_DENSITY}dpi"
 }
 
 create_avd "$EMU_CAR_AVD" "$EMU_CAR_IMAGE" "automotive_1024p_landscape"
@@ -157,46 +155,45 @@ create_avd "$EMU_SCREEN_AVD" "$EMU_SCREEN_IMAGE" "pixel_c"
 '''
 
 [tasks.emulator-car]
-description = "Lance l'émulateur Automotive (API 33 — a un CarPropertyManager)"
+description = "Start the API 33 Automotive emulator with CarPropertyManager"
 run = '''
 set -e
-# swiftshader_indirect : le GPU hôte n'est pas exposé de façon fiable sous WSL2.
+# The host GPU is not exposed reliably under WSL2.
 "$ANDROID_HOME/emulator/emulator" -avd "$EMU_CAR_AVD" \
   -gpu host -no-snapshot-save -no-boot-anim &
 "$ANDROID_HOME/platform-tools/adb" wait-for-device
-echo "Émulateur voiture prêt."
+echo "Vehicle emulator is ready."
 '''
 
 [tasks.emulator-screen]
-description = "Lance l'émulateur écran MG4 (API 28, 1920x1080 @ 160dpi — pas de service voiture)"
+description = "Start the API 28 MG4 screen emulator without vehicle services"
 run = '''
 set -e
 "$ANDROID_HOME/emulator/emulator" -avd "$EMU_SCREEN_AVD" \
   -gpu host -no-snapshot-save -no-boot-anim &
 "$ANDROID_HOME/platform-tools/adb" wait-for-device
-echo "Émulateur écran prêt."
+echo "Screen emulator is ready."
 '''
 
 [tasks.emulator-stop]
-description = "Arrête l'émulateur en cours"
+description = "Stop the running emulator"
 run = '"$ANDROID_HOME/platform-tools/adb" emu kill || true'
 
 [tasks.run]
-description = "Compile, installe et lance l'APK sur l'émulateur ou le véhicule connecté"
+description = "Build, install and launch the APK on an emulator or connected vehicle"
 depends = ["build"]
 run = '''
 set -e
 ADB="$ANDROID_HOME/platform-tools/adb"
 if [ -z "$($ADB devices | sed '1d' | grep -w device || true)" ]; then
-  echo "Aucun appareil. Lancer 'mise run emulator-car'/'emulator-screen' ou brancher le véhicule." >&2
+  echo "No device found. Start an emulator or connect the vehicle." >&2
   exit 1
 fi
-# Les builds debug retirent sharedUserId (overlay src/debug/AndroidManifest.xml), donc la
-# clé debug suffit pour installer sur un émulateur. La release garde sharedUserId + signature
-# plateforme pour le véhicule.
+# Debug builds remove sharedUserId through src/debug/AndroidManifest.xml, so the debug key
+# is sufficient on an emulator. Release retains sharedUserId and the platform signature.
 APK=$(ls -t app/build/outputs/apk/stable/debug/*.apk | head -1)
-echo "Installation de $APK"
+echo "Installing $APK"
 $ADB install -r -g "$APK"
 $ADB shell am start -n "com.evsuite.profile/com.evsuite.profile.MainActivity"
-echo "Lancé. Logs : mise run logs"
+echo "Launched. View logs with: mise run logs"
 '''

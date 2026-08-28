@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Fond d'un onglet de la barre de pages. L'état vient de View.isSelected, posé par
-     MainActivity.markCurrentPage sur le seul onglet dont la page est à l'écran : la
-     couleur n'est plus appliquée à la main dans le code, ce qui garantit qu'un onglet
-     ne peut pas rester peint « actif » si la liste des écrans change. -->
+<!-- Background of a page bar tab. The state comes from View.isSelected, set by
+     MainActivity.markCurrentPage on the only tab whose page is on the screen: the
+     color is no longer applied by hand in the code, which ensures that a tab
+     Cannot remain painted "active" if the screen list changes. -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true" android:color="@color/dash_accent" />
     <item android:color="@color/dash_btn" />

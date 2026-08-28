@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Layout principal dashboard — écran unique 1280×480
-    Remplace la navigation par onglets.
-    Deux rangées :
-      • Haut  : carte "Paramètres de conduite" (Mode | Regen | ADAS)
+    Main dashboard layout — single screen 1280×480
+    Replaces tab-based navigation.
+    Two rows:
+      • Top: “Driving parameters” map (Mode | Regen | ADAS)
       • Bas   : carte CLIMAT (gauche) + carte ALERTES (droite)
 -->
 <LinearLayout
@@ -16,12 +16,12 @@
     android:padding="12dp">
 
     <!-- ══════════════════════════════════════════════════════════════════ -->
-    <!--  CARTE : Paramètres de conduite                                   -->
+    <!--  MAP: Driving settings                                   -->
     <!-- ══════════════════════════════════════════════════════════════════ -->
-    <!-- 3:2 et non 2:1. Sur un panneau de 480 dp la carte du bas recevait un tiers de la
-         hauteur, dont il fallait encore retirer l'en-tête et deux niveaux de marges : il
-         restait moins de 40 dp pour les boutons de sièges. La carte du haut cède ce qu'il
-         faut pour que les deux restent lisibles — ses propres boutons, sur une grille 2×2,
+    <!-- 3:2 and not 2:1. On a 480 dp panel the bottom card received a third of the
+         height, from which it was still necessary to remove the header and two levels of margins: it
+         Less than 40 dp remained for the seat buttons. The top card gives up what it
+         necessary for both to remain readable — its own buttons, on a 2×2 grid,
          gardent de quoi tenir. -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -196,7 +196,7 @@
                     android:paddingTop="5dp"
                     android:paddingBottom="5dp" />
 
-                <!-- Économie d'énergie — bouton toggle sous Custom (masqué par défaut) -->
+                <!-- Power saving — toggle button under Custom (hidden by default) -->
                 <Button
                     android:id="@+id/btn_energy_saving"
                     android:layout_width="match_parent"
@@ -213,7 +213,7 @@
 
             </LinearLayout>
 
-            <!-- ── Section Régénération ────────────────────────────────── -->
+            <!-- ── Regeneration Section ────────────────────────────────── -->
             <LinearLayout
                 android:id="@+id/section_regen"
                 android:layout_width="0dp"
@@ -403,7 +403,7 @@
                     android:background="@color/dash_border"
                     android:layout_marginBottom="5dp" />
 
-                <!-- SWI133/SWI132 : OFF / LIM.MANUEL / LIM.AUTO / ACC / ICA  (2 rangées) -->
+                <!-- SWI133/SWI132: OFF / MANUAL LIM / AUTO LIM / ACC / ICA (2 rows) -->
                 <LinearLayout
                     android:id="@+id/adas_group_swi133"
                     android:layout_width="match_parent"
@@ -412,7 +412,7 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <!-- Rangée 1 : Off / Lim. Manuel / Lim. Auto -->
+                    <!-- Row 1: Off / Lim. Manual / Lim. Auto -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -477,7 +477,7 @@
 
                     </LinearLayout>
 
-                    <!-- Rangée 2 : ACC / ICA -->
+                    <!-- Row 2: ACC / ICA -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -521,7 +521,7 @@
                             app:autoSizeMinTextSize="11sp"
                             app:autoSizeMaxTextSize="18sp" />
 
-                        <!-- Spacer pour aligner sur 3 colonnes -->
+                        <!-- Spacer to align on 3 columns -->
                         <View
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -532,7 +532,7 @@
 
                 </LinearLayout>
 
-                <!-- SWI68/69/131/165 : OFF / LIM.MANUEL / LIM.AUTO / ACC / TJA  (2 rangées) -->
+                <!-- SWI68/69/131/165: OFF / MANUAL LIM / AUTO LIM / ACC / TJA (2 rows) -->
                 <LinearLayout
                     android:id="@+id/adas_group_swi68"
                     android:layout_width="match_parent"
@@ -541,7 +541,7 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <!-- Rangée 1 : Off / Lim. Manuel / Lim. Auto -->
+                    <!-- Row 1: Off / Lim. Manual / Lim. Auto -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -606,7 +606,7 @@
 
                     </LinearLayout>
 
-                    <!-- Rangée 2 : ACC / TJA -->
+                    <!-- Row 2: ACC / TJA -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -674,7 +674,7 @@
         android:layout_weight="2"
         android:orientation="horizontal">
 
-        <!-- ── Carte CLIMAT (masquée en SWI69 — pas de sièges/volant chauffant) -->
+        <!-- ── CLIMATE map (hidden in SWI69 — no heated seats/steering wheel) -->
         <LinearLayout
             android:id="@+id/climate_card"
             android:layout_width="0dp"
@@ -752,7 +752,7 @@
 
                 </LinearLayout>
 
-                <!-- Siège gauche -->
+                <!-- Left seat -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -780,10 +780,10 @@
                         android:background="@color/dash_border"
                         android:layout_marginBottom="5dp" />
 
-                    <!-- Les quatre niveaux sur une seule rangée. En 2x2 ils se partageaient
-                         une hauteur qui n'en contenait pas deux : LinearLayout répartit alors
-                         le déficit, les boutons tombaient sous 20 dp et les libellés étaient
-                         rognés. Sur une rangée, chacun prend toute la hauteur de la section. -->
+                    <!-- All four levels in a single row. In 2x2 they shared
+                         a height that did not contain two: LinearLayout then distributes
+                         the deficit, the buttons fell below 20 dp and the labels were
+                         trimmed. In a row, each takes up the entire height of the section. -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -873,7 +873,7 @@
 
                 </LinearLayout>
 
-                <!-- Siège droit -->
+                <!-- Right seat -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -900,10 +900,10 @@
                         android:background="@color/dash_border"
                         android:layout_marginBottom="5dp" />
 
-                    <!-- Les quatre niveaux sur une seule rangée. En 2x2 ils se partageaient
-                         une hauteur qui n'en contenait pas deux : LinearLayout répartit alors
-                         le déficit, les boutons tombaient sous 20 dp et les libellés étaient
-                         rognés. Sur une rangée, chacun prend toute la hauteur de la section. -->
+                    <!-- All four levels in a single row. In 2x2 they shared
+                         a height that did not contain two: LinearLayout then distributes
+                         the deficit, the buttons fell below 20 dp and the labels were
+                         trimmed. In a row, each takes up the entire height of the section. -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -997,7 +997,7 @@
 
         </LinearLayout>
 
-        <!-- ── Carte SÉCURITÉ & ALERTES ─────────────────────────────── -->
+        <!-- ── SECURITY & ALERTS Card ─────────────────────────────── -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -1025,7 +1025,7 @@
                 android:layout_height="1dp"
                 android:background="@color/dash_border" />
 
-            <!-- 2 colonnes : Sécurité (gauche) | Alertes (droite) -->
+            <!-- 2 columns: Security (left) | Alerts (right) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -1161,7 +1161,7 @@
                         android:background="@color/dash_border"
                         android:layout_marginBottom="6dp" />
 
-                    <!-- 2 colonnes : TSR à gauche, autres alertes à droite -->
+                    <!-- 2 columns: TSR on the left, other alerts on the right -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -1195,7 +1195,7 @@
 
                         </LinearLayout>
 
-                        <!-- Séparateur vertical -->
+                        <!-- Vertical separator -->
                         <View
                             android:layout_width="1dp"
                             android:layout_height="match_parent"
@@ -1203,7 +1203,7 @@
                             android:layout_marginStart="6dp"
                             android:layout_marginEnd="6dp" />
 
-                        <!-- Colonne droite : alertes spécifiques au firmware -->
+                        <!-- Right column: firmware-specific alerts -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -1211,7 +1211,7 @@
                             android:orientation="vertical"
                             android:gravity="center_vertical">
 
-                            <!-- SWI133 : Survitesse + Chgt vitesse -->
+                            <!-- SWI133: overspeed + speed-limit change -->
                             <LinearLayout
                                 android:id="@+id/alerts_group_swi133"
                                 android:layout_width="match_parent"

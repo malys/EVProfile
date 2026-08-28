@@ -5,26 +5,26 @@ import android.provider.Settings
 import androidx.appcompat.app.AppCompatDelegate
 
 /**
- * Gestion du thème de l'application (sombre / clair / auto-sync launcher).
+ * Management of the application theme (dark / light / auto-sync launcher).
  *
- * Le mode "auto" est disponible sur TOUS les firmwares, mais fonctionne différemment :
+ * "Auto" mode is available on ALL firmwares, but works differently:
  *
  * ─ SWI69 / SWI131 / SWI132 ──────────────────────────────────────────────────────
- *   Clé Settings.System : "SKIN_THEME_CONFIG"  (0 = sombre, 1 = clair)
- *   Broadcast launcher  : "com.saicmotor.changeSkin" (sans extra → relire Settings.System)
- *   → On lit la valeur explicitement et on passe MODE_NIGHT_YES/NO + recreate().
+ *   Settings.System key: "SKIN_THEME_CONFIG" (0 = dark, 1 = light)
+ *   Launcher broadcast: "com.saicmotor.changeSkin" (no extra → reread Settings.System)
+ *   → We read the value explicitly and pass MODE_NIGHT_YES/NO + recreate().
  *
  * ─ SWI133 / SWI68 ───────────────────────────────────────────────────────────────
- *   Le launcher appelle UiModeManager.setNightMode() qui change le uiMode Android
+ *   The launcher calls UiModeManager.setNightMode() which changes the Android uiMode
  *   global (0x13 = clair, 0x23 = sombre). Le SkinManager SWI133 lit isNightMode()
- *   depuis Configuration.uiMode.
- *   → On utilise MODE_NIGHT_FOLLOW_SYSTEM : AppCompat suit automatiquement le
- *     uiMode système et recrée l'activité lorsqu'il change.
+ *   from Configuration.uiMode.
+ *   → Use MODE_NIGHT_FOLLOW_SYSTEM so AppCompat automatically follows the
+ *     uiSystem mode and recreates the activity when it changes.
  *
- * Préférence stockée : "theme_mode" dans "ev_settings"
- *   "auto"  → sync avec le launcher MG (mécanisme adapté au firmware)
- *   "dark"  → toujours sombre
- *   "light" → toujours clair
+ * Stored preference: "theme_mode" in "ev_settings"
+ *   "auto" → sync with the MG launcher (mechanism adapted to the firmware)
+ *   "dark"  → always dark
+ *   "light" → always light
  */
 object ThemeHelper {
 
@@ -34,17 +34,17 @@ object ThemeHelper {
     private const val PREFS_NAME      = "ev_settings"
 
     /**
-     * Callback invoqué (sur le thread principal) lorsque le launcher change de thème
-     * sur SWI69/131/132. MainActivity l'utilise pour déclencher recreate().
+     * Callback invoked (on the main thread) when the launcher changes theme
+     * on SWI69/131/132. MainActivity uses it to trigger recreate().
      * Sur SWI133/68, AppCompat appelle recreate() automatiquement via FOLLOW_SYSTEM.
      */
     @Volatile var onThemeChanged: (() -> Unit)? = null
 
-    // ── Détection du mécanisme ───────────────────────────────────────────────
+    // ── Mechanism detection ─────────────────────── ────────────────────────
 
     /**
-     * Retourne true si ce firmware expose SKIN_THEME_CONFIG dans Settings.System
-     * (SWI69 / SWI131 / SWI132). Sur SWI68/133, utilise FOLLOW_SYSTEM à la place.
+     * Returns true if this firmware exposes SKIN_THEME_CONFIG in Settings.System
+     * (SWI69 / SWI131 / SWI132). On SWI68/133, use FOLLOW_SYSTEM instead.
      */
     fun hasSkinThemeConfig(context: Context): Boolean {
         return try {
@@ -54,11 +54,11 @@ object ThemeHelper {
         }
     }
 
-    // ── Lecture du thème launcher (SWI69/131/132 uniquement) ─────────────────
+    // ── Playing the launcher theme (SWI69/131/132 only) ─────────────────
 
     /**
-     * Lit SKIN_THEME_CONFIG et retourne MODE_NIGHT_YES ou MODE_NIGHT_NO.
-     * À n'appeler que si hasSkinThemeConfig() == true.
+     * Reads SKIN_THEME_CONFIG and returns MODE_NIGHT_YES or MODE_NIGHT_NO.
+     * Only call if hasSkinThemeConfig() == true.
      */
     fun getLauncherNightMode(context: Context): Int {
         return try {
@@ -69,13 +69,13 @@ object ThemeHelper {
         }
     }
 
-    // ── Résolution du mode à appliquer ───────────────────────────────────────
+    // ── Resolution of the mode to apply ───────────────────────────────────────
 
     /**
-     * Retourne le night mode AppCompat à appliquer selon la préférence "theme_mode".
+     * Returns the AppCompat night mode to apply according to the "theme_mode" preference.
      *
-     * "auto" sur SWI69/131/132 → YES ou NO selon SKIN_THEME_CONFIG
-     * "auto" sur SWI133/68    → MODE_NIGHT_FOLLOW_SYSTEM (suit le uiMode Android)
+     * "auto" on SWI69/131/132 → YES or NO according to SKIN_THEME_CONFIG
+     * "auto" on SWI133/68 → MODE_NIGHT_FOLLOW_SYSTEM (follows Android uiMode)
      */
     fun resolveNightMode(context: Context): Int {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -89,7 +89,7 @@ object ThemeHelper {
 
     // ── Notification de changement (SWI69/131/132) ───────────────────────────
 
-    /** Appelé depuis le service (déjà sur le main thread) pour déclencher recreate(). */
+    /** Called from the service (already on the main thread) to trigger recreate(). */
     fun notifyThemeChanged() {
         onThemeChanged?.invoke()
     }
