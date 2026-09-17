@@ -226,6 +226,7 @@ class EVProfileService : Service() {
         val pressKey = when (event.press) {
             PhysicalButtonEventDecoder.Press.LONG  -> "${slot}_long"
             PhysicalButtonEventDecoder.Press.SHORT -> "${slot}_single"
+            PhysicalButtonEventDecoder.Press.DOUBLE -> return
         }
         val action = ShortcutAction.fromId(prefs.getInt("shortcut_$pressKey", 0))
         if (action != ShortcutAction.NONE) executeToggle(action, pressKey)
