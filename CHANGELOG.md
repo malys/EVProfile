@@ -4,6 +4,16 @@ All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.3] - 2026-09-17
+
+### Fixed
+
+- Ignore double presses when only single and long steering-wheel shortcuts are configured.
+
+### Changed
+
+- Updated EVHardware to the shared `master` catalogue and telemetry implementation.
+
 ## [3.0.2] - 2026-08-26
 
 ### Fixed

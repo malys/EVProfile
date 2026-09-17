@@ -10,8 +10,8 @@ android {
         applicationId = "com.evsuite.profile"
         minSdk = 28
         targetSdk = 34
-        versionCode = 21
-        versionName = "3.0.2"
+        versionCode = 22
+        versionName = "3.0.3"
     }
 
     // Signing with the ROM platform key (required by sharedUserId=android.uid.system).
