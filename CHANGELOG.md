@@ -4,6 +4,13 @@ All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.4] - 2026-09-22
+
+### Fixed
+
+- **Applying a profile while driving no longer floods the head unit with refusal messages.** The write gate was asked once per setting rather than once per profile, and the automatic-startup verification pass then rewrote settings the gate had never let through. The gate is now asked once for the immediate settings and once for the ADAS block, and a closed gate skips the ADAS sequence instead of retrying it.
+- **The refusal message no longer shows format placeholders.** `write_refused_moving` carried `%1$s` and `%2$d` but was read without arguments, so the driver saw them verbatim. The gate refuses anything above standstill, so the speed and limit those placeholders named added nothing; they are gone from every locale.
+
 ## [3.0.3] - 2026-09-17
 
 ### Fixed
