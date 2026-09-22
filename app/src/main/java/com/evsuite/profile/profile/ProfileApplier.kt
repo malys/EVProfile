@@ -5,6 +5,7 @@ import com.evsuite.hardware.EVHardware
 import com.evsuite.hardware.EVHardware.Swi68Mode
 import com.evsuite.hardware.model.DrivingProfile
 import com.evsuite.hardware.FirmwareInfo
+import com.evsuite.hardware.VehicleWriteGate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -83,15 +84,27 @@ object ProfileApplier {
     private fun applyLocked(profile: DrivingProfile, autoStart: Boolean, onComplete: ((Boolean) -> Unit)?) {
             var ok = true
 
-            // Mode de conduite (rapide — binder call)
-            val dmOk = EVHardware.setDriveMode(profile.driveMode)
-            AppLogger.i(TAG, "  DriveMode=${profile.driveMode.label} → $dmOk")
-            ok = ok && dmOk
+            // The gate is asked once for the whole road-behaviour block instead of once per
+            // setting. Its answer is the same for all of them — they are refused together or
+            // allowed together — and each refusal shows the driver a message: a profile applied
+            // while moving used to put one refusal on screen per setting, back to back, for as
+            // long as the sequence lasted. One question, one answer, one message.
+            val roadWrites = VehicleWriteGate.allow("profile '${profile.name}' — driving settings")
 
-            // Regeneration level (fast — binder call)
-            val rlOk = EVHardware.setRegenLevel(profile.regenLevel)
-            AppLogger.i(TAG, "  RegenLevel=${profile.regenLevel.label} → $rlOk")
-            ok = ok && rlOk
+            if (roadWrites) {
+                // Mode de conduite (rapide — binder call)
+                val dmOk = EVHardware.setDriveMode(profile.driveMode)
+                AppLogger.i(TAG, "  DriveMode=${profile.driveMode.label} → $dmOk")
+                ok = ok && dmOk
+
+                // Regeneration level (fast — binder call)
+                val rlOk = EVHardware.setRegenLevel(profile.regenLevel)
+                AppLogger.i(TAG, "  RegenLevel=${profile.regenLevel.label} → $rlOk")
+                ok = ok && rlOk
+            } else {
+                AppLogger.w(TAG, "  DriveMode/RegenLevel skipped — vehicle write gate is closed")
+                ok = false
+            }
 
             // Steering wheel + Heated seats — only SWI133 and SWI68 (SWI69/SWI131 do not have this equipment)
             if (FirmwareInfo.hasHeatFeatures()) {
@@ -108,6 +121,13 @@ object ProfileApplier {
 
             // ADAS (Katman4) — applied as soon as the service is ready
             EVHardware.whenKatman4Ready {
+                // Asked again rather than reusing the verdict above: this block runs when the
+                // ADAS service becomes available, which on a cold head unit is minutes later.
+                // The car may have stopped since, and that profile deserves to land.
+                if (!VehicleWriteGate.allow("profile '${profile.name}' — ADAS")) {
+                    AppLogger.w(TAG, "  ADAS skipped for '${profile.name}' — vehicle write gate is closed")
+                    return@whenKatman4Ready
+                }
                 AppLogger.i(TAG, "  Applying ADAS for profile '${profile.name}'")
                 if (FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI132) {
                     // ── SWI132 ──────────────────────────────────────────────────────────

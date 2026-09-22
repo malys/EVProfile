@@ -223,7 +223,7 @@
     <string name="update_installed">✅ Update erfolgreich installiert!</string>
     <string name="update_error_download">Download fehlgeschlagen. Verbindung prüfen.</string>
     <string name="update_error_signature">Update abgelehnt: Die heruntergeladene APK ist nicht mit dem erwarteten Schlüssel signiert. Datei gelöscht.</string>
-    <string name="write_refused_moving">Fahreinstellung abgelehnt: %1$s km/h (Grenze %2$d km/h). Zum Ändern langsamer fahren.</string>
+    <string name="write_refused_moving">Fahreinstellung abgelehnt: zum Ändern das Fahrzeug anhalten.</string>
     <string name="write_refused_unknown_speed">Einstellung abgelehnt: Fahrzeuggeschwindigkeit nicht lesbar.</string>
     <string name="update_error_install">Installation fehlgeschlagen.</string>
     <string name="update_install_error">Installationsfehler: %s</string>

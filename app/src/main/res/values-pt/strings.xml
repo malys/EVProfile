@@ -223,7 +223,7 @@
     <string name="update_installed">✅ Atualização instalada com sucesso!</string>
     <string name="update_error_download">Transferência falhada. Verifique a ligação.</string>
     <string name="update_error_signature">Atualização recusada: o APK transferido não está assinado com a chave esperada. Ficheiro eliminado.</string>
-    <string name="write_refused_moving">Definição de condução recusada: %1$s km/h (limite %2$d km/h). Abrande para alterar.</string>
+    <string name="write_refused_moving">Definição de condução recusada: pare o veículo para alterar.</string>
     <string name="write_refused_unknown_speed">Definição recusada: não foi possível ler a velocidade do veículo.</string>
     <string name="update_error_install">Instalação falhada.</string>
     <string name="update_install_error">Erro de instalação: %s</string>
