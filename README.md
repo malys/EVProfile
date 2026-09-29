@@ -78,10 +78,16 @@ The app communicates with the vehicle through the proprietary SAIC SDK, accessin
 - Available actions: Drive mode / Regeneration / ADAS / **Open app**
 - Enable/disable shortcuts with a **warning dialog**
 
+### Audio
+- **Door-open volume** (SWI132/133): lowers media volume when a front door opens,
+  configurable target level, trigger doors and restore-on-close
+
 ### Profile Management
 - Save up to **5 custom profiles**
 - Instant one-tap profile application
 - Automatic default profile application **on vehicle startup**
+- Automatic profile application **on a paired Bluetooth device connecting**
+- Profile backup to **vehicle-persistent storage** — survives app uninstall/reinstall
 
 ### Settings
 - Language selection (English / German / Spanish / Portuguese / Italian)

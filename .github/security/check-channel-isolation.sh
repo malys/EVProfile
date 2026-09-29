@@ -2,8 +2,8 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../.." && pwd)"
-stable_manifest="$(find "$root/app/build/intermediates" -path '*stableDebug*' -name AndroidManifest.xml | head -1)"
-unstable_manifest="$(find "$root/app/build/intermediates" -path '*unstableDebug*' -name AndroidManifest.xml | head -1)"
+stable_manifest="$(find "$root/app/build/intermediates" -path '*/stableDebug/*' -name AndroidManifest.xml | head -1)"
+unstable_manifest="$(find "$root/app/build/intermediates" -path '*/unstableDebug/*' -name AndroidManifest.xml | head -1)"
 
 if [ -z "$stable_manifest" ] || [ -z "$unstable_manifest" ]; then
   echo "::error::Merged channel manifests were not generated."
