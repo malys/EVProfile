@@ -7,7 +7,7 @@
 [![Unstable](https://github.com/malys/EVProfile/actions/workflows/unstable.yml/badge.svg)](https://github.com/malys/EVProfile/actions/workflows/unstable.yml)
 [![Release](https://img.shields.io/github/v/release/malys/EVProfile?include_prereleases&sort=semver)](https://github.com/malys/EVProfile/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Part of EVSuite](https://img.shields.io/badge/part%20of-EVSuite-2f81f7)](https://malys.github.io/EVSuite_site/)
+[![Part of EVSuite](https://img.shields.io/badge/part%20of-EVSuite-2f81f7)](https://malys.github.io/EVSuite/)
 
 > ⚠️ **This app writes vehicle settings.** Use it only while parked and at your own risk.
 > Read [DISCLAIMER.md](DISCLAIMER.md) before installing. Incorrect settings may affect
@@ -33,10 +33,10 @@ exposed by the vehicle. It reads and writes the vehicle through the shared
 
 ## Part of EVSuite
 
-EVProfile is one app of [**EVSuite**](https://malys.github.io/EVSuite_site/), a family of independent,
+EVProfile is one app of [**EVSuite**](https://malys.github.io/EVSuite/), a family of independent,
 offline-first apps for the MG4 head unit (Android Automotive OS 9). Each app installs on its
 own — pick only what you need. User guides and install instructions:
-<https://malys.github.io/EVSuite_site/>.
+<https://malys.github.io/EVSuite/>.
 
 Discover the rest of the suite:
 
