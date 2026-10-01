@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- CUSTOM drive mode settings, live (CR-040). Opened from the dashboard's Custom button
+     while the car is in Custom; every tap is one standstill-gated write. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="640dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_section_rounded"
+    android:padding="@dimen/spacing_md">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_section_custom"
+        android:textColor="@color/dash_text_lo"
+        android:textSize="@dimen/text_label"
+        android:textStyle="bold"
+        android:letterSpacing="0.12"
+        android:textAllCaps="true"
+        android:paddingBottom="@dimen/spacing_sm" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_custom_power"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_label"
+        android:paddingBottom="4dp" />
+    <LinearLayout
+        android:id="@+id/row_custom_power"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/touch_target"
+        android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/spacing_sm" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_custom_steering"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_label"
+        android:paddingBottom="4dp" />
+    <LinearLayout
+        android:id="@+id/row_custom_steering"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/touch_target"
+        android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/spacing_sm" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_custom_pedal"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_label"
+        android:paddingBottom="4dp" />
+    <LinearLayout
+        android:id="@+id/row_custom_pedal"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/touch_target"
+        android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/spacing_sm" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_custom_close"
+        style="@style/Widget.EV.Button.Outlined"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/touch_target"
+        android:layout_gravity="end"
+        android:minWidth="160dp"
+        android:text="@string/custom_drive_close"
+        android:textAllCaps="false"
+        app:cornerRadius="@dimen/ev_corner" />
+</LinearLayout>

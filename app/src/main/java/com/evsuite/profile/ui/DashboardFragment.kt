@@ -5,10 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.widget.Button
+import android.widget.LinearLayout
+import androidx.appcompat.app.AlertDialog
 import android.widget.Switch
 import androidx.fragment.app.Fragment
 import com.evsuite.profile.R
+import com.evsuite.hardware.CustomDrive
 import com.evsuite.hardware.EVHardware
 import com.evsuite.hardware.EVHardware.AebMode
 import com.evsuite.hardware.EVHardware.AebSensitivity
@@ -259,6 +264,12 @@ class DashboardFragment : Fragment() {
         // Drive mode
         driveModeButtons.forEach { (mode, btn) ->
             btn.setOnClickListener {
+                // Custom tapped while the car is already in Custom opens its three settings (CR-040).
+                if (mode == DriveMode.CUSTOM && currentDriveMode == DriveMode.CUSTOM &&
+                    CustomDrive.familyOf(gen) != null) {
+                    showCustomDriveDialog()
+                    return@setOnClickListener
+                }
                 applyDriveModeUI(mode)
                 CoroutineScope(Dispatchers.IO).launch { EVHardware.setDriveMode(mode) }
             }
@@ -605,6 +616,61 @@ class DashboardFragment : Fragment() {
         alertsGroupSwi133?.alpha    = if (enabled) 1f else 0.4f
         switchOverspeed?.isEnabled  = enabled
         switchSpeedTone?.isEnabled  = enabled
+    }
+
+    /**
+     * CUSTOM drive mode settings, live (CR-040). Each tap is one standstill-gated write; the
+     * gate's own toast is the refusal. A setting with no route on this car is greyed out, and
+     * one the car does not report reads with nothing highlighted rather than a guess.
+     */
+    private fun showCustomDriveDialog() {
+        val ctx = requireContext()
+        val view = LayoutInflater.from(ctx).inflate(R.layout.dialog_custom_drive, null)
+        val dialog = AlertDialog.Builder(ctx, R.style.Theme_EV_Picker).setView(view).create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        view.findViewById<View>(R.id.btn_custom_close).setOnClickListener { dialog.dismiss() }
+        val rows = listOf(
+            Triple(CustomDrive.Setting.POWER, R.id.row_custom_power, DriveMode.ECO.labelRes),
+            Triple(CustomDrive.Setting.STEERING, R.id.row_custom_steering, R.string.profile_custom_comfort),
+            Triple(CustomDrive.Setting.PEDAL, R.id.row_custom_pedal, R.string.profile_custom_comfort),
+        )
+        dialog.show()
+        CoroutineScope(Dispatchers.IO).launch {
+            val state = rows.map { (setting, _, _) -> CustomDrive.isAvailable(setting) to CustomDrive.read(setting) }
+            withContext(Dispatchers.Main) {
+                if (!isAdded || !dialog.isShowing) return@withContext
+                rows.forEachIndexed { i, (setting, rowId, first) ->
+                    val (available, current) = state[i]
+                    val row = view.findViewById<LinearLayout>(rowId)
+                    val gap = resources.getDimensionPixelSize(R.dimen.spacing_sm)
+                    val labels = listOf(getString(first), getString(DriveMode.NORMAL.labelRes), getString(DriveMode.SPORT.labelRes))
+                    val buttons = labels.mapIndexed { index, label ->
+                        (LayoutInflater.from(ctx).inflate(R.layout.item_segment_button, row, false) as Button).also {
+                            it.text = label
+                            if (index > 0) (it.layoutParams as LinearLayout.LayoutParams).marginStart = gap
+                            row.addView(it)
+                        }
+                    }
+                    fun highlight(selected: Int?) = buttons.forEachIndexed { index, b ->
+                        val active = index == selected
+                        b.backgroundTintList = ColorStateList.valueOf(if (active) colorActive else colorInactive)
+                        b.setTextColor(if (active) colorTextActive else colorTextInactive)
+                        b.isSelected = active
+                    }
+                    highlight(current)
+                    buttons.forEachIndexed { index, b ->
+                        b.isEnabled = available
+                        b.alpha = if (available) 1f else 0.35f
+                        b.setOnClickListener {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val ok = CustomDrive.write(setting, index)
+                                withContext(Dispatchers.Main) { if (ok && isAdded) highlight(index) }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // ═════════════════════════════════════════════════════════════════════════

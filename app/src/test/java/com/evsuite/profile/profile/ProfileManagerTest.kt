@@ -3,6 +3,7 @@ package com.evsuite.profile.profile
 import androidx.test.core.app.ApplicationProvider
 import com.evsuite.hardware.model.DriveMode
 import com.evsuite.hardware.model.DrivingProfile
+import com.evsuite.hardware.model.ProfileClimate
 import com.evsuite.hardware.model.RegenLevel
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -93,6 +94,29 @@ class ProfileManagerTest {
         val kept = manager.getAll().single()
         assertFalse(kept.aebEnabled)
         assertEquals(1, kept.aebMode)
+    }
+
+    @Test
+    fun `a profile saved before CR-040 and CR-041 configures neither`() {
+        val legacy = """[{"id":"old","name":"Old","driveMode":"CUSTOM","regenLevel":"MEDIUM","aebMode":2}]"""
+        ApplicationProvider.getApplicationContext<android.content.Context>()
+            .getSharedPreferences("ev_profiles", android.content.Context.MODE_PRIVATE)
+            .edit().putString("profiles_json", legacy).commit()
+        val p = manager.getAll().single()
+        assertNull(p.customPower)
+        assertNull(p.customSteering)
+        assertNull(p.customPedal)
+        assertNull(p.climate)
+    }
+
+    @Test
+    fun `custom settings and climate survive a save`() {
+        val p = profile("Full").copy(
+            driveMode = DriveMode.CUSTOM, customPower = 2, customSteering = 0, customPedal = 1,
+            climate = ProfileClimate(autoOn = false, tempCelsius = 20, fanLevel = 4, frontDefrost = true)
+        )
+        manager.save(p)
+        assertEquals(p, manager.getById(p.id))
     }
 
     @Test

@@ -23,6 +23,10 @@ import com.evsuite.hardware.EVHardware.ElkSensitivity
 import com.evsuite.hardware.EVHardware.Swi68Mode
 import com.evsuite.hardware.model.DriveMode
 import com.evsuite.hardware.model.DrivingProfile
+import com.evsuite.hardware.model.ProfileClimate
+import com.evsuite.hardware.saic.SaicClimate
+import com.evsuite.hardware.CustomDrive
+import com.evsuite.profile.profile.ClimatePlan
 import com.evsuite.hardware.model.RegenLevel
 import android.widget.Toast
 import com.evsuite.hardware.AppLogger
@@ -234,6 +238,21 @@ class ProfileFragment : Fragment() {
             }
         }
 
+        /** Fills [rowId] with one button per option and links them like [bindGroup]. */
+        fun <T> segment(rowId: Int, options: List<Pair<String, T>>, initial: T, onSelect: (T) -> Unit) {
+            val row = dialogView.findViewById<LinearLayout>(rowId)
+            val gap = resources.getDimensionPixelSize(R.dimen.spacing_sm)
+            val pairs = options.mapIndexed { i, (label, value) ->
+                val btn = LayoutInflater.from(ctx)
+                    .inflate(R.layout.item_segment_button, row, false) as MaterialButton
+                btn.text = label
+                if (i > 0) (btn.layoutParams as LinearLayout.LayoutParams).marginStart = gap
+                row.addView(btn)
+                btn to value
+            }
+            bindGroup(pairs, initial, onSelect)
+        }
+
         // ── Selection variables ───────────────────── ──────────────────────
         var selectedDrive   = data.driveMode
         var selectedRegen   = data.regenLevel
@@ -259,6 +278,27 @@ class ProfileFragment : Fragment() {
 
         // ── Eco energy button — declared early to be accessible in binding drive mode ─
         val btnEnergy = dialogView.findViewById<MaterialButton>(R.id.btn_energy_saving_d)
+
+        // ── CUSTOM drive mode settings (CR-040) ─────────────────────────────
+        // Shown only while the profile selects Custom, on a firmware with a route for them.
+        // null = not configured: nothing is highlighted and nothing is written.
+        var customPowerSel    = data.customPower
+        var customSteeringSel = data.customSteering
+        var customPedalSel    = data.customPedal
+        val sectionCustom = dialogView.findViewById<View>(R.id.section_custom_dialog)
+        val hasCustomRoute = CustomDrive.familyOf(gen) != null
+        fun updateCustomSection() {
+            sectionCustom.visibility =
+                if (hasCustomRoute && selectedDrive == DriveMode.CUSTOM) View.VISIBLE else View.GONE
+        }
+        fun levels(first: Int) = listOf(
+            getString(first) to 0, getString(DriveMode.NORMAL.labelRes) to 1, getString(DriveMode.SPORT.labelRes) to 2)
+        if (hasCustomRoute) {
+            segment(R.id.row_custom_power_d, levels(DriveMode.ECO.labelRes), customPowerSel) { customPowerSel = it }
+            segment(R.id.row_custom_steering_d, levels(R.string.profile_custom_comfort), customSteeringSel) { customSteeringSel = it }
+            segment(R.id.row_custom_pedal_d, levels(R.string.profile_custom_comfort), customPedalSel) { customPedalSel = it }
+        }
+        updateCustomSection()
 
         // ── Mode de conduite ─────────────────────────────────────────────────
         val drivePairs = listOf(
@@ -293,6 +333,7 @@ class ProfileFragment : Fragment() {
 
         bindGroup(drivePairs, selectedDrive) { mode ->
             selectedDrive = mode
+            updateCustomSection()
             val isSnow = mode == DriveMode.SNOW
             // Regen: unavailable if SNOW or Eco energy active (ONE_PEDAL exempt from Eco)
             setRegenEnabled(!isSnow && !energySavingSel)
@@ -347,6 +388,63 @@ class ProfileFragment : Fragment() {
             if (hasHeat) View.VISIBLE else View.GONE
         dialogView.findViewById<View>(R.id.section_seats_dialog)?.visibility =
             if (hasHeat) View.VISIBLE else View.GONE
+
+        // ── Climate (CR-041) — optional block, unchecked for every existing profile ──
+        val climateSupported = ClimatePlan.isSupported(gen)
+        var climateIncluded = data.climate != null
+        val c0 = data.climate ?: ProfileClimate()
+        var climPower  = c0.powerOn
+        var climAuto   = c0.autoOn ?: true
+        var climAc     = c0.acOn ?: true
+        var climTemp   = c0.tempCelsius ?: CLIMATE_DEFAULT_TEMP
+        var climFan    = c0.fanLevel ?: CLIMATE_DEFAULT_FAN
+        var climRecirc = c0.recirculation
+        var climFront  = c0.frontDefrost
+        var climRear   = c0.rearDefrost
+        if (climateSupported) {
+            dialogView.findViewById<View>(R.id.section_climate_dialog).visibility = View.VISIBLE
+            val controls   = dialogView.findViewById<View>(R.id.climate_controls_d)
+            val onControls = dialogView.findViewById<View>(R.id.climate_on_controls_d)
+            val tvTemp     = dialogView.findViewById<TextView>(R.id.tv_climate_temp_d)
+            val tvFan      = dialogView.findViewById<TextView>(R.id.tv_climate_fan_d)
+            val fanRow     = dialogView.findViewById<View>(R.id.row_climate_fan_d)
+            val fanButtons = listOf(R.id.btn_climate_fan_minus_d, R.id.btn_climate_fan_plus_d)
+                .map { dialogView.findViewById<MaterialButton>(it) }
+            fun refreshClimate() {
+                controls.visibility = if (climateIncluded) View.VISIBLE else View.GONE
+                onControls.visibility = if (climPower) View.VISIBLE else View.GONE
+                // A fan speed takes the unit out of AUTO, so the profile only carries one in manual.
+                fanRow.alpha = if (climAuto) 0.35f else 1f
+                fanButtons.forEach { it.isEnabled = !climAuto }
+                tvTemp.text = getString(R.string.profile_climate_temp_value, climTemp)
+                tvFan.text = climFan.toString()
+            }
+            val sw = dialogView.findViewById<Switch>(R.id.sw_climate_include_d)
+            sw.isChecked = climateIncluded
+            sw.setOnCheckedChangeListener { _, checked -> climateIncluded = checked; refreshClimate() }
+
+            val offOn = listOf(getString(R.string.climate_off) to false, getString(R.string.climate_on) to true)
+            val keepOffOn: List<Pair<String, Boolean?>> =
+                listOf(getString(R.string.profile_unchanged) to null) + offOn
+            segment(R.id.row_climate_power_d, offOn, climPower) { climPower = it; refreshClimate() }
+            segment(R.id.row_climate_auto_d, offOn, climAuto) { climAuto = it; refreshClimate() }
+            segment(R.id.row_climate_ac_d, offOn, climAc) { climAc = it }
+            segment(R.id.row_climate_recirc_d, keepOffOn, climRecirc) { climRecirc = it }
+            segment(R.id.row_climate_front_defrost_d, keepOffOn, climFront) { climFront = it }
+            segment(R.id.row_climate_rear_defrost_d, keepOffOn, climRear) { climRear = it }
+
+            fun stepper(minus: Int, plus: Int, step: (Int) -> Unit) {
+                dialogView.findViewById<MaterialButton>(minus).setOnClickListener { step(-1); refreshClimate() }
+                dialogView.findViewById<MaterialButton>(plus).setOnClickListener { step(+1); refreshClimate() }
+            }
+            stepper(R.id.btn_climate_temp_minus_d, R.id.btn_climate_temp_plus_d) {
+                climTemp = (climTemp + it).coerceIn(SaicClimate.TEMP_MIN, SaicClimate.TEMP_MAX)
+            }
+            stepper(R.id.btn_climate_fan_minus_d, R.id.btn_climate_fan_plus_d) {
+                climFan = (climFan + it).coerceIn(ClimatePlan.FAN_MIN, ClimatePlan.FAN_MAX)
+            }
+            refreshClimate()
+        }
 
         // ── Section AEB (commune SWI133 + SWI68 + SWI69) ────────────────────
         val sectionAeb = dialogView.findViewById<View>(R.id.adas_section_aeb)
@@ -656,7 +754,20 @@ class ProfileFragment : Fragment() {
                 lasAudibleWarning    = lasAudibleWarningSel,
                 lasVibrationReminder = lasVibrationReminderSel,
                 energySaving   = energySavingSel,
-                tsrEnabled     = tsrEnabledSel
+                tsrEnabled     = tsrEnabledSel,
+                customPower    = customPowerSel,
+                customSteering = customSteeringSel,
+                customPedal    = customPedalSel,
+                // On a firmware without climate the block was not shown: keep what the profile had.
+                climate        = when {
+                    !climateSupported -> data.climate
+                    !climateIncluded  -> null
+                    else -> ProfileClimate(
+                        powerOn = climPower, autoOn = climAuto, acOn = climAc,
+                        tempCelsius = climTemp, fanLevel = climFan,
+                        recirculation = climRecirc, frontDefrost = climFront, rearDefrost = climRear
+                    )
+                }
             )
             manager.save(profile)
             if (swDefault.isChecked) manager.setDefault(profile.id)
@@ -673,7 +784,8 @@ class ProfileFragment : Fragment() {
         val railEntries = listOf(
             R.id.rail_profile_general to emptyList<Int>(),
             R.id.rail_profile_drive   to emptyList(),
-            R.id.rail_profile_comfort to listOf(R.id.section_steering_dialog, R.id.section_seats_dialog),
+            R.id.rail_profile_comfort to listOf(R.id.section_steering_dialog, R.id.section_seats_dialog,
+                                                R.id.section_climate_dialog),
             R.id.rail_profile_adas    to listOf(R.id.adas_section_swi133, R.id.adas_section_swi68,
                                                 R.id.section_tsr_dialog),
             R.id.rail_profile_safety  to listOf(R.id.adas_section_aeb, R.id.elk_section_dialog)
@@ -706,3 +818,7 @@ class ProfileFragment : Fragment() {
         )
     }
 }
+
+/** What a newly enabled climate block starts from: a mild cabin, a quiet fan. */
+private const val CLIMATE_DEFAULT_TEMP = 21
+private const val CLIMATE_DEFAULT_FAN = 3

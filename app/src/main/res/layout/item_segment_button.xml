@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One option of a segmented row built in code (profile editor). Same look as the
+     hand-written selector buttons of dialog_profile_edit.xml. -->
+<com.google.android.material.button.MaterialButton xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.EV.Button.Outlined"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:textColor="@color/text_secondary"
+    android:textSize="@dimen/text_label"
+    android:textAllCaps="true"
+    android:backgroundTint="@color/dash_btn"
+    app:strokeColor="@color/dash_border"
+    app:strokeWidth="1dp"
+    app:cornerRadius="@dimen/ev_corner" />

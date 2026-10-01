@@ -311,4 +311,17 @@
     <string name="automation_dir_above">Superior a</string>
     <string name="automation_confirm_msg_above">La temperatura exterior está por encima de %1$d°C\n(%2$s°C temperatura actual)\n¿Aplicar el perfil «%3$s»?</string>
     <string name="profile_prefill_unread">No legibles en este coche: %1$s. Revísalos antes de guardar: el perfil los aplicaría tal cual.</string>
+
+    <!-- Profile editor: CUSTOM drive mode (CR-040) and climate (CR-041) -->
+    <string name="profile_section_custom">Ajustes del modo Personalizado</string>
+    <string name="profile_custom_power">Respuesta de potencia</string>
+    <string name="profile_custom_steering">Dirección</string>
+    <string name="profile_custom_pedal">Tacto del pedal de freno</string>
+    <string name="profile_custom_comfort">Confort</string>
+    <string name="profile_unchanged">Sin cambios</string>
+    <string name="profile_section_climate">Climatización</string>
+    <string name="profile_climate_include">Aplicar climatización con este perfil</string>
+    <string name="profile_climate_decrease">Disminuir</string>
+    <string name="profile_climate_increase">Aumentar</string>
+    <string name="custom_drive_close">Cerrar</string>
 </resources>

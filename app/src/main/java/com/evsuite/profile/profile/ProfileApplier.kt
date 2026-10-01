@@ -1,9 +1,13 @@
 package com.evsuite.profile.profile
 
 import com.evsuite.hardware.AppLogger
+import com.evsuite.hardware.CustomDrive
 import com.evsuite.hardware.EVHardware
 import com.evsuite.hardware.EVHardware.Swi68Mode
+import com.evsuite.hardware.model.DriveMode
 import com.evsuite.hardware.model.DrivingProfile
+import com.evsuite.hardware.model.ProfileClimate
+import com.evsuite.hardware.saic.SaicClimate
 import com.evsuite.hardware.FirmwareInfo
 import com.evsuite.hardware.VehicleWriteGate
 import kotlinx.coroutines.CoroutineScope
@@ -116,6 +120,9 @@ object ProfileApplier {
                 AppLogger.i(TAG, "  SeatHeatRight=${profile.seatHeatRight} → $srOk")
             }
 
+            // Climate (CR-041) — comfort, like the heating above: not speed-gated.
+            profile.climate?.let { applyClimate(it) }
+
             AppLogger.i(TAG, "Profile '${profile.name}' Katman1 completed — ok=$ok")
             onComplete?.invoke(ok)
 
@@ -128,6 +135,10 @@ object ProfileApplier {
                     AppLogger.w(TAG, "  ADAS skipped for '${profile.name}' — vehicle write gate is closed")
                     return@whenKatman4Ready
                 }
+                // CUSTOM drive settings (CR-040) live on the same VSM as the ADAS calls below,
+                // so they wait for it too. The drive-mode write above has long landed by now.
+                if (profile.driveMode == DriveMode.CUSTOM) applyCustomDrive(profile)
+
                 AppLogger.i(TAG, "  Applying ADAS for profile '${profile.name}'")
                 if (FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI132) {
                     // ── SWI132 ──────────────────────────────────────────────────────────
@@ -249,6 +260,40 @@ object ProfileApplier {
                     verifyAdasWithRetry(profile)
                 }
             }
+    }
+
+    /**
+     * Writes the profile's configured CUSTOM settings, 150 ms apart: the middleware debounces,
+     * and two writes closer than that land only the last one. A null setting is not configured
+     * and stays where the car has it.
+     */
+    private fun applyCustomDrive(profile: DrivingProfile) {
+        listOf(
+            CustomDrive.Setting.POWER to profile.customPower,
+            CustomDrive.Setting.STEERING to profile.customSteering,
+            CustomDrive.Setting.PEDAL to profile.customPedal,
+        ).forEach { (setting, index) ->
+            if (index == null) return@forEach
+            if (!CustomDrive.isAvailable(setting)) {
+                AppLogger.w(TAG, "  Custom $setting=$index skipped — no route on this firmware")
+                return@forEach
+            }
+            val done = CustomDrive.write(setting, index)
+            AppLogger.i(TAG, "  Custom $setting=$index → $done")
+            try { Thread.sleep(150) } catch (_: InterruptedException) {}
+        }
+    }
+
+    /** Runs [ClimatePlan]'s steps, spaced like every other multi-write sequence here. */
+    private fun applyClimate(climate: ProfileClimate) {
+        if (!ClimatePlan.isSupported() || !SaicClimate.isAvailable) {
+            AppLogger.w(TAG, "  Climate skipped — climate service not available")
+            return
+        }
+        ClimatePlan.steps(climate).forEachIndexed { i, step ->
+            if (i > 0) try { Thread.sleep(150) } catch (_: InterruptedException) {}
+            AppLogger.i(TAG, "  Climate ${step.control}=${step.value} → ${ClimatePlan.write(step)}")
+        }
     }
 
     /**

@@ -518,6 +518,78 @@
                     </LinearLayout>
 
                 </LinearLayout>
+
+                <!-- ── CUSTOM drive mode settings (CR-040) — shown only while Custom is selected ── -->
+                <LinearLayout
+                    android:id="@+id/section_custom_dialog"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_section_rounded"
+                    android:padding="8dp"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/profile_section_custom"
+                        android:textColor="@color/dash_text_lo"
+                        android:textSize="@dimen/text_label"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.12"
+                        android:textAllCaps="true"
+                        android:paddingBottom="5dp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/dash_border"
+                        android:layout_marginBottom="@dimen/spacing_sm" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/profile_custom_power"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_label"
+                        android:paddingBottom="4dp" />
+                    <LinearLayout
+                        android:id="@+id/row_custom_power_d"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/touch_target"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="@dimen/spacing_sm" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/profile_custom_steering"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_label"
+                        android:paddingBottom="4dp" />
+                    <LinearLayout
+                        android:id="@+id/row_custom_steering_d"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/touch_target"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="@dimen/spacing_sm" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/profile_custom_pedal"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_label"
+                        android:paddingBottom="4dp" />
+                    <LinearLayout
+                        android:id="@+id/row_custom_pedal_d"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/touch_target"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="@dimen/spacing_sm" />
+
+                </LinearLayout>
                 </LinearLayout>
 
             </LinearLayout>
@@ -606,6 +678,251 @@
 
                     </LinearLayout>
 
+                </LinearLayout>
+                <!-- ── Climate (CR-041) — optional, unchecked by default ── -->
+                <LinearLayout
+                    android:id="@+id/section_climate_dialog"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_section_rounded"
+                    android:padding="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/profile_section_climate"
+                        android:textColor="@color/dash_text_lo"
+                        android:textSize="@dimen/text_label"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.12"
+                        android:textAllCaps="true"
+                        android:paddingBottom="5dp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/dash_border"
+                        android:layout_marginBottom="@dimen/spacing_sm" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/touch_target"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/profile_climate_include"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_label" />
+                        <Switch android:id="@+id/sw_climate_include_d"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/climate_controls_d"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/act_climate_power"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_label"
+                        android:paddingBottom="4dp" />
+                    <LinearLayout
+                        android:id="@+id/row_climate_power_d"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/touch_target"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="@dimen/spacing_sm" />
+
+                    <LinearLayout
+                        android:id="@+id/climate_on_controls_d"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/act_cabin_temp"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_label"
+                        android:paddingBottom="4dp" />
+                    <LinearLayout
+                        android:id="@+id/row_climate_temp_d"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/touch_target"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="@dimen/spacing_sm">
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_climate_temp_minus_d"
+                            style="@style/Widget.EV.Button.Outlined"
+                            android:layout_width="@dimen/touch_target"
+                            android:layout_height="match_parent"
+                            android:text="−"
+                            android:contentDescription="@string/profile_climate_decrease"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_label"
+                            android:backgroundTint="@color/dash_btn"
+                            app:strokeColor="@color/dash_border"
+                            app:strokeWidth="1dp"
+                            app:cornerRadius="@dimen/ev_corner" />
+
+                        <TextView
+                            android:id="@+id/tv_climate_temp_d"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:textColor="@color/ev_text_primary"
+                            android:textSize="@dimen/text_label"
+                            android:textStyle="bold" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_climate_temp_plus_d"
+                            style="@style/Widget.EV.Button.Outlined"
+                            android:layout_width="@dimen/touch_target"
+                            android:layout_height="match_parent"
+                            android:text="+"
+                            android:contentDescription="@string/profile_climate_increase"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_label"
+                            android:backgroundTint="@color/dash_btn"
+                            app:strokeColor="@color/dash_border"
+                            app:strokeWidth="1dp"
+                            app:cornerRadius="@dimen/ev_corner" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/act_climate_auto"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_label"
+                        android:paddingBottom="4dp" />
+                    <LinearLayout
+                        android:id="@+id/row_climate_auto_d"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/touch_target"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="@dimen/spacing_sm" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/act_fan_level"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_label"
+                        android:paddingBottom="4dp" />
+                    <LinearLayout
+                        android:id="@+id/row_climate_fan_d"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/touch_target"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="@dimen/spacing_sm">
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_climate_fan_minus_d"
+                            style="@style/Widget.EV.Button.Outlined"
+                            android:layout_width="@dimen/touch_target"
+                            android:layout_height="match_parent"
+                            android:text="−"
+                            android:contentDescription="@string/profile_climate_decrease"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_label"
+                            android:backgroundTint="@color/dash_btn"
+                            app:strokeColor="@color/dash_border"
+                            app:strokeWidth="1dp"
+                            app:cornerRadius="@dimen/ev_corner" />
+
+                        <TextView
+                            android:id="@+id/tv_climate_fan_d"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:textColor="@color/ev_text_primary"
+                            android:textSize="@dimen/text_label"
+                            android:textStyle="bold" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_climate_fan_plus_d"
+                            style="@style/Widget.EV.Button.Outlined"
+                            android:layout_width="@dimen/touch_target"
+                            android:layout_height="match_parent"
+                            android:text="+"
+                            android:contentDescription="@string/profile_climate_increase"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_label"
+                            android:backgroundTint="@color/dash_btn"
+                            app:strokeColor="@color/dash_border"
+                            app:strokeWidth="1dp"
+                            app:cornerRadius="@dimen/ev_corner" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/act_ac"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_label"
+                        android:paddingBottom="4dp" />
+                    <LinearLayout
+                        android:id="@+id/row_climate_ac_d"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/touch_target"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="@dimen/spacing_sm" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/act_recirc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_label"
+                        android:paddingBottom="4dp" />
+                    <LinearLayout
+                        android:id="@+id/row_climate_recirc_d"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/touch_target"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="@dimen/spacing_sm" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/act_front_defrost"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_label"
+                        android:paddingBottom="4dp" />
+                    <LinearLayout
+                        android:id="@+id/row_climate_front_defrost_d"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/touch_target"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="@dimen/spacing_sm" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/act_rear_defrost"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_label"
+                        android:paddingBottom="4dp" />
+                    <LinearLayout
+                        android:id="@+id/row_climate_rear_defrost_d"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/touch_target"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="@dimen/spacing_sm" />
+
+                    </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
                 </LinearLayout>
 

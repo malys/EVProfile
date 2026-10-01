@@ -315,4 +315,18 @@
     <string name="automation_dir_above">Above</string>
     <string name="automation_confirm_msg_above">The outside temperature is above %1$d°C\n(%2$s°C current temperature)\nApply profile “%3$s”?</string>
     <string name="profile_prefill_unread">Not readable on this car: %1$s. Check them before saving — the profile would apply them as they stand.</string>
+
+    <!-- Profile editor: CUSTOM drive mode (CR-040) and climate (CR-041) -->
+    <string name="profile_section_custom">Custom mode settings</string>
+    <string name="profile_custom_power">Power response</string>
+    <string name="profile_custom_steering">Steering</string>
+    <string name="profile_custom_pedal">Brake pedal feel</string>
+    <string name="profile_custom_comfort">Comfort</string>
+    <string name="profile_unchanged">Unchanged</string>
+    <string name="profile_section_climate">Climate</string>
+    <string name="profile_climate_include">Apply climate with this profile</string>
+    <string name="profile_climate_decrease">Decrease</string>
+    <string name="profile_climate_increase">Increase</string>
+    <string name="profile_climate_temp_value" translatable="false">%1$d °C</string>
+    <string name="custom_drive_close">Close</string>
 </resources>

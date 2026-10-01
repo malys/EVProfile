@@ -4,6 +4,14 @@ All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Custom drive mode settings (CR-040).** When a profile selects Custom, the editor offers power response (Eco / Normal / Sport), steering and brake-pedal feel (Comfort / Normal / Sport). They are written after the drive mode, only when the profile's mode is Custom, 150 ms apart and behind the standstill gate. On the dashboard, tapping Custom while the car is already in Custom opens the same three settings live. Available on SWI68, SWI165, SWI69, SWI131 and SWI132; not on SWI133. The value scales beyond the read/write codes recorded in RI-006 still need an on-vehicle confirmation.
+- **Climate in profiles (CR-041).** An optional climate block on the comfort tab, unchecked by default: power, setpoint, AUTO, fan, A/C, recirculation and the two defrosters, the last three with an "Unchanged" choice. Climate off writes nothing else, and the fan is written only in manual mode, so a profile never knocks the unit out of AUTO. Climate is a comfort write, like seat heating, and is not speed-gated. Not offered on SWI133, which has no climate write path.
+- Profiles saved before this release configure neither feature and behave exactly as before.
+
 ## [3.0.4] - 2026-09-22
 
 ### Fixed
