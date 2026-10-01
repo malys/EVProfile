@@ -5,118 +5,69 @@
 [![Tests](https://github.com/malys/EVProfile/actions/workflows/tests.yml/badge.svg)](https://github.com/malys/EVProfile/actions/workflows/tests.yml)
 [![Security](https://github.com/malys/EVProfile/actions/workflows/security.yml/badge.svg)](https://github.com/malys/EVProfile/actions/workflows/security.yml)
 [![Unstable](https://github.com/malys/EVProfile/actions/workflows/unstable.yml/badge.svg)](https://github.com/malys/EVProfile/actions/workflows/unstable.yml)
-[![Release](https://github.com/malys/EVProfile/actions/workflows/release.yml/badge.svg)](https://github.com/malys/EVProfile/actions/workflows/release.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
-
-Android Automotive app for advanced driving-settings control on the MG4 electric vehicle.
+[![Release](https://img.shields.io/github/v/release/malys/EVProfile?include_prereleases&sort=semver)](https://github.com/malys/EVProfile/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Part of EVSuite](https://img.shields.io/badge/part%20of-EVSuite-2f81f7)](https://malys.github.io/EVSuite/)
 
 > ⚠️ **This app writes vehicle settings.** Use it only while parked and at your own risk.
-> Read [DISCLAIMER.md](DISCLAIMER.md) before installing. This independent community
-> project is not affiliated with or approved by SAIC Motor or MG Motor. MG and MG4 are
-> third-party marks used only to identify compatibility.
+> Read [DISCLAIMER.md](DISCLAIMER.md) before installing. Incorrect settings may affect
+> vehicle behaviour.
+> MG and MG4 are third-party marks used only to identify compatibility; this independent
+> project is not affiliated with or approved by SAIC Motor or MG Motor.
 
-## Release channels
+**EVProfile** is a system-level Android Automotive OS app for the head unit of MG4 electric
+vehicles equipped with the **SAIC MT2712** SoC. It gives direct, unified access to driving
+settings that are unavailable, or poorly accessible, through the stock interface: drive mode,
+regenerative braking, heated seats and steering wheel, ADAS options and steering wheel
+shortcuts, saved as profiles you apply in one tap, at vehicle start or when a paired
+Bluetooth device connects.
 
-- **Stable** (`com.evsuite.profile`): offline APK, no updater code and no network
-  permission. Install and update it manually from a tagged GitHub Release.
-- **Unstable** (`com.evsuite.profile.unstable`): rolling pre-release that can coexist with
-  stable. It checks the `unstable` GitHub pre-release, validates HTTPS origins and the APK
-  signing certificate, then requires an explicit user installation.
+It communicates with the vehicle through the proprietary SAIC SDK, accessing Android
+Automotive services (`CarPropertyManager`, `CarHvacManager`) as well as low-level services
+exposed by the vehicle. It reads and writes the vehicle through the shared
+[EVHardware](https://github.com/malys/EVHardware) layer.
 
-Migration: the former `online` package upgrades in place to stable because it used the same
-application ID. The former `com.evsuite.profile.offline` package is a separate installation;
-back up its profiles, install stable, restore them, then uninstall the legacy package.
+> **Important:** this application requires system privileges
+> (`sharedUserId="android.uid.system"`) and must be signed with the ROM's platform key. It
+> cannot run on a standard unlocked device.
+
+## Part of EVSuite
+
+EVProfile is one app of [**EVSuite**](https://malys.github.io/EVSuite/), a family of independent,
+offline-first apps for the MG4 head unit (Android Automotive OS 9). Each app installs on its
+own — pick only what you need. User guides and install instructions:
+<https://malys.github.io/EVSuite/>.
+
+Discover the rest of the suite:
+
+[![EVTasker](https://img.shields.io/badge/EVTasker-rule%20automation-2f81f7?logo=github)](https://github.com/malys/EVTasker)
+[![EVABRPUploader](https://img.shields.io/badge/EVABRPUploader-ABRP%20telemetry-2f81f7?logo=github)](https://github.com/malys/EVABRPUploader)
+[![EVChargePilot](https://img.shields.io/badge/EVChargePilot-energy%20%26%20trips-2f81f7?logo=github)](https://github.com/malys/EVChargePilot)
+[![EVLauncher](https://img.shields.io/badge/EVLauncher-home%20launcher-2f81f7?logo=github)](https://github.com/malys/EVLauncher)
+[![EVSwipe](https://img.shields.io/badge/EVSwipe-swipe%20shortcuts-2f81f7?logo=github)](https://github.com/malys/EVSwipe)
+[![EVHardware](https://img.shields.io/badge/EVHardware-shared%20vehicle%20library-2f81f7?logo=github)](https://github.com/malys/EVHardware)
+
+---
 
 ## Contents
 
-- [Release channels](#release-channels)
-- [Overview](#overview)
-- [Features](#features)
-- [Requirements](#requirements)
 - [How it works](#how-it-works)
+- [Requirements](#requirements)
+- [Features](#features)
 - [Hardware Layers](#hardware-layers)
 - [Profile System](#profile-system)
 - [User Interface](#user-interface)
 - [Required Permissions](#required-permissions)
+- [Install](#install)
 - [Building](#building)
-- [Project layout](#project-layout)
 - [Project documents](#project-documents)
 - [Security](#security)
 - [Contributing](#contributing)
 - [Legal](#legal)
 - [Credits](#credits)
 
-## Overview
-**EVProfile** is a system-level application designed for Android Automotive OS, intended to run on the head unit of MG4 electric vehicles equipped with the **SAIC MT2712** SoC. It provides direct, unified access to driving settings that are unavailable — or poorly accessible — through the stock manufacturer interface.
-
-The app communicates with the vehicle through the proprietary SAIC SDK, accessing Android Automotive services (`CarPropertyManager`, `CarHvacManager`) as well as low-level services exposed by the vehicle's firmware.
-
-> **Important:** This application requires system privileges (`sharedUserId="android.uid.system"`) and must be signed with the ROM's platform key. It cannot run on a standard unlocked device.
-
-> [!WARNING]
-> **EVProfile is an independent community project. It is in no way affiliated with, endorsed by, or supported by MG Motor, SAIC Motor, or any of their subsidiaries.**
-> Use this application entirely at your own risk. Incorrect settings may affect vehicle behaviour. Proceed with caution.
-
----
-
-## Features
-### Driving Settings
-- **Drive mode**: ECO / NORMAL / SPORT / SNOW / CUSTOM
-- **Regenerative braking**: Off / Low / Medium / High / Adaptive / One Pedal
-
-### Climate Control
-- **Heated steering wheel**: On / Off
-- **Heated seats (left & right)**: Off / Level 1 / 2 / 3
-
-### ADAS (Advanced Driver Assistance)
-- **SWI133**: Off / Speed Limiter / Auto / ACC / ICA + overspeed alert / speed limit change alert
-- **SWI68**: Disable / ACC / TJA + audible warning On / Off
-- **SWI69 / SWI131**: Forward Collision Warning (AEB) — On / Off + mode Alert only / Alert + Emergency Braking
-
-### Steering Wheel Shortcuts
-- Configure **4 steering wheel buttons** (left/right side buttons)
-- Available actions: Drive mode / Regeneration / ADAS / **Open app**
-- Enable/disable shortcuts with a **warning dialog**
-
-### Audio
-- **Door-open volume** (SWI132/133): lowers media volume when a front door opens,
-  configurable target level, trigger doors and restore-on-close
-
-### Profile Management
-- Save up to **5 custom profiles**
-- Instant one-tap profile application
-- Automatic default profile application **on vehicle startup**
-- Automatic profile application **on a paired Bluetooth device connecting**
-- Profile backup to **vehicle-persistent storage** — survives app uninstall/reinstall
-
-### Settings
-- Language selection (English / German / Spanish / Portuguese / Italian)
-- Enable/disable automatic profile application
-- **Unstable only — OTA**: GitHub pre-release check + verified APK download
-- **Unstable only — APK cleanup**: removes old `EVProfile*.apk` files from Downloads
-- "About" dialog showing app version, firmware version, and GitHub QR code
-
----
-
-## Requirements
-| Item | Value |
-|------|-------|
-| Target vehicle | MG4 Electric (SAIC) |
-| OS | Android Automotive 9+ (API 28+) |
-| SoC | SAIC MT2712 |
-| Screen resolution | 1280 × 480 (forced landscape) |
-| Firmware SWI133 | Compatible ✅ |
-| Firmware SWI131 | Compatible ✅ |
-| Firmware SWI132 | Compatible ✅ |
-| Firmware SWI68 | Compatible ✅ |
-| Firmware SWI69 | Compatible ✅ |
-| Firmware SWI165 | Compatible ✅ |
-| UNKNOWN firmware | Forced SWI133/SWI132/SWI68/SWI69/SWI131/SWI165 mode available ⚠️ |
-
----
-
 ## How it works
-### Overview
+### Architecture
 
 ```
 ┌──────────────────────────────────────────────────────┐
@@ -165,7 +116,57 @@ MainActivity (UI)
   └─ Navigate to DashboardFragment
 ```
 
----
+## Requirements
+| Item | Value |
+|------|-------|
+| Target vehicle | MG4 Electric (SAIC) |
+| OS | Android Automotive 9+ (API 28+) |
+| SoC | SAIC MT2712 |
+| Screen resolution | 1280 × 480 (forced landscape) |
+| Firmware SWI133 | Compatible ✅ |
+| Firmware SWI131 | Compatible ✅ |
+| Firmware SWI132 | Compatible ✅ |
+| Firmware SWI68 | Compatible ✅ |
+| Firmware SWI69 | Compatible ✅ |
+| Firmware SWI165 | Compatible ✅ |
+| UNKNOWN firmware | Forced SWI133/SWI132/SWI68/SWI69/SWI131/SWI165 mode available ⚠️ |
+
+## Features
+### Driving Settings
+- **Drive mode**: ECO / NORMAL / SPORT / SNOW / CUSTOM
+- **Regenerative braking**: Off / Low / Medium / High / Adaptive / One Pedal
+
+### Climate Control
+- **Heated steering wheel**: On / Off
+- **Heated seats (left & right)**: Off / Level 1 / 2 / 3
+
+### ADAS (Advanced Driver Assistance)
+- **SWI133**: Off / Speed Limiter / Auto / ACC / ICA + overspeed alert / speed limit change alert
+- **SWI68**: Disable / ACC / TJA + audible warning On / Off
+- **SWI69 / SWI131**: Forward Collision Warning (AEB) — On / Off + mode Alert only / Alert + Emergency Braking
+
+### Steering Wheel Shortcuts
+- Configure **4 steering wheel buttons** (left/right side buttons)
+- Available actions: Drive mode / Regeneration / ADAS / **Open app**
+- Enable/disable shortcuts with a **warning dialog**
+
+### Audio
+- **Door-open volume** (SWI132/133): lowers media volume when a front door opens,
+  configurable target level, trigger doors and restore-on-close
+
+### Profile Management
+- Save up to **5 custom profiles**
+- Instant one-tap profile application
+- Automatic default profile application **on vehicle startup**
+- Automatic profile application **on a paired Bluetooth device connecting**
+- Profile backup to **vehicle-persistent storage** — survives app uninstall/reinstall
+
+### Settings
+- Language selection (English / German / Spanish / Portuguese / Italian)
+- Enable/disable automatic profile application
+- **Unstable only — OTA**: GitHub pre-release check + verified APK download
+- **Unstable only — APK cleanup**: removes old `EVProfile*.apk` files from Downloads
+- "About" dialog showing app version, firmware version, and GitHub QR code
 
 ## Hardware Layers
 `EVHardware` is organized into **4 access layers**, from highest to lowest level, with automatic fallback on failure.
@@ -199,8 +200,6 @@ val gen = FirmwareInfo.getGeneration()  // Reads ro.build.mt2712.version
 ```
 
 The result is cached and used throughout the app to branch firmware-specific code paths.
-
----
 
 ## Profile System
 ### `DrivingProfile` Model
@@ -238,8 +237,6 @@ Profiles are serialized to JSON via **Gson** and stored in `SharedPreferences`. 
 5. Right seat heating (~7 s — toggle polling)
 6. Wait for Katman4 → ADAS (firmware-dependent)
 
----
-
 ## User Interface
 ### Navigation
 The app uses a **NavController** with **3 destinations**:
@@ -270,8 +267,6 @@ A second press on PROFILES or SETTINGS closes the view and returns to the dashbo
 | `dash_warn` | `#F59E0B` | SPORT mode (amber) |
 | `dash_danger` | `#F43F5E` | Delete / danger actions |
 
----
-
 ## Required Permissions
 | Permission | Reason |
 |-----------|--------|
@@ -287,21 +282,43 @@ A second press on PROFILES or SETTINGS closes the view and returns to the dashbo
 | `INTERNET` *(unstable only)* | Rolling pre-release check and verified APK download |
 | `ACCESS_NETWORK_STATE` *(unstable only)* | Warn before downloading outside Wi-Fi |
 
----
+## Install
+Download the APK from the [releases page](https://github.com/malys/EVProfile/releases) and
+install it from a USB drive through the AAOS settings. The MG4 head unit has no visible way
+to open Settings or install an APK; the known route in (via the on-screen keyboard) is:
+
+1. Open any app with a text field and tap it to raise the on-screen keyboard.
+2. **Long-press** the comma `,` (or the `@`) key on the keyboard.
+3. Tap **"Language settings"**.
+4. Tap the **search** icon in the top bar and type **`backup`**. It opens an empty page —
+   now press the **back** arrow, and you land in Android's Settings panel.
+5. Enable **Developer options**, and turn on **"Install unknown apps"** (unknown sources).
+6. In Settings, search **`storage`** — you now have access to internal storage and the USB
+   key. Navigate to the APK and tap it to install.
+
+The application must be signed with the ROM's system key. On a development system:
+
+```bash
+adb push app-debug.apk /sdcard/
+adb shell pm install -r --system /sdcard/app-debug.apk
+```
+
+> On a production ROM, the APK must be included in the system build or installed through an
+> OEM-specific mechanism.
+
+> ⚠️ You are enabling developer options and sideloading on a car. Do this **parked**, and
+> only with an APK you trust. See [DISCLAIMER.md](DISCLAIMER.md).
 
 ## Building
-You can download the latest version of EVProfile directly from the releases page: https://github.com/malys/EVProfile/releases
-All you need is a USB drive and access to the AAOS settings to install the APK.
+```bash
+mise run build        # stable debug APK
+mise run test         # JVM unit tests for both channels
+mise run lint         # Android lint
+mise run check        # what CI runs (permission drift gate + tests)
+mise run release      # both release APKs (R8 on); validate on a vehicle before publishing
+```
 
-
-You can also compile the project yourself:
-
-### Prerequisites
-- Android Studio Hedgehog (2023.1) or later
-- JDK 17+
-- Android SDK API 34
-
-### Debug Build
+Without mise, with Android Studio Hedgehog (2023.1) or later, JDK 17+ and Android SDK API 34:
 
 ```bash
 # Using Android Studio's bundled JDK
@@ -315,82 +332,39 @@ Output APK location:
 app/build/outputs/apk/debug/app-debug.apk
 ```
 
-### Installing on the Vehicle
+### Layout
 
-The application must be signed with the ROM's system key. On a development system:
-
-```bash
-adb push app-debug.apk /sdcard/
-adb shell pm install -r --system /sdcard/app-debug.apk
+```
+app/src/main/java/com/evsuite/profile/
+  EVApp.kt              Application — night mode, locale
+  MainActivity.kt       Main activity, top bar, navigation
+  profile/              ProfileManager (SharedPreferences + Gson), ProfileApplier, backup, climate plan
+  automation/           Automatic-application decision and settings
+  bluetooth/            Paired-device profile matching
+  shortcut/             Steering wheel shortcut actions
+  api/                  Profile control service (AIDL in app/src/main/aidl)
+  ui/                   Dashboard, Profile, Settings, Shortcuts, Audio, Console and legacy fragments
+  service/              EVProfileService (foreground, boot + auto-apply), profile overlays
+  receiver/             BootReceiver
+  util/                 LocaleHelper, ThemeHelper, QrCode
+app/src/stable/ app/src/unstable/   per-channel sources (update code is unstable only)
+app/src/test/ app/src/testUnstable/ JVM unit tests
 ```
 
-> On a production ROM, the APK must be included in the system build or installed through an OEM-specific mechanism.
+Hardware access lives in the shared [EVHardware](https://github.com/malys/EVHardware)
+submodule (`EVHardware/`).
 
----
+### Channels
 
-## Project layout
-```
-EVProfile/
-├── app/src/main/
-│   ├── java/com/evsuite/profile/
-│   │   ├── EVApp.kt                  # Application — night mode, locale
-│   │   ├── MainActivity.kt            # Main activity, top bar, navigation
-│   │   │
-│   │   ├── model/
-│   │   │   ├── DrivingProfile.kt      # Profile data model
-│   │   │   ├── DriveMode.kt           # Drive mode enum (ECO/NORMAL/SPORT/SNOW/CUSTOM)
-│   │   │   └── RegenLevel.kt          # Regen level enum
-│   │   │
-│   │   ├── profile/
-│   │   │   ├── ProfileManager.kt      # Profile CRUD (SharedPreferences + Gson)
-│   │   │   └── ProfileApplier.kt      # Applies settings to vehicle (async)
-│   │   │
-│   │   ├── hardware/
-│   │   │   └── EVHardware.kt         # Hardware abstraction (4 layers)
-│   │   │
-│   │   ├── ui/
-│   │   │   ├── DashboardFragment.kt   # Unified main screen
-│   │   │   ├── ProfileFragment.kt     # Profile management
-│   │   │   ├── SettingsFragment.kt    # Settings & About
-│   │   │   ├── ProfileAdapter.kt      # Profile list RecyclerView adapter
-│   │   │   ├── ConsoleFragment.kt     # Real-time debug log viewer
-│   │   │   ├── DriveRegenFragment.kt  # Legacy (unused in v2)
-│   │   │   ├── ClimateFragment.kt     # Legacy (unused in v2)
-│   │   │   └── AdasFragment.kt        # Legacy (unused in v2)
-│   │   │
-│   │   ├── service/
-│   │   │   └── EVProfileService.kt   # Foreground service (boot + auto-apply)
-│   │   │
-│   │   ├── receiver/
-│   │   │   └── BootReceiver.kt        # System boot receiver
-│   │   │
-│   │   ├── util/
-│   │   │   ├── FirmwareInfo.kt        # Firmware generation detection (SWI133 / SWI68)
-│   │   │   ├── FirmwareHelper.kt      # Full firmware version string reader (async)
-│   │   │   └── LocaleHelper.kt        # Language management
-│   │   │
-│   │   └── debug/
-│   │       └── AppLogger.kt           # In-memory log ring buffer (400 entries)
-│   │
-│   ├── res/
-│   │   ├── layout/
-│   │   │   ├── activity_main.xml      # Top bar + NavHostFragment
-│   │   │   ├── fragment_dashboard.xml # Main screen (drive + climate + alerts)
-│   │   │   ├── fragment_profile.xml   # Profile list
-│   │   │   ├── fragment_settings.xml  # Settings screen
-│   │   │   ├── item_profile.xml       # Profile list item
-│   │   │   ├── dialog_profile_edit.xml# Profile create / edit dialog
-│   │   │   └── dialog_app_info.xml    # About dialog
-│   │   ├── navigation/nav_graph.xml   # Dashboard → Profiles / Settings
-│   │   ├── values/strings.xml         # Default English strings
-│   │   ├── values-{de,es,it,pt}/      # Supported translations
-│   │   └── values/colors.xml          # dash_* color palette (dark theme)
-│   │
-│   └── AndroidManifest.xml
-│
-└── mockup/
-    └── index.html                     # Interactive HTML mockup (1280×480)
-```
+- **Stable** (`com.evsuite.profile`): offline APK, no updater code and no network
+  permission. Install and update it manually from a tagged GitHub Release.
+- **Unstable** (`com.evsuite.profile.unstable`): rolling pre-release that can coexist with
+  stable. It checks the `unstable` GitHub pre-release, validates HTTPS origins and the APK
+  signing certificate, then requires an explicit user installation.
+
+Migration: the former `online` package upgrades in place to stable because it used the same
+application ID. The former `com.evsuite.profile.offline` package is a separate installation;
+back up its profiles, install stable, restore them, then uninstall the legacy package.
 
 ---
 
@@ -403,7 +377,7 @@ EVProfile/
 | [SECURITY.md](SECURITY.md) | Threat model and vulnerability disclosure |
 | [DISCLAIMER.md](DISCLAIMER.md) | Vehicle-safety disclaimer — read before installing |
 | [CHANGELOG.md](CHANGELOG.md) | Release history |
-| [LICENSE.md](LICENSE.md) | Licence text |
+| [LICENSE](LICENSE) | Licence text |
 
 ## Security
 See [SECURITY.md](SECURITY.md) for the threat model and how to report a vulnerability
@@ -416,10 +390,10 @@ what would break without them. Anything touching the interface follows
 [DESIGN.md](DESIGN.md).
 
 ## Legal
-
-Licensed under [LICENSE.md](LICENSE.md). Read [DISCLAIMER.md](DISCLAIMER.md) before
-installing: this application writes to vehicle settings, and wrong settings can affect
-how the car behaves. Not affiliated with SAIC Motor or MG.
+Licensed under the MIT License — see [LICENSE](LICENSE) and [LICENSE.md](LICENSE.md). Read
+[DISCLAIMER.md](DISCLAIMER.md) before installing: this application writes to vehicle
+settings, and wrong settings can affect how the car behaves. Not affiliated with SAIC Motor
+or MG.
 
 ## Credits
 Made with ❤ by **SliDeeN** and **Claude AI**.
@@ -428,4 +402,4 @@ Based on **DriveHub Dort**, developed by **Merth4n** and **hotboy_ist**.
 
 Special thanks to **confor1max** for extensive SWI68 firmware testing.
 
-[![GitHub](https://img.shields.io/badge/GitHub-SliDeeN%2FEVProfile-181717?logo=github)](https://github.com/malys/EVProfile)
+[![GitHub](https://img.shields.io/badge/GitHub-malys%2FEVProfile-181717?logo=github)](https://github.com/malys/EVProfile)
