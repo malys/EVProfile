@@ -171,6 +171,11 @@
     <string name="diagnostic_unlocked">Diagnostica sbloccata</string>
     <string name="diag_title">Diagnostica</string>
     <string name="diag_copy">Copia</string>
+    <string name="diag_tool_soc">Fonti SOC</string>
+    <string name="diag_tool_capture_before">Acquisizione prima</string>
+    <string name="diag_tool_capture_after">Acquisizione dopo</string>
+    <string name="diag_tool_running">Lettura…</string>
+    <string name="diag_tool_capture_hint">%1$d valori letti. A 0 km/h, cambia UNA impostazione nella schermata originale dell\'auto, attendi due secondi, poi tocca Acquisizione dopo.</string>
     <string name="diag_copied">Copiato!</string>
     <string name="diag_loading">Analisi in corso…</string>
     <string name="diag_clear_crash">Cancella crash log</string>

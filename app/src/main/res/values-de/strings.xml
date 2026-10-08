@@ -171,6 +171,11 @@
     <string name="diagnostic_unlocked">Diagnose freigeschaltet</string>
     <string name="diag_title">Diagnose</string>
     <string name="diag_copy">Kopieren</string>
+    <string name="diag_tool_soc">SOC-Quellen</string>
+    <string name="diag_tool_capture_before">Erfassung vorher</string>
+    <string name="diag_tool_capture_after">Erfassung nachher</string>
+    <string name="diag_tool_running">Lese…</string>
+    <string name="diag_tool_capture_hint">%1$d Werte gelesen. Bei 0 km/h EINE Einstellung im Originalbildschirm des Autos ändern, zwei Sekunden warten, dann Erfassung nachher tippen.</string>
     <string name="diag_copied">Kopiert!</string>
     <string name="diag_loading">Analysiere…</string>
     <string name="diag_clear_crash">Absturzbericht löschen</string>

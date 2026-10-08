@@ -1,5 +1,6 @@
 package com.evsuite.profile.ui
 
+import com.evsuite.profile.diag.DiagnosticTools
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.content.ClipData
@@ -488,6 +489,9 @@ class SettingsFragment : Fragment() {
         }
         container.addView(tvReport)
 
+        // Vendor-surface tools (CR-044 / CR-045): unstable only, read-only, output joins the report.
+        val toolsReport = DiagnosticTools.install(ctx, container)
+
         // Real-time AppLogger section (last 30 lines)
         val tvLogs = TextView(ctx).apply {
             typeface = Typeface.MONOSPACE
@@ -532,6 +536,7 @@ class SettingsFragment : Fragment() {
             if (crashLog != null) { appendLine(crashLog); appendLine() }
             appendLine(tvReport.text)
             appendLine()
+            toolsReport().takeIf { it.isNotEmpty() }?.let { appendLine(it); appendLine() }
             if (fullLog) {
                 val entries = AppLogger.entries.filterNot { leaving && it.tag == SHARE_TAG }
                 appendLine("─── AppLogger (${entries.size} entries) ───")

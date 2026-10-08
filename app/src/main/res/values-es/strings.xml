@@ -171,6 +171,11 @@
     <string name="diagnostic_unlocked">Diagnóstico desbloqueado</string>
     <string name="diag_title">Diagnóstico</string>
     <string name="diag_copy">Copiar</string>
+    <string name="diag_tool_soc">Fuentes de SOC</string>
+    <string name="diag_tool_capture_before">Captura antes</string>
+    <string name="diag_tool_capture_after">Captura después</string>
+    <string name="diag_tool_running">Leyendo…</string>
+    <string name="diag_tool_capture_hint">%1$d valores leídos. A 0 km/h, cambia UN ajuste en la pantalla original del coche, espera dos segundos y pulsa Captura después.</string>
     <string name="diag_copied">¡Copiado!</string>
     <string name="diag_loading">Analizando…</string>
     <string name="diag_clear_crash">Borrar informe de crash</string>

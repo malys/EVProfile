@@ -175,6 +175,11 @@
     <string name="diagnostic_unlocked">Diagnostics unlocked</string>
     <string name="diag_title">Diagnostic</string>
     <string name="diag_copy">Copy</string>
+    <string name="diag_tool_soc">SOC sources</string>
+    <string name="diag_tool_capture_before">Capture before</string>
+    <string name="diag_tool_capture_after">Capture after</string>
+    <string name="diag_tool_running">Reading…</string>
+    <string name="diag_tool_capture_hint">%1$d values read. At 0 km/h, change ONE setting on the car\'s own screen, wait two seconds, then tap Capture after.</string>
     <string name="diag_copied">Copied!</string>
     <string name="diag_loading">Analysing…</string>
     <string name="diag_clear_crash">Clear crash log</string>
