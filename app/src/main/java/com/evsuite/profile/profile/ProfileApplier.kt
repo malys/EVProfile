@@ -42,6 +42,9 @@ object ProfileApplier {
     @Volatile
     private var currentApply: Job? = null
 
+    /** Bumped by every [apply]; a deferred ADAS block from an older request checks it. */
+    private val applyGeneration = java.util.concurrent.atomic.AtomicInteger()
+
     /**
      * ID of the last profile applied MANUALLY (steering-wheel picker, app button, shortcut
      * APPLY_PROFILE) — i.e. with autoStart=false. Allows switching to READY to respect the
@@ -72,12 +75,13 @@ object ProfileApplier {
             AppLogger.i(TAG, "  Remembered manual selection: ${profile.name} (id=${profile.id})")
         }
 
+        val generation = applyGeneration.incrementAndGet()
         val previous = currentApply
         currentApply = applierScope.launch {
             // Cancels the previous application before taking the lock: the new one
             // authoritative request, we do not queue behind an obsolete sequence.
             previous?.cancelAndJoin()
-            applyMutex.withLock { applyLocked(profile, autoStart, onComplete) }
+            applyMutex.withLock { applyLocked(profile, autoStart, onComplete, generation) }
         }
     }
 
@@ -85,7 +89,12 @@ object ProfileApplier {
      * Body of the application, executed under [applyMutex]: a single sequence of writes
      * vehicle at a time.
      */
-    private fun applyLocked(profile: DrivingProfile, autoStart: Boolean, onComplete: ((Boolean) -> Unit)?) {
+    private fun applyLocked(
+        profile: DrivingProfile,
+        autoStart: Boolean,
+        onComplete: ((Boolean) -> Unit)?,
+        generation: Int,
+    ) {
             var ok = true
 
             // The gate is asked once for the whole road-behaviour block instead of once per
@@ -133,139 +142,161 @@ object ProfileApplier {
             onComplete?.invoke(ok)
 
             // ADAS (Katman4) — applied as soon as the service is ready
+            // Ready now → runs inline, still under [applyMutex] and on this IO thread. Not ready
+            // → EVHardware runs it minutes later on the MAIN thread; it is sent back under the
+            // lock from there, or its sleeps would block the UI and its writes interleave with a
+            // newer profile's. A newer profile requested meanwhile supersedes it.
+            val callerThread = Thread.currentThread()
             EVHardware.whenKatman4Ready {
-                // Asked again rather than reusing the verdict above: this block runs when the
-                // ADAS service becomes available, which on a cold head unit is minutes later.
-                // The car may have stopped since, and that profile deserves to land.
-                if (!VehicleWriteGate.allow("profile '${profile.name}' — ADAS")) {
-                    AppLogger.w(TAG, "  ADAS skipped for '${profile.name}' — vehicle write gate is closed")
-                    return@whenKatman4Ready
-                }
-                // CUSTOM drive settings (CR-040) live on the same VSM as the ADAS calls below,
-                // so they wait for it too. The drive-mode write above has long landed by now.
-                if (profile.driveMode == DriveMode.CUSTOM) applyCustomDrive(profile)
-
-                AppLogger.i(TAG, "  Applying ADAS for profile '${profile.name}'")
-                if (FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI132) {
-                    // ── SWI132 ──────────────────────────────────────────────────────────
-                    //
-                    // SWI132 uses CarVehicleSettingClient for ADAS (ACC/TJA)
-                    // but the IVehicleSettingService direct binder for sound alerts.
-                    // → setOverspeedAlarm() and setSpeedLimitTone() send the correct binder transactions.
-                    //   (0x128 and 0x12a) without going through VehicleSettingManager.
-
-                    // TSR (SLIF) via VSM — applied first as SWI133
-                    val tsrOk = EVHardware.setTsrMode(profile.tsrEnabled)
-                    AppLogger.i(TAG, "  TsrEnabled=${profile.tsrEnabled} → $tsrOk")
-
-                    // Alertes sonores via VSM
-                    // SWI132 firmware resets overspeed and speedTone to ON ~400ms after activation
-                    // of the TSR (same behavior as SWI133). setTsrMode() returns immediately without
-                    // wait for this reset. If we write alerts too early, the firmware
-                    // then crushes them. We wait 450ms to let the firmware complete its
-                    // reset before applying profile values.
-                    if (profile.tsrEnabled) {
-                        try { Thread.sleep(450) } catch (_: InterruptedException) {}
-                    }
-                    // Delay of 150ms between the two writes: the middleware processes the properties
-                    // in a queue with debounce — two writes too fast mean that only the
-                    // last one is validated. 150ms ensures that the first one is processed.
-                    val oaOk = EVHardware.setOverspeedAlarm(profile.overspeedAlarm)
-                    AppLogger.i(TAG, "  OverspeedAlarm=${profile.overspeedAlarm} → $oaOk")
-                    try { Thread.sleep(150) } catch (_: InterruptedException) {}
-                    val stOk = EVHardware.setSpeedLimitTone(profile.speedLimitTone)
-                    AppLogger.i(TAG, "  SpeedLimitTone=${profile.speedLimitTone} → $stOk")
-
-                    // Mode ACC/TJA via CarVehicleSettingClient (setAccTjaState).
-                    // SHWA (old limiter coding) is no longer an ACC/TJA mode → returned to Off;
-                    // the limiter is handled separately via setSasMode below.
-                    val cruiseMode = if (profile.swi68AdasMode == Swi68Mode.SHWA) Swi68Mode.OFF else profile.swi68AdasMode
-                    val adOk = EVHardware.setAccTjaMode(cruiseMode)
-                    AppLogger.i(TAG, "  AdasMode=0x${cruiseMode.toString(16)} → $adOk")
-                    // Speed ​​limiter (SAS) — applied only if the profile has configured it.
-                    // Profiles created before this function (swi132LimiterConfigured=false) → not affected.
-                    if (profile.swi132LimiterConfigured) {
-                        EVHardware.setSpeedLimiterMode(profile.swi132SasMode)
-                        AppLogger.i(TAG, "  SasMode=${profile.swi132SasMode} (0=Off 2=Manuel 3=Intelligent)")
-                    }
-                    applyAeb(profile.aebEnabled, profile.aebMode, profile.aebSensitivity)
-
-                    // Energy saving — via CarVehicleSettingClient (setEnduranceMode), same path as SWI69
-                    val esOk = EVHardware.setEnergySavingMode(profile.energySaving)
-                    AppLogger.i(TAG, "  EnergySaving=${profile.energySaving} → $esOk")
-
-                } else if (FirmwareInfo.isVsmBased()) {
-                    // ── SWI68/SWI69/SWI131/SWI165 ──────────────────────────────────────
-                    //
-                    // The TSR is applied FIRST: setTsrMode() blocks 400 ms internally
-                    // and restores soundWarning from preferences. We call him first
-                    // to then be able to overwrite the sound alert with the profile value.
-                    val tsrOk = EVHardware.setTsrMode(profile.tsrEnabled)
-                    AppLogger.i(TAG, "  TsrEnabled=${profile.tsrEnabled} → $tsrOk")
-
-                    // Audible alert — applied AFTER the TSR to overwrite its internal restore
-                    val swOk = EVHardware.setSoundWarning(profile.soundWarning)
-                    AppLogger.i(TAG, "  SoundWarning=${profile.soundWarning} → $swOk")
-
-                    // ACC/TJA mode — SHWA (old limiter coding) set to Off (limiter managed separately)
-                    val cruiseMode = if (profile.swi68AdasMode == Swi68Mode.SHWA) Swi68Mode.OFF else profile.swi68AdasMode
-                    val adOk = EVHardware.setAccTjaMode(cruiseMode)
-                    AppLogger.i(TAG, "  AdasMode=0x${cruiseMode.toString(16)} → $adOk")
-                    // Speed ​​limiter — applied only if the profile has configured it.
-                    // (SWI69/SWI131 → setSasMode ; SWI68/SWI165 → setSpeedAsstMode, dispatch interne)
-                    if (profile.swi132LimiterConfigured) {
-                        EVHardware.setSpeedLimiterMode(profile.swi132SasMode)
-                        AppLogger.i(TAG, "  LimiterMode=${profile.swi132SasMode} (0=Off 2=Manuel 3=Intelligent)")
-                    }
-                    applyAeb(profile.aebEnabled, profile.aebMode, profile.aebSensitivity)
-
-                    // Power saving — VSM firmwares excluding SWI132 (SWI68/SWI69/SWI131/SWI165)
-                    val esOk = EVHardware.setEnergySavingMode(profile.energySaving)
-                    AppLogger.i(TAG, "  EnergySaving=${profile.energySaving} → $esOk")
+                if (Thread.currentThread() === callerThread) {
+                    applyAdas(profile, autoStart)
                 } else {
-                    // ── SWI133/UNKNOWN ──────────────────────────────────────────────────
-                    //
-                    // Same logic: activating TSR re-enables OVERSPEED_ALARM and SPEED_LIMIT_TONE.
-                    // setTsrMode() restores from preferences — we call it first
-                    // then we overwrite with the profile values.
-                    if (FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI133) {
-                        val tsrOk = EVHardware.setTsrMode(profile.tsrEnabled)
-                        AppLogger.i(TAG, "  TsrEnabled=${profile.tsrEnabled} → $tsrOk")
+                    applierScope.launch {
+                        applyMutex.withLock {
+                            if (generation != applyGeneration.get()) {
+                                AppLogger.i(TAG, "  ADAS for '${profile.name}' dropped — a newer profile was requested")
+                            } else {
+                                applyAdas(profile, autoStart)
+                            }
+                        }
                     }
-
-                    // Speed ​​alerts — applied AFTER TSR
-                    // Delay of 150ms between the two writes: the vehicle middleware (VPM) processes
-                    // properties in a queue with debounce — two writes too fast make
-                    // that only the last one is validated. 150ms ensures that the first one is processed.
-                    val oaOk = EVHardware.setOverspeedAlarm(profile.overspeedAlarm)
-                    AppLogger.i(TAG, "  OverspeedAlarm=${profile.overspeedAlarm} → $oaOk")
-                    try { Thread.sleep(150) } catch (_: InterruptedException) {}
-                    val stOk = EVHardware.setSpeedLimitTone(profile.speedLimitTone)
-                    AppLogger.i(TAG, "  SpeedLimitTone=${profile.speedLimitTone} → $stOk")
-
-                    val adOk = EVHardware.setMixedIntelligentDrive(profile.adasMode)
-                    AppLogger.i(TAG, "  AdasMode=${profile.adasMode} → $adOk")
-                    applyAeb(profile.aebEnabled, profile.aebMode, profile.aebSensitivity)
-
-                    // Energy saving — SWI133 via VPM
-                    if (FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI133) {
-                        val esOk = EVHardware.setEnergySavingMode(profile.energySaving)
-                        AppLogger.i(TAG, "  EnergySaving=${profile.energySaving} → $esOk")
-                    }
-                }
-                // ELK — common to all known firmware
-                applyElk(profile.elkMode, profile.elkSensitivity, profile.lasAudibleWarning, profile.lasVibrationReminder)
-
-                // ── ADAS verification pass (self-start only) ────────────
-                // On cold start, the firmware may re-assert certain settings AFTER
-                // our writing (overspeed/tone alerts ~400ms after SLIF/TSR; ELK reset to
-                // its default value). We reread after stabilization and we rewrite in the event of a discrepancy.
-                // Concerne SWI132/SWI133 (2 alertes distinctes + ELK).
-                val gen = FirmwareInfo.getGeneration()
-                if (autoStart && (gen == FirmwareInfo.Gen.SWI133 || gen == FirmwareInfo.Gen.SWI132)) {
-                    verifyAdasWithRetry(profile)
                 }
             }
+    }
+
+    /** ADAS (Katman4) part of a profile. Always runs under [applyMutex], off the main thread. */
+    private fun applyAdas(profile: DrivingProfile, autoStart: Boolean) {
+        // Asked again rather than reusing the verdict above: this block runs when the
+        // ADAS service becomes available, which on a cold head unit is minutes later.
+        // The car may have stopped since, and that profile deserves to land.
+        if (!VehicleWriteGate.allow("profile '${profile.name}' — ADAS")) {
+            AppLogger.w(TAG, "  ADAS skipped for '${profile.name}' — vehicle write gate is closed")
+            return
+        }
+        // CUSTOM drive settings (CR-040) live on the same VSM as the ADAS calls below,
+        // so they wait for it too. The drive-mode write above has long landed by now.
+        if (profile.driveMode == DriveMode.CUSTOM) applyCustomDrive(profile)
+
+        AppLogger.i(TAG, "  Applying ADAS for profile '${profile.name}'")
+        if (FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI132) {
+            // ── SWI132 ──────────────────────────────────────────────────────────
+            //
+            // SWI132 uses CarVehicleSettingClient for ADAS (ACC/TJA)
+            // but the IVehicleSettingService direct binder for sound alerts.
+            // → setOverspeedAlarm() and setSpeedLimitTone() send the correct binder transactions.
+            //   (0x128 and 0x12a) without going through VehicleSettingManager.
+
+            // TSR (SLIF) via VSM — applied first as SWI133
+            val tsrOk = EVHardware.setTsrMode(profile.tsrEnabled)
+            AppLogger.i(TAG, "  TsrEnabled=${profile.tsrEnabled} → $tsrOk")
+
+            // Alertes sonores via VSM
+            // SWI132 firmware resets overspeed and speedTone to ON ~400ms after activation
+            // of the TSR (same behavior as SWI133). setTsrMode() returns immediately without
+            // wait for this reset. If we write alerts too early, the firmware
+            // then crushes them. We wait 450ms to let the firmware complete its
+            // reset before applying profile values.
+            if (profile.tsrEnabled) {
+                try { Thread.sleep(450) } catch (_: InterruptedException) {}
+            }
+            // Delay of 150ms between the two writes: the middleware processes the properties
+            // in a queue with debounce — two writes too fast mean that only the
+            // last one is validated. 150ms ensures that the first one is processed.
+            val oaOk = EVHardware.setOverspeedAlarm(profile.overspeedAlarm)
+            AppLogger.i(TAG, "  OverspeedAlarm=${profile.overspeedAlarm} → $oaOk")
+            try { Thread.sleep(150) } catch (_: InterruptedException) {}
+            val stOk = EVHardware.setSpeedLimitTone(profile.speedLimitTone)
+            AppLogger.i(TAG, "  SpeedLimitTone=${profile.speedLimitTone} → $stOk")
+
+            // Mode ACC/TJA via CarVehicleSettingClient (setAccTjaState).
+            // SHWA (old limiter coding) is no longer an ACC/TJA mode → returned to Off;
+            // the limiter is handled separately via setSasMode below.
+            val cruiseMode = if (profile.swi68AdasMode == Swi68Mode.SHWA) Swi68Mode.OFF else profile.swi68AdasMode
+            val adOk = EVHardware.setAccTjaMode(cruiseMode)
+            AppLogger.i(TAG, "  AdasMode=0x${cruiseMode.toString(16)} → $adOk")
+            // Speed ​​limiter (SAS) — applied only if the profile has configured it.
+            // Profiles created before this function (swi132LimiterConfigured=false) → not affected.
+            if (profile.swi132LimiterConfigured) {
+                EVHardware.setSpeedLimiterMode(profile.swi132SasMode)
+                AppLogger.i(TAG, "  SasMode=${profile.swi132SasMode} (0=Off 2=Manuel 3=Intelligent)")
+            }
+            applyAeb(profile.aebEnabled, profile.aebMode, profile.aebSensitivity)
+
+            // Energy saving — via CarVehicleSettingClient (setEnduranceMode), same path as SWI69
+            val esOk = EVHardware.setEnergySavingMode(profile.energySaving)
+            AppLogger.i(TAG, "  EnergySaving=${profile.energySaving} → $esOk")
+
+        } else if (FirmwareInfo.isVsmBased()) {
+            // ── SWI68/SWI69/SWI131/SWI165 ──────────────────────────────────────
+            //
+            // The TSR is applied FIRST: setTsrMode() blocks 400 ms internally
+            // and restores soundWarning from preferences. We call him first
+            // to then be able to overwrite the sound alert with the profile value.
+            val tsrOk = EVHardware.setTsrMode(profile.tsrEnabled)
+            AppLogger.i(TAG, "  TsrEnabled=${profile.tsrEnabled} → $tsrOk")
+
+            // Audible alert — applied AFTER the TSR to overwrite its internal restore
+            val swOk = EVHardware.setSoundWarning(profile.soundWarning)
+            AppLogger.i(TAG, "  SoundWarning=${profile.soundWarning} → $swOk")
+
+            // ACC/TJA mode — SHWA (old limiter coding) set to Off (limiter managed separately)
+            val cruiseMode = if (profile.swi68AdasMode == Swi68Mode.SHWA) Swi68Mode.OFF else profile.swi68AdasMode
+            val adOk = EVHardware.setAccTjaMode(cruiseMode)
+            AppLogger.i(TAG, "  AdasMode=0x${cruiseMode.toString(16)} → $adOk")
+            // Speed ​​limiter — applied only if the profile has configured it.
+            // (SWI69/SWI131 → setSasMode ; SWI68/SWI165 → setSpeedAsstMode, dispatch interne)
+            if (profile.swi132LimiterConfigured) {
+                EVHardware.setSpeedLimiterMode(profile.swi132SasMode)
+                AppLogger.i(TAG, "  LimiterMode=${profile.swi132SasMode} (0=Off 2=Manuel 3=Intelligent)")
+            }
+            applyAeb(profile.aebEnabled, profile.aebMode, profile.aebSensitivity)
+
+            // Power saving — VSM firmwares excluding SWI132 (SWI68/SWI69/SWI131/SWI165)
+            val esOk = EVHardware.setEnergySavingMode(profile.energySaving)
+            AppLogger.i(TAG, "  EnergySaving=${profile.energySaving} → $esOk")
+        } else {
+            // ── SWI133/UNKNOWN ──────────────────────────────────────────────────
+            //
+            // Same logic: activating TSR re-enables OVERSPEED_ALARM and SPEED_LIMIT_TONE.
+            // setTsrMode() restores from preferences — we call it first
+            // then we overwrite with the profile values.
+            if (FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI133) {
+                val tsrOk = EVHardware.setTsrMode(profile.tsrEnabled)
+                AppLogger.i(TAG, "  TsrEnabled=${profile.tsrEnabled} → $tsrOk")
+            }
+
+            // Speed ​​alerts — applied AFTER TSR
+            // Delay of 150ms between the two writes: the vehicle middleware (VPM) processes
+            // properties in a queue with debounce — two writes too fast make
+            // that only the last one is validated. 150ms ensures that the first one is processed.
+            val oaOk = EVHardware.setOverspeedAlarm(profile.overspeedAlarm)
+            AppLogger.i(TAG, "  OverspeedAlarm=${profile.overspeedAlarm} → $oaOk")
+            try { Thread.sleep(150) } catch (_: InterruptedException) {}
+            val stOk = EVHardware.setSpeedLimitTone(profile.speedLimitTone)
+            AppLogger.i(TAG, "  SpeedLimitTone=${profile.speedLimitTone} → $stOk")
+
+            val adOk = EVHardware.setMixedIntelligentDrive(profile.adasMode)
+            AppLogger.i(TAG, "  AdasMode=${profile.adasMode} → $adOk")
+            applyAeb(profile.aebEnabled, profile.aebMode, profile.aebSensitivity)
+
+            // Energy saving — SWI133 via VPM
+            if (FirmwareInfo.getGeneration() == FirmwareInfo.Gen.SWI133) {
+                val esOk = EVHardware.setEnergySavingMode(profile.energySaving)
+                AppLogger.i(TAG, "  EnergySaving=${profile.energySaving} → $esOk")
+            }
+        }
+        // ELK — common to all known firmware
+        applyElk(profile.elkMode, profile.elkSensitivity, profile.lasAudibleWarning, profile.lasVibrationReminder)
+
+        // ── ADAS verification pass (self-start only) ────────────
+        // On cold start, the firmware may re-assert certain settings AFTER
+        // our writing (overspeed/tone alerts ~400ms after SLIF/TSR; ELK reset to
+        // its default value). We reread after stabilization and we rewrite in the event of a discrepancy.
+        // Concerne SWI132/SWI133 (2 alertes distinctes + ELK).
+        val gen = FirmwareInfo.getGeneration()
+        if (autoStart && (gen == FirmwareInfo.Gen.SWI133 || gen == FirmwareInfo.Gen.SWI132)) {
+            verifyAdasWithRetry(profile)
+        }
     }
 
     /**

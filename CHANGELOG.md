@@ -13,6 +13,10 @@ All notable changes to this project are documented here. Format follows
 - Profiles saved before this release configure neither feature and behave exactly as before.
 - **Read-back logging for the parked on-vehicle tests (RI-006, CR-040, CR-041).** `[READBACK]` INFO lines in the log console and diagnostic export record the car's state before and after the dashboard's regen and Custom writes (500 ms and 300 ms after), around a profile's drive/regen block, its Custom block and its climate plan. Reads only: no write, value, order, delay or lock changed, and a failed read is logged as text. One-pedal has no reader in EVHardware, so it is logged as such.
 
+### Fixed
+
+- **ADAS of a profile applied before the ADAS service was up now keeps the write lock.** On a cold head unit the ADAS/Custom block of a profile runs when the service binds, minutes later, on the main thread and outside the lock that serializes vehicle writes — so its sleeps blocked the UI and its writes could interleave with a newer profile's. It is now sent back to the applier's thread under the lock, and dropped if a newer profile was requested meanwhile.
+
 ## [3.0.4] - 2026-09-22
 
 ### Fixed
