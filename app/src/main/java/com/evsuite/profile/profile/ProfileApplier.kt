@@ -96,6 +96,8 @@ object ProfileApplier {
             val roadWrites = VehicleWriteGate.allow("profile '${profile.name}' — driving settings")
 
             if (roadWrites) {
+                // RI-006 read-back: before the block's first write, never between its writes.
+                ReadBack.regen("ProfileApplier", "before")
                 // Mode de conduite (rapide — binder call)
                 val dmOk = EVHardware.setDriveMode(profile.driveMode)
                 AppLogger.i(TAG, "  DriveMode=${profile.driveMode.label} → $dmOk")
@@ -122,6 +124,10 @@ object ProfileApplier {
 
             // Climate (CR-041) — comfort, like the heating above: not speed-gated.
             profile.climate?.let { applyClimate(it) }
+
+            // RI-006 read-back, after the Katman1 block's last write. No wait added: there is
+            // no existing delay after it, and a new one here would hold up every profile.
+            if (roadWrites) ReadBack.regen("ProfileApplier", "after Katman1 (no added wait)")
 
             AppLogger.i(TAG, "Profile '${profile.name}' Katman1 completed — ok=$ok")
             onComplete?.invoke(ok)
@@ -268,6 +274,9 @@ object ProfileApplier {
      * and stays where the car has it.
      */
     private fun applyCustomDrive(profile: DrivingProfile) {
+        // CR-040 read-back: a snapshot before the first write and after the last write's own
+        // 150 ms — never between two writes, so the existing spacing stays exactly as it is.
+        ReadBack.custom("ProfileApplier", "before")
         listOf(
             CustomDrive.Setting.POWER to profile.customPower,
             CustomDrive.Setting.STEERING to profile.customSteering,
@@ -282,6 +291,7 @@ object ProfileApplier {
             AppLogger.i(TAG, "  Custom $setting=$index → $done")
             try { Thread.sleep(150) } catch (_: InterruptedException) {}
         }
+        ReadBack.custom("ProfileApplier", "after")
     }
 
     /** Runs [ClimatePlan]'s steps, spaced like every other multi-write sequence here. */
@@ -290,10 +300,13 @@ object ProfileApplier {
             AppLogger.w(TAG, "  Climate skipped — climate service not available")
             return
         }
+        ReadBack.climate("before")   // CR-041 read-back
         ClimatePlan.steps(climate).forEachIndexed { i, step ->
             if (i > 0) try { Thread.sleep(150) } catch (_: InterruptedException) {}
             AppLogger.i(TAG, "  Climate ${step.control}=${step.value} → ${ClimatePlan.write(step)}")
         }
+        // After the plan's last write; the spec's ~2 s wait is not added (it would be a new delay).
+        ReadBack.climate("after (no added wait)")
     }
 
     /**

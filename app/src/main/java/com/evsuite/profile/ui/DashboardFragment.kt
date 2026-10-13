@@ -23,8 +23,10 @@ import com.evsuite.hardware.EVHardware.Swi68Mode
 import com.evsuite.hardware.model.DriveMode
 import com.evsuite.hardware.model.RegenLevel
 import com.evsuite.hardware.FirmwareInfo
+import com.evsuite.profile.profile.ReadBack
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -279,7 +281,13 @@ class DashboardFragment : Fragment() {
         regenButtons.forEach { (level, btn) ->
             btn.setOnClickListener {
                 applyRegenUI(level)
-                CoroutineScope(Dispatchers.IO).launch { EVHardware.setRegenLevel(level) }
+                CoroutineScope(Dispatchers.IO).launch {
+                    // RI-006 read-back around the one write; the wait comes after it, never before.
+                    ReadBack.regen("Dashboard", "before ${level.name}")
+                    EVHardware.setRegenLevel(level)
+                    delay(500)
+                    ReadBack.regen("Dashboard", "500 ms after ${level.name}")
+                }
             }
         }
 
@@ -663,8 +671,12 @@ class DashboardFragment : Fragment() {
                         b.alpha = if (available) 1f else 0.35f
                         b.setOnClickListener {
                             CoroutineScope(Dispatchers.IO).launch {
+                                // CR-040 read-back; the wait follows the highlight, so the UI is not held.
+                                ReadBack.custom("Dashboard", "before $index", listOf(setting))
                                 val ok = CustomDrive.write(setting, index)
                                 withContext(Dispatchers.Main) { if (ok && isAdded) highlight(index) }
+                                delay(300)
+                                ReadBack.custom("Dashboard", "300 ms after $index", listOf(setting))
                             }
                         }
                     }
