@@ -15,6 +15,9 @@
 > MG and MG4 are third-party marks used only to identify compatibility; this independent
 > project is not affiliated with or approved by SAIC Motor or MG Motor.
 
+> **Frozen since 2026-10-24 — no new features.** Existing releases keep working. New vehicle
+> settings arrive only in [EVTasker](https://github.com/malys/EVTasker); use it for new installs.
+
 **EVProfile** is a system-level Android Automotive OS app for the head unit of MG4 electric
 vehicles equipped with the **SAIC MT2712** SoC. It gives direct, unified access to driving
 settings that are unavailable, or poorly accessible, through the stock interface: drive mode,
