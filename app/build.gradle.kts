@@ -54,6 +54,7 @@ android {
             // manual test on vehicle (Katman1/2/3, HVAC, ADAS/AEB/ELK, ignition, OTA)
             // before publishing.
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfigs.findByName("platform")?.let { signingConfig = it }
         }
