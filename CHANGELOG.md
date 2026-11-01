@@ -6,6 +6,8 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-11-01
+
 ### Added
 
 - **Custom drive mode settings (CR-040).** When a profile selects Custom, the editor offers power response (Eco / Normal / Sport), steering and brake-pedal feel (Comfort / Normal / Sport). They are written after the drive mode, only when the profile's mode is Custom, 150 ms apart and behind the standstill gate. On the dashboard, tapping Custom while the car is already in Custom opens the same three settings live. Available on SWI68, SWI165, SWI69, SWI131 and SWI132; not on SWI133. The value scales beyond the read/write codes recorded in RI-006 still need an on-vehicle confirmation.
@@ -16,6 +18,11 @@ All notable changes to this project are documented here. Format follows
 ### Fixed
 
 - **ADAS of a profile applied before the ADAS service was up now keeps the write lock.** On a cold head unit the ADAS/Custom block of a profile runs when the service binds, minutes later, on the main thread and outside the lock that serializes vehicle writes — so its sleeps blocked the UI and its writes could interleave with a newer profile's. It is now sent back to the applier's thread under the lock, and dropped if a newer profile was requested meanwhile.
+
+### Changed
+
+- **Smaller APK.** Unused resources are dropped from the release build: 2.6 MB instead of
+  3.4 MB.
 
 ## [3.0.4] - 2026-09-22
 
